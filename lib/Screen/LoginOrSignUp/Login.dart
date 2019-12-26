@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sellerapp/Screen/Admin.dart';
 import 'package:sellerapp/Screen/Wrapper.dart';
-import 'package:sellerapp/Screen/formDetails.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'Signup.dart';
 import 'resetpassword.dart';
