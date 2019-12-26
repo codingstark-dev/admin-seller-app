@@ -5,11 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
-import 'package:sellerapp/Screen/formDetails.dart';
+import 'package:sellerapp/Screen/Notfication.dart';
 import 'package:sellerapp/Screen/settings.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:sellerapp/model/db/category.dart';
 import 'package:sellerapp/model/user.dart';
+import 'package:sellerapp/service/dbapi.dart';
 import 'LoginOrSignUp/Signup.dart';
 import 'package:sellerapp/service/auth.dart';
 
@@ -39,7 +40,7 @@ var _txtEdit = _txt.copyWith(color: Colors.black26, fontSize: 15.0);
 var _txtName = _txt.copyWith(fontWeight: FontWeight.w700, fontSize: 17.0);
 
 class _AdminState extends State<Admin> {
-  MaterialColor active = Colors.purple;
+  Color active = Colors.deepPurple[400];
   final authService = AuthService();
   TextEditingController brandController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
@@ -50,14 +51,12 @@ class _AdminState extends State<Admin> {
   GlobalKey<FormState> _categoryFormKey = GlobalKey();
   CategoryService _categoryService = CategoryService();
   Page _selectedPage = Page.dashboard;
-
   @override
   void initState() {
-    // UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
     super.initState();
   }
 
-  Text buildText(username, User user) {
+  Text buildText(username, User user,String usernameindb) {
     setState(() {});
     if (username != null) {
       return Text(
@@ -172,7 +171,7 @@ class _AdminState extends State<Admin> {
       username: (user?.name == "") ? null : user?.name,
       emailIds: (user?.emailId == "") ? null : user?.emailId,
     );
-// UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
+UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
     // var ldos = Provider.of<List<UserDetails>>(context);
     var profile = Padding(
       padding: EdgeInsets.only(
@@ -192,14 +191,14 @@ class _AdminState extends State<Admin> {
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.white, width: 2.5),
                     shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: NetworkImage(datas.imageUrls ??
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqXzigtzoi2Md9v4AMfFNVAfwhXYlLxSYjxwXh3DPCm_4STJoz&s"),
-                        fit: BoxFit.cover)),
+                    image: 
+                    DecorationImage(
+                        image: NetworkImage(datas.imageUrls ?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROEN04MBFWtD4MOMdV2TTH8rWsjlI1U0ZFVZMQoP1S6SwMDq9N&s" ?? ""),
+                        fit: BoxFit.fill)),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 5.0),
-                child: buildText(datas.username, user),
+                child: buildText(datas.username, user, userDetails.userName),
               ),
               StreamBuilder<QuerySnapshot>(
                   stream: null,
@@ -654,7 +653,7 @@ class _AdminState extends State<Admin> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => FormDetails()));
+                          builder: (BuildContext context) => NotificationO()));
                 },
               )
             ],
