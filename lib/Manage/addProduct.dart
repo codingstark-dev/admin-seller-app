@@ -28,7 +28,7 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController productNameController = TextEditingController();
   ProductService productService = ProductService();
   TextEditingController quatityController = TextEditingController();
-Color active = Colors.deepPurple[400];
+  Color active = Colors.deepPurple[400];
   List<String> selectedSizes = <String>[];
   Color white = Colors.white;
 
@@ -40,12 +40,6 @@ Color active = Colors.deepPurple[400];
   File _image1;
   File _image2;
   File _image3;
-
-  @override
-  void initState() {
-    _getCategories();
-    _getBrands();
-  }
 
   List<DropdownMenuItem<String>> getCategoriesDropdown() {
     List<DropdownMenuItem<String>> items = new List();
@@ -240,12 +234,19 @@ Color active = Colors.deepPurple[400];
           }
         } else {
           setState(() => isLoading = false);
-         Fluttertoast.showToast(msg: 'all the images must be provided');
+          Fluttertoast.showToast(msg: 'all the images must be provided');
         }
       }
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCategories();
+    _getBrands();
   }
 
   @override
@@ -351,7 +352,8 @@ Color active = Colors.deepPurple[400];
                             return 'You must enter the product name';
                           } else if (value.length > 10) {
                             return 'Product name cant have more than 10 letters';
-                          } 
+                          }
+                         
                         },
                       ),
                     ),
@@ -411,7 +413,8 @@ Color active = Colors.deepPurple[400];
                             return 'You Must Need Add Quantity';
                           } else if (value.length > 5) {
                             return "Must Add only 5 digit number";
-                          } 
+                          }
+                         
                         },
                       ),
                     ),
@@ -430,6 +433,7 @@ Color active = Colors.deepPurple[400];
                           } else if (value.length > 5) {
                             return "Add Number Less Then 5";
                           }
+                         
                         },
                       ),
                     ),

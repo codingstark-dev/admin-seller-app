@@ -175,7 +175,7 @@ class AuthService {
             "TimeCreated": Timestamp.now(),
             "Register By": "Google Sign Up",
             "id": user.uid,
-            "refercode": user.uid.toString().substring(0, 6),
+            "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
             "name": user.displayName ?? user.uid.toString().substring(3, 8),
             "Email": user.email,
             "photo": user.isEmailVerified,
@@ -185,7 +185,10 @@ class AuthService {
             "formstatus": false
           });
         } else {
-            Firestore.instance.collection("Sellers").document(user.uid).updateData({
+          Firestore.instance
+              .collection("Sellers")
+              .document(user.uid)
+              .updateData({
             "TimeCreated": Timestamp.now(),
             "Register By": "Google Sign Up",
             "id": user.uid,
@@ -338,32 +341,38 @@ class AuthService {
       assert(await user.getIdToken() != null);
       if (result != null) {
         final QuerySnapshot results = await Firestore.instance
-            .collection("path")
+            .collection("Sellers")
             .where("id", isEqualTo: user.uid)
             .getDocuments();
         final List<DocumentSnapshot> documents = results.documents;
         if (documents.length == 0) {
           Firestore.instance.collection("Sellers").document(user.uid).setData({
             "TimeCreated": Timestamp.now(),
-            "Register By": "registerWithEmailAndPassword",
+            "Register By": "Register Via Email Password",
             "id": user.uid,
-            "refercode":
-                user.displayName ?? user.uid.toString().substring(0, 6),
-            "name": user.displayName ?? user.uid.toString().substring(3, 8),
+            "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
+            "name": user.displayName ?? user.uid.toString().substring(3, 8).toLowerCase(),
+            "Email": user.email,
+            "photo": user.isEmailVerified,
+            "Verification": true,
+            "Reward": 0,
+            "Verification": false,
+            "formstatus": false
+          });
+        } else {
+          Firestore.instance
+              .collection("Sellers")
+              .document(user.uid)
+              .updateData({
+            "TimeCreated": Timestamp.now(),
+            "Register By": "Register Via Email Password",
+            "id": user.uid,
+            "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
+            "name": user.displayName ?? user.uid.toString().substring(3, 8).toLowerCase(),
             "Email": user.email,
             "photo": user.isEmailVerified,
           });
-
-          // await sharedPreferences.setString("id", user.uid);
-          // await sharedPreferences.setString("Email", user.email);
-          // await sharedPreferences.setString("photo", user.email);
-        } else {
-          // await sharedPreferences.setString("id", documents[0]["id"]);
-          // await sharedPreferences.setString("Email", documents[0]["Email"]);
-          // await sharedPreferences.setString("photo", documents[0]["photo"]);
         }
-
-        // Fluttertoast.showToast(msg: 'SignUp sucessed');
       }
       return true;
     } catch (e) {

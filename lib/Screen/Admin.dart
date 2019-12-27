@@ -51,10 +51,7 @@ class _AdminState extends State<Admin> {
   GlobalKey<FormState> _categoryFormKey = GlobalKey();
   CategoryService _categoryService = CategoryService();
   Page _selectedPage = Page.dashboard;
-  @override
-  void initState() {
-    super.initState();
-  }
+
 
   Text buildText(username, User user,String usernameindb) {
     setState(() {});
@@ -78,7 +75,7 @@ class _AdminState extends State<Admin> {
       return Text(
           (email == null)
               ? "Guest person"
-              : (email != null) ? usernameindb : "Something Wents Wrong",
+              : (email != null) ? usernameindb ?? "" : "Something Wents Wrong",
           style: _txtName);
     }
   }
@@ -198,7 +195,7 @@ UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 5.0),
-                child: buildText(datas.username, user, userDetails?.userName),
+                child: buildText(datas?.username, user, userDetails?.userName),
               ),
               StreamBuilder<QuerySnapshot>(
                   stream: null,
