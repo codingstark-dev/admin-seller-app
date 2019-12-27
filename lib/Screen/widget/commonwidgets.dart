@@ -11,8 +11,8 @@ class TextFieldWidget extends StatelessWidget {
   final Function onChanged;
   final String errorText;
   final List<TextInputFormatter> inputFormatters;
-  final MaterialColor active = Colors.purple;
-  const TextFieldWidget(
+  final Color active = Colors.deepPurple[400];
+   TextFieldWidget(
       {Key key,
       this.errorText,
       this.onChanged,

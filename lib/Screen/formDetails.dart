@@ -18,7 +18,7 @@ enum Page { service, local }
 Page _selectedPage = Page.service;
 
 TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-MaterialColor active = Colors.purple;
+ Color active = Colors.deepPurple[400];
 MaterialColor notActive = Colors.grey;
 final TextEditingController _details = TextEditingController();
 final TextEditingController _email = TextEditingController();

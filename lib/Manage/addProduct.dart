@@ -28,7 +28,7 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController productNameController = TextEditingController();
   ProductService productService = ProductService();
   TextEditingController quatityController = TextEditingController();
-  Color red = Colors.red;
+Color active = Colors.deepPurple[400];
   List<String> selectedSizes = <String>[];
   Color white = Colors.white;
 
@@ -337,7 +337,7 @@ class _AddProductState extends State<AddProduct> {
                       child: Text(
                         'enter a product name with 10 characters at maximum',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: red, fontSize: 12),
+                        style: TextStyle(color: active, fontSize: 12),
                       ),
                     ),
 
@@ -363,7 +363,7 @@ class _AddProductState extends State<AddProduct> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             'Category: ',
-                            style: TextStyle(color: red),
+                            style: TextStyle(color: active),
                           ),
                         ),
                         DropdownButton(
@@ -375,7 +375,7 @@ class _AddProductState extends State<AddProduct> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             'Brand: ',
-                            style: TextStyle(color: red),
+                            style: TextStyle(color: active),
                           ),
                         ),
                         DropdownButton(
@@ -533,7 +533,7 @@ class _AddProductState extends State<AddProduct> {
                     ),
 
                     FlatButton(
-                      color: red,
+                      color: active,
                       textColor: white,
                       child: Text('add product'),
                       onPressed: () {
