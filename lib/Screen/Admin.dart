@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/Notfication.dart';
+import 'package:sellerapp/Screen/productList.dart';
 import 'package:sellerapp/Screen/settings.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:sellerapp/model/db/category.dart';
@@ -50,8 +50,7 @@ class _AdminState extends State<Admin> {
   CategoryService _categoryService = CategoryService();
   Page _selectedPage = Page.dashboard;
 
-
-  Text buildText(username, User user,String usernameindb) {
+  Text buildText(username, User user, String usernameindb) {
     setState(() {});
     if (username != null) {
       return Text(
@@ -98,11 +97,14 @@ class _AdminState extends State<Admin> {
       actions: <Widget>[
         FlatButton(
             onPressed: () {
-              if (categoryController.text != null) {
+              if (categoryController.text.isNotEmpty) {
                 _categoryService.createCategory(categoryController.text);
+                Fluttertoast.showToast(msg: 'category created');
+                categoryController.clear();
+                Navigator.of(context, rootNavigator: true).pop();
+              } else {
+                Fluttertoast.showToast(msg: "Please Enter Category");
               }
-              Fluttertoast.showToast(msg: 'category created');
-              Navigator.of(context, rootNavigator: true).pop();
             },
             child: Text('ADD')),
         FlatButton(
@@ -140,11 +142,14 @@ class _AdminState extends State<Admin> {
       actions: <Widget>[
         FlatButton(
             onPressed: () {
-              if (brandController.text != null) {
+              if (brandController.text.isNotEmpty) {
                 _brandService.createBrand(brandController.text);
+                Fluttertoast.showToast(msg: 'brand added');
+                Navigator.of(context, rootNavigator: true).pop();
+                brandController.clear();
+              } else {
+                Fluttertoast.showToast(msg: "Please Enter Brand");
               }
-              Fluttertoast.showToast(msg: 'brand added');
-              Navigator.of(context, rootNavigator: true).pop();
             },
             child: Text('ADD')),
         FlatButton(
@@ -166,7 +171,7 @@ class _AdminState extends State<Admin> {
       username: (user?.name == "") ? null : user?.name,
       emailIds: (user?.emailId == "") ? null : user?.emailId,
     );
-UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
+    UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
     // var ldos = Provider.of<List<UserDetails>>(context);
     var profile = Padding(
       padding: EdgeInsets.only(
@@ -186,39 +191,36 @@ UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.white, width: 2.5),
                     shape: BoxShape.circle,
-                    image: 
-                    DecorationImage(
-                        image: NetworkImage(datas.imageUrls ?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROEN04MBFWtD4MOMdV2TTH8rWsjlI1U0ZFVZMQoP1S6SwMDq9N&s" ?? ""),
+                    image: DecorationImage(
+                        image: NetworkImage(datas.imageUrls ??
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROEN04MBFWtD4MOMdV2TTH8rWsjlI1U0ZFVZMQoP1S6SwMDq9N&s" ??
+                            ""),
                         fit: BoxFit.fill)),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 5.0),
                 child: buildText(datas?.username, user, userDetails?.userName),
               ),
-              StreamBuilder<QuerySnapshot>(
-                  stream: null,
-                  builder: (context, snapshot) {
-                    return InkWell(
-                      onTap: () {
-                        if (datas.emailIds == null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) => Signup()));
-                        } else if (datas.emailIds != null) {
-                          Fluttertoast.showToast(
-                              msg: "Our Feature is Coming soon");
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 0.0),
-                        child: Text(
-                          datas.emailIds ?? "Click Here To SignUp",
-                          style: _txtEdit,
-                        ),
-                      ),
-                    );
-                  }),
+              InkWell(
+                onTap: () {
+                  if (datas.emailIds == null) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Signup()));
+                  } else if (datas.emailIds != null) {
+                    Fluttertoast.showToast(msg: "Our Feature is Coming soon");
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 0.0),
+                  child: Text(
+                    datas.emailIds ?? "Click Here To SignUp",
+                    style: _txtEdit,
+                  ),
+                ),
+              )
+
               // FlatButton(
               //   child: Text("data"),
               //   onPressed: () {
@@ -529,7 +531,11 @@ UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
               ListTile(
                 leading: Icon(Icons.change_history),
                 title: Text("Products list"),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ProductList();
+                  }));
+                },
               ),
               Divider(),
               ListTile(
