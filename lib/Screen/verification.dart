@@ -21,62 +21,66 @@ class _VerificationDbState extends State<VerificationDb> {
       ),
       body: DoubleBackToCloseApp(
         snackBar: SnackBar(content: Text("Double Tap To Exit")),
-        child: Container(
-            child: Stack(
-          children: <Widget>[
-            FlareActor(
-              "assets/flare/otp.flr",
-              // alignment: Alignment.topCenter,
-              fit: BoxFit.contain,
-              animation: "otp",
-              alignment: Alignment.topCenter,
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 240, 0, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Center(
-                      child: Text(
-                    "Your Detail Verification Pending!",
-                    style: TextStyle(
-                        color: active,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
-                  )),
-                  SizedBox(height: 5,),
-                  Center(
-                      child: Text(
-                    "Our Team Verifying Your Given Details",
-                    style: TextStyle(
-                        color: active,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
-                  )),
-                     SizedBox(height: 5,),
-                   Center(
-                      child: Text(
-                    "If You Given Wrong Details In form Contact Us",
-                    style: TextStyle(
-                        color: active,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
-                  )),
-                     SizedBox(height: 5,),
-                     Center(
-                      child: Text(
-                    "- +919898xxxxx \n- +919898xxxxx \n- xyz@gmail.com",
-                    style: TextStyle(
-                        color: active,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
-                  )),
-                ],
+        child: SafeArea(
+                  child: Container(
+              child: Stack(
+            children: <Widget>[
+              FlareActor(
+                "assets/flare/otp.flr",
+                // alignment: Alignment.topCenter,
+                fit: BoxFit.contain,
+                animation: "otp",
+                alignment: Alignment.topCenter,
               ),
-            )
-          ],
-        )),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 240, 0, 0),
+                child: SafeArea(
+                                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Center(
+                          child: Text(
+                        "Your Detail Verification Pending!",
+                        style: TextStyle(
+                            color: active,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      )),
+                      SizedBox(height: 5,),
+                      Center(
+                          child: Text(
+                        "Our Team Verifying Your Given Details",
+                        style: TextStyle(
+                            color: active,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      )),
+                         SizedBox(height: 5,),
+                       Center(
+                          child: Text(
+                        "If You Given Wrong Details In form Contact Us",
+                        style: TextStyle(
+                            color: active,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      )),
+                         SizedBox(height: 5,),
+                         Center(
+                          child: Text(
+                        "- +919898xxxxx \n- +919898xxxxx \n- xyz@gmail.com",
+                        style: TextStyle(
+                            color: active,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      )),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          )),
+        ),
       ),
     );
   }

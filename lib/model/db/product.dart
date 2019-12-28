@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 class ProductService {
   String ref = 'ProductListID';
   String appid = "CityGrow Product List";
- 
+ final db = UserDetails();
 
   Firestore _firestore = Firestore.instance;
   void uploadProduct(Map<String, dynamic> data) async {
@@ -21,7 +21,7 @@ class ProductService {
     _firestore
         .collection(ref)
         .document(appid)
-        .collection(name)
+        .collection((name == "") ? null : db?.userName ?? name)
         .document(productId)
         .collection("productsAdded")
         .document(productIds)

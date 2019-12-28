@@ -4,13 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sellerapp/model/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final FirebaseAuth auth = FirebaseAuth.instance;
   // final fblogin = FacebookLogin();
   final GoogleSignIn googleSignIn = GoogleSignIn();
-  SharedPreferences sharedPreferences;
+  // SharedPreferences sharedPreferences;
   String usernameSign;
   final Firestore firestore = Firestore();
   String referalId;
@@ -113,7 +112,7 @@ class AuthService {
   //! gooogle signinnnn
 
   Future signinn() async {
-    sharedPreferences = await SharedPreferences.getInstance();
+    // sharedPreferences = await SharedPreferences.getInstance();
     GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount.authentication;
@@ -231,7 +230,7 @@ class AuthService {
               .document(documents[i].data["id"])
               .updateData({
             "Reward": (results.documents[i].data["refercode"] == refercode)
-                ? FieldValue.increment(50)
+                ? FieldValue.increment(25)
                 : null
           });
           firestore
@@ -256,8 +255,9 @@ class AuthService {
         });
       } else if (refercode.isEmpty) {
       } else {
-        return Fluttertoast.showToast(msg: "Invalid Refercode");
-      }
+       return false;
+      } 
+     
 
       // if (documents.length == 1) {
       //   Firestore.instance.collection("Sellers").document(user.uid).collection("joined").document(user.displayName).updateData({
@@ -327,6 +327,7 @@ class AuthService {
 
     } catch (e) {
       print(e.toString());
+      return null;
     }
   }
 

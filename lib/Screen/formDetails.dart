@@ -1,6 +1,7 @@
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Screen/Wrapper.dart';
 import 'package:sellerapp/Screen/validator.dart';
@@ -18,7 +19,7 @@ enum Page { service, local }
 Page _selectedPage = Page.service;
 
 TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
- Color active = Colors.deepPurple[400];
+Color active = Colors.deepPurple[400];
 MaterialColor notActive = Colors.grey;
 final TextEditingController _details = TextEditingController();
 final TextEditingController _email = TextEditingController();
@@ -379,39 +380,58 @@ class _FormDetailsState extends State<FormDetails> {
     }
   }
 
-  lolos() {
+  lolos() async {
+    final auth = Provider.of<AuthService>(context);
+    bool result = await auth.refferal(refercode, name);
+    final user = Provider.of<User>(context);
     setState(() {
-      final user = Provider.of<User>(context);
-      final auth = Provider.of<AuthService>(context);
-
       submitBtn = true;
-      DatabaseService(uid: user.uid).addDataToDb(_selectedPage == Page.service
-          ? {
-              "name": name,
-              "SecEmail": email,
-              "usedReferCode": refercode,
-              "PhoneNumber": phoneNumber,
-              "Address": address,
-              "ServiceDetails": details,
-              "Verification": false,
-              "formstatus": true
-            }
-          : {
-              "name": name,
-              "SecEmail": email,
-              "usedReferCode": refercode,
-              "PhoneNumber": phoneNumber,
-              "Address": address,
-              "ServiceDetails": details,
-              "GstinOrTin": gstinOrtin,
-              "Pan Card": pan,
-              "Verification": false,
-              "formstatus": true
-            });
-      auth.refferal(refercode, name);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Wrapper()));
+      if (result == false) {
+        Fluttertoast.showToast(
+            msg: "Invalid Refer Code Please Check It Properly");
+      } else {
+        DatabaseService(uid: user.uid).addDataToDb(_selectedPage == Page.service
+            ? {
+                "name": name,
+                "SecEmail": email,
+                "usedReferCode": refercode,
+                "PhoneNumber": phoneNumber,
+                "Address": address,
+                "ServiceDetails": details,
+                "Verification": false,
+                "formstatus": true
+              }
+            : {
+                "name": name,
+                "SecEmail": email,
+                "usedReferCode": refercode,
+                "PhoneNumber": phoneNumber,
+                "Address": address,
+                "ServiceDetails": details,
+                "GstinOrTin": gstinOrtin,
+                "Pan Card": pan,
+                "Verification": false,
+                "formstatus": true
+              });
+        auth.refferal(refercode, name);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Wrapper()));
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _email.clear();
+    _details.clear();
+    _address.clear();
+    _bussiness.clear();
+    _gstinORtin.clear();
+    _name.clear();
+    _pan.clear();
+    _phoneNumber.clear();
+    _refercode.clear();
   }
 
   @override

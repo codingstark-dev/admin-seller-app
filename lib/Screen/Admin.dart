@@ -14,8 +14,6 @@ import 'package:sellerapp/service/dbapi.dart';
 import 'LoginOrSignUp/Signup.dart';
 import 'package:sellerapp/service/auth.dart';
 
-//import 'package:fluttertoast/fluttertoast.dart';
-
 enum Page { dashboard, manage } // look here
 
 class Admin extends StatefulWidget {

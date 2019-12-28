@@ -33,7 +33,7 @@ class _WrapperState extends State<Wrapper> {
           ),
         ],
         child: StreamBuilder<UserDetails>(
-            stream: db.documentSnapshot,
+            stream: db?.documentSnapshot,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data.formDetaiVerify == true) {

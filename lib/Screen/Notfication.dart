@@ -6,7 +6,7 @@ class NotificationO extends StatefulWidget {
   @override
   _NotificationOState createState() => _NotificationOState();
 }
-
+Color active = Colors.deepPurple[400];
 class _NotificationOState extends State<NotificationO> {
   final List<Post> items = new List();
   @override
@@ -50,7 +50,7 @@ class _NotificationOState extends State<NotificationO> {
                 fontFamily: "Gotik"),
           ),
           iconTheme: IconThemeData(
-            color:  Colors.purple,
+            color: active,
           ),
           centerTitle: true,
           elevation: 0.0,
@@ -69,7 +69,7 @@ class _NotificationOState extends State<NotificationO> {
                     });
                   },
                   background: Container(
-                    color: Colors.purple,
+                    color: active,
                   ),
                   child: Container(
                     height: 88.0,

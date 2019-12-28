@@ -24,7 +24,6 @@ dependencies:
   fluttertoast:
   firebase_auth:
   google_sign_in:
-  shared_preferences:
   http:
   double_back_to_close_app: ^0.1.2
   firebase_storage:
