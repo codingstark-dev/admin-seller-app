@@ -255,9 +255,8 @@ class AuthService {
         });
       } else if (refercode.isEmpty) {
       } else {
-       return false;
-      } 
-     
+        return false;
+      }
 
       // if (documents.length == 1) {
       //   Firestore.instance.collection("Sellers").document(user.uid).collection("joined").document(user.displayName).updateData({
@@ -352,7 +351,8 @@ class AuthService {
             "Register By": "Register Via Email Password",
             "id": user.uid,
             "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
-            "name": user.displayName ?? user.uid.toString().substring(3, 8).toLowerCase(),
+            "name": user.displayName ??
+                user.uid.toString().substring(3, 8).toLowerCase(),
             "Email": user.email,
             "photo": user.isEmailVerified,
             "Verification": true,
@@ -369,7 +369,8 @@ class AuthService {
             "Register By": "Register Via Email Password",
             "id": user.uid,
             "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
-            "name": user.displayName ?? user.uid.toString().substring(3, 8).toLowerCase(),
+            "name": user.displayName ??
+                user.uid.toString().substring(3, 8).toLowerCase(),
             "Email": user.email,
             "photo": user.isEmailVerified,
           });

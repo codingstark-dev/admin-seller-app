@@ -218,7 +218,8 @@ class _AddProductState extends State<AddProduct> {
               List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
 
               productService.uploadProduct({
-                "name": productNameController.text,
+                "ProductName": productNameController.text,
+                "UploaderName": username,
                 "price": double.parse(priceController.text),
                 "sizes": selectedSizes,
                 "images": imageList,

@@ -18,7 +18,7 @@ class _WrapperState extends State<Wrapper> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
 
-    final db = DatabaseService(uid: user?.uid);
+    final db = DatabaseService(uid: user?.uid,name: user?.name);
     // .forEach((doc) => doc.verificationDone);
 
     //  ! return ethier Home or auth widget

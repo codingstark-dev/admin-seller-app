@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserDetails {
   final String referalId;
@@ -30,13 +32,36 @@ class UserData {
   final String referalId;
   final bool verification;
   final String userName;
- 
+
   // final String points;
   UserData({
-
     this.verification,
     this.referalId,
     this.userName,
     // this.points,
   });
+}
+
+class ProductListsView {
+  final String uid;
+  final String price;
+  final String brand;
+  final String category;
+  final String images;
+  final String quantity;
+  final String sizes;
+  final String userName;
+  final String name;
+
+  ProductListsView(
+      {this.price,
+      this.name,
+      this.uid,
+      this.userName,
+      this.brand,
+      this.category,
+      this.images,
+      this.quantity,
+      this.sizes});
+
 }

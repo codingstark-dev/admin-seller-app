@@ -8,8 +8,14 @@ import 'dart:async';
 class DatabaseService {
   final Firestore _db = Firestore.instance;
   final String uid;
+  final String userName;
+  final String name;
 
-  DatabaseService({@required this.uid});
+  DatabaseService({
+    @required this.uid,
+    this.name,
+    this.userName,
+  });
 
   /// Get a stream of a single document
   // Stream<SuperHero> streamHero(String id) {
@@ -50,11 +56,10 @@ class DatabaseService {
     return collectionDataOfDb(snapshot);
   }
 
-
-//! different
+//! different 1
   // stream of data
   Stream<List<UserData>> get dataSnapshotss {
-    return _db.collection("Sellers").snapshots().map(datarefer);
+    return _db.collection("ProductListID").snapshots().map(datarefer);
   }
 
 // list data
@@ -67,6 +72,41 @@ class DatabaseService {
           verification: doc.data["Verfication"] ?? "");
     }).toList();
   }
+
+  //! different 2
+  ProductListsView productcollection(DocumentSnapshot snapshot) {
+    Map data = snapshot.data;
+    return ProductListsView(
+        userName: data["UploaderName"] ?? "",
+        uid: uid,
+        price: data["price"] ?? "",
+        brand: data["brand"] ?? "",
+        category: data["category"] ?? "",
+        images: data["images"] ?? "",
+        sizes: data["sizes"] ?? "",
+        quantity: data["quantity"] ?? "");
+  }
+
+  // stream of data
+  Stream<ProductListsView> get productSnapshot {
+    String ref = 'ProductListID';
+    return _db
+        .collection(ref)
+        .document(uid.substring(0, 6))
+        .collection(uid)
+        .document()
+        .snapshots()
+        .map(_productDataFromSnapshot);
+  }
+
+  ProductListsView _productDataFromSnapshot(DocumentSnapshot snapshot) {
+    return productcollection(snapshot);
+  }
+
+
+
+
+  
 //  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
 //     return UserData(
 //         userName: snapshot.data['name'] ?? "",
