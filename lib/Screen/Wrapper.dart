@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Screen/Admin.dart';
@@ -17,8 +18,8 @@ class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-
-    final db = DatabaseService(uid: user?.uid,name: user?.name);
+   
+    final db = DatabaseService(uid: user?.uid, name: user?.name);
     // .forEach((doc) => doc.verificationDone);
 
     //  ! return ethier Home or auth widget
@@ -38,9 +39,9 @@ class _WrapperState extends State<Wrapper> {
               if (snapshot.hasData) {
                 if (snapshot.data.formDetaiVerify == true) {
                   if (snapshot.data.verificationWaiting == true) {
-                     return Admin();
+                    return Admin();
                   }
-                   return VerificationDb();
+                  return VerificationDb();
                 } else {
                   return FormDetails();
                 }
@@ -48,7 +49,7 @@ class _WrapperState extends State<Wrapper> {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
-              } else{
+              } else {
                 return Container();
               }
             }),

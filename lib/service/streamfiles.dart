@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -105,8 +108,6 @@ class DatabaseService {
 
 
 
-
-  
 //  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
 //     return UserData(
 //         userName: snapshot.data['name'] ?? "",
@@ -147,5 +148,21 @@ class DatabaseService {
         .collection('weapons')
         .document(id)
         .delete();
+  }
+}
+class ConnectivityService {
+  //
+  StreamController<ConnectivityResult> connectionStatusController =
+      StreamController<ConnectivityResult>();
+  // Stream is like a pipe, you add the changes to the pipe, it will come
+  // out on the other side.
+  // Create the Constructor
+
+  ConnectivityService() {
+    // Subscribe to the connectivity changed stream
+ 
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      connectionStatusController.add(result);
+    });
   }
 }

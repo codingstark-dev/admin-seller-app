@@ -656,7 +656,7 @@ class _AdminState extends State<Admin> {
                       MaterialPageRoute(
                           builder: (BuildContext context) => NotificationO()));
                 },
-              )
+              ),
             ],
           ),
           elevation: 0.0,
