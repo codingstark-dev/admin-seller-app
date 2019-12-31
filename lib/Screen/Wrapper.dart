@@ -1,7 +1,8 @@
-
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Screen/Admin.dart';
+import 'package:sellerapp/Screen/NoInternet.dart';
 import 'package:sellerapp/Screen/formDetails.dart';
 import 'package:sellerapp/Screen/verification.dart';
 import 'package:sellerapp/model/user.dart';
@@ -18,7 +19,7 @@ class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-   
+
     final db = DatabaseService(uid: user?.uid, name: user?.name);
     // .forEach((doc) => doc.verificationDone);
 
@@ -39,7 +40,26 @@ class _WrapperState extends State<Wrapper> {
               if (snapshot.hasData) {
                 if (snapshot.data.formDetaiVerify == true) {
                   if (snapshot.data.verificationWaiting == true) {
-                    return Admin();
+                    return StreamBuilder<ConnectivityResult>(
+                        stream: Connectivity().onConnectivityChanged,
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData)
+                            return CircularProgressIndicator();
+                          var result = snapshot.data;
+                          switch (result) {
+                            case ConnectivityResult.none:
+                              print("no net");
+                              return NoInternet();
+                            case ConnectivityResult.mobile:
+                            case ConnectivityResult.wifi:
+                              print("yes net");
+                              return Admin();
+                            default:
+                              return Center(
+                                  child: Text("No Internet Connection!"));
+                          }
+                         
+                        });
                   }
                   return VerificationDb();
                 } else {

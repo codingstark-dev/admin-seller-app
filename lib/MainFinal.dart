@@ -1,10 +1,8 @@
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:sellerapp/service/dbapi.dart';
-import 'package:sellerapp/service/streamfiles.dart';
 import 'Screen/Wrapper.dart';
 
  Color active = Colors.deepPurple[400];

@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -16,28 +13,7 @@ class ProductList extends StatefulWidget {
 Color active = Colors.deepPurple[400];
 
 class _ProductListState extends State<ProductList> {
-  final Connectivity _connectivity = new Connectivity();
-  String _connectionStatus;
-  //For subscription to the ConnectivityResult stream
-  StreamSubscription<ConnectivityResult> _connectionSubscription;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _connectionSubscription =
-        _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectionStatus = result.toString();
-      });
-    });
-    print(_connectionStatus);
-  }
 
-  @override
-  void dispose() {
-    _connectionSubscription.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
