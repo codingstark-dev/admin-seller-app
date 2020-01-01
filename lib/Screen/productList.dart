@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -13,8 +14,6 @@ class ProductList extends StatefulWidget {
 Color active = Colors.deepPurple[400];
 
 class _ProductListState extends State<ProductList> {
-
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -47,6 +46,7 @@ class _ProductListState extends State<ProductList> {
                           snapshot?.data?.documents[index]?.documentID;
                       // print(documentID.toString());
                       //firestore
+
                       if (snapshot.hasData &&
                           snapshot.data.documents.length > 0) {
                         return Card(
@@ -57,7 +57,8 @@ class _ProductListState extends State<ProductList> {
                               document[index]["images"][0],
                               fit: BoxFit.fill,
                             ),
-                            subtitle: Text(documentID),
+                            subtitle:
+                                Text(document[index]["ProductName"].toString()),
                             trailing: IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () {
@@ -70,8 +71,8 @@ class _ProductListState extends State<ProductList> {
                                             "The Product Where Going to delete Permanetly Means They Will Not Recover"),
                                         actions: <Widget>[
                                           FlatButton(
-                                            onPressed: () {
-                                              Firestore.instance
+                                            onPressed: () async {
+                                              await Firestore.instance
                                                   .collection("ProductListID")
                                                   .document(user.uid)
                                                   .collection(user.uid)

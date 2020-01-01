@@ -98,7 +98,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   changeSelectedBrand(String selectedBrand) {
-    setState(() => _currentCategory = selectedBrand);
+    setState(() => _currentBrand = selectedBrand);
   }
 
   void changeSelectedSize(String size) {
@@ -182,7 +182,7 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  void validateAndUpload(String username) async {
+  void validateAndUpload(String username,String uid) async {
     try {
       if (_formKey.currentState.validate()) {
         setState(() => isLoading = true);
@@ -196,15 +196,15 @@ class _AddProductState extends State<AddProduct> {
             final String picture1 =
                 "1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
             StorageUploadTask task1 =
-                storage.ref().child(picture1).putFile(_image1);
+                storage.ref().child(uid).child(productNameController.text).child(picture1).putFile(_image1);
             final String picture2 =
                 "2${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
             StorageUploadTask task2 =
-                storage.ref().child(picture2).putFile(_image2);
+                storage.ref().child(uid).child(productNameController.text).child(picture2).putFile(_image2);
             final String picture3 =
                 "3${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
             StorageUploadTask task3 =
-                storage.ref().child(picture3).putFile(_image3);
+                storage.ref().child(uid).child(productNameController.text).child(picture3).putFile(_image3);
 
             StorageTaskSnapshot snapshot1 =
                 await task1.onComplete.then((snapshot) => snapshot);
@@ -360,7 +360,7 @@ class _AddProductState extends State<AddProduct> {
                             child: TextFormField(
                               controller: productNameController,
                               decoration:
-                                  InputDecoration(hintText: 'Product name'),
+                                  InputDecoration(hintText: 'Product name',focusColor: active),
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return 'You must enter the product name';
@@ -570,7 +570,7 @@ class _AddProductState extends State<AddProduct> {
                             textColor: white,
                             child: Text('add product'),
                             onPressed: () {
-                              validateAndUpload(snapshot.data.userName.toString());
+                              validateAndUpload(snapshot.data.userName.toString(),snapshot.data.uid.toString());
                             },
                           )
                         ],

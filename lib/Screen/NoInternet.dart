@@ -13,7 +13,7 @@ class NoInternet extends StatelessWidget {
         backgroundColor: active,
       ),
       body: Container(
-        child: Icon(Icons.signal_cellular_connected_no_internet_4_bar)
+     
       ),
     );
   }

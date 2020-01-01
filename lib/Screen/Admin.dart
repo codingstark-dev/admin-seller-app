@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -333,170 +334,146 @@ class _AdminState extends State<Admin> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: GridView(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2),
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                        child: Card(
-                            child: ListTile(
-                                title: FlatButton.icon(
-                                    onPressed: () async {
-                                      // if (snapshot.hasData) {
-                                      //   return snapshot.data.map((f) {
-                                      //     print('$f.referalId');
-                                      //   });
-                                      // } else if (snapshot.hasError) {
-                                      //   return print(
-                                      //      " kjkh");
-                                      // }
-                                      // snapshot.data.map((val) {
-                                      //   setState(() {
-                                      //     verificationDone = val.verificationDone;
-                                      //   });
-                                      //   print(val.verificationDone);
-                                      // });
-                                      // print(userDetails.referalId);
-                                      // String refercode;
-                                      // final FirebaseUser user =
-                                      //     await FirebaseAuth.instance
-                                      //         .currentUser();
-                                      // final String uid = user.uid.toString();
-                                      // if (uid != null) {
-                                      //    Firestore.instance
-                                      //       .collection("users")
-                                      //       .document(uid)
-                                      //       .snapshots()
-                                      //       .listen((snapshot) async{
-                                      //    setState(() {
-                                      //      return refercode =
-                                      //           snapshot.data["refercode"];
-                                      //    });
-                                      //   });
-                                      // if (snapshot.hasData) {
-                                      //   snapshot.data.documents
-                                      //       .map((datas) {
-                                      //     setState(() {
-                                      //       return refercode =
-                                      //           datas["refercode"];
-                                      //     });
-                                      //   });
-                                      // }
-
-                                      // authService.refferal(
-                                      //     "refercode", "refercode", "user");
-                                      // userDetails.points
-
-                                      //  dbNotifier.dataList[0].userName.toString()
-                                      //   } else {}
-                                    },
-                                    icon: Icon(
-                                      Icons.category,
-                                      color: active,
-                                    ),
-                                    label: Text("Category")),
-                                subtitle: Text(
-                                  '16',
-                                  textAlign: TextAlign.center,
-                                  style:
-                                      TextStyle(color: active, fontSize: 60.0),
-                                ))),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                        child: Card(
-                          child: ListTile(
-                              title: FlatButton.icon(
-                                  onPressed: null,
-                                  icon: Icon(
-                                    Icons.people_outline,
-                                    color: active,
-                                  ),
-                                  label: Text("Users")),
-                              subtitle: Text(
-                                '7',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: active, fontSize: 60.0),
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                        child: Card(
-                          child: ListTile(
-                              title: FlatButton.icon(
-                                  onPressed: null,
-                                  icon: Icon(
-                                    Icons.track_changes,
-                                    color: active,
-                                  ),
-                                  label: Text("Products")),
-                              subtitle: Text(
-                                '111',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: active, fontSize: 60.0),
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                        child: Card(
-                          child: ListTile(
-                              title: FlatButton.icon(
-                                  onPressed: null,
-                                  icon: Icon(
-                                    Icons.tag_faces,
-                                    color: active,
-                                  ),
-                                  label: Text("Sold")),
-                              subtitle: Text(
-                                '23',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: active, fontSize: 60.0),
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                        child: Card(
-                          child: ListTile(
-                              title: FlatButton.icon(
-                                  onPressed: null,
-                                  icon: Icon(
-                                    Icons.shopping_cart,
-                                    color: active,
-                                  ),
-                                  label: Text("Orders")),
-                              subtitle: Text(
-                                '4',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: active, fontSize: 60.0),
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                        child: Card(
-                          child: ListTile(
-                              title: FlatButton.icon(
-                                  onPressed: null,
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: active,
-                                  ),
-                                  label: Text("Return")),
-                              subtitle: Text(
-                                '1',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: active, fontSize: 60.0),
-                              )),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                StreamBuilder(
+                    stream: Firestore.instance
+                        .collection("ProductListID")
+                        .document(user.uid)
+                        .collection(user.uid)
+                        .where("PersonID", isEqualTo: user.uid)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          snapshot.data.documents.length > 0) {
+                        return Expanded(
+                          child: GridView(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                            children: <Widget>[
+                              Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                                  child: Card(
+                                      child: ListTile(
+                                          title: FlatButton.icon(
+                                              onPressed: () async {},
+                                              icon: Icon(
+                                                Icons.category,
+                                                color: active,
+                                              ),
+                                              label: Text("Category")),
+                                          subtitle: Text(
+                                            '16',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: active, fontSize: 60.0),
+                                          )))),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                                child: Card(
+                                  child: ListTile(
+                                      title: FlatButton.icon(
+                                          onPressed: null,
+                                          icon: Icon(
+                                            Icons.people_outline,
+                                            color: active,
+                                          ),
+                                          label: Text("Users")),
+                                      subtitle: Text(
+                                        '7',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: active, fontSize: 60.0),
+                                      )),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                                child: Card(
+                                  child: ListTile(
+                                      title: FlatButton.icon(
+                                          onPressed: null,
+                                          icon: Icon(
+                                            Icons.track_changes,
+                                            color: active,
+                                          ),
+                                          label: Text("Products")),
+                                      subtitle: Text(
+                                        snapshot.data.documents.length
+                                            .toString(),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: active, fontSize: 60.0),
+                                      )),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                                child: Card(
+                                  child: ListTile(
+                                      title: FlatButton.icon(
+                                          onPressed: null,
+                                          icon: Icon(
+                                            Icons.tag_faces,
+                                            color: active,
+                                          ),
+                                          label: Text("Sold")),
+                                      subtitle: Text(
+                                        '23',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: active, fontSize: 60.0),
+                                      )),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                                child: Card(
+                                  child: ListTile(
+                                      title: FlatButton.icon(
+                                          onPressed: null,
+                                          icon: Icon(
+                                            Icons.shopping_cart,
+                                            color: active,
+                                          ),
+                                          label: Text("Orders")),
+                                      subtitle: Text(
+                                        '4',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: active, fontSize: 60.0),
+                                      )),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                                child: Card(
+                                  child: ListTile(
+                                      title: FlatButton.icon(
+                                          onPressed: null,
+                                          icon: Icon(
+                                            Icons.close,
+                                            color: active,
+                                          ),
+                                          label: Text("Return")),
+                                      subtitle: Text(
+                                        '1',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: active, fontSize: 60.0),
+                                      )),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return Center(
+                            child: CircularProgressIndicator(
+                          backgroundColor: active,
+                        ));
+                      }
+                    }),
               ],
             ),
           );

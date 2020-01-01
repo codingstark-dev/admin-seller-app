@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Screen/Admin.dart';
-import 'package:sellerapp/Screen/NoInternet.dart';
 import 'package:sellerapp/Screen/formDetails.dart';
 import 'package:sellerapp/Screen/verification.dart';
 import 'package:sellerapp/model/user.dart';
@@ -22,7 +24,7 @@ class _WrapperState extends State<Wrapper> {
 
     final db = DatabaseService(uid: user?.uid, name: user?.name);
     // .forEach((doc) => doc.verificationDone);
-
+    bool condition = true;
     //  ! return ethier Home or auth widget
     if (user == null) {
       return Signup();
@@ -49,16 +51,92 @@ class _WrapperState extends State<Wrapper> {
                           switch (result) {
                             case ConnectivityResult.none:
                               print("no net");
-                              return NoInternet();
+                              if (ConnectivityResult.none ==
+                                  ConnectivityResult.none) {
+                                Future.delayed(const Duration(seconds: 25),
+                                    () => condition = false);
+
+                                Stream.periodic(const Duration(seconds: 5))
+                                    .takeWhile((_) => condition)
+                                    .forEach((e) {
+                                  print('event: $e');
+
+                                  return Fluttertoast.showToast(
+                                      toastLength: Toast.LENGTH_LONG,
+                                      msg:
+                                          "No Internet Connection Check Your Internet Connection",
+                                      gravity: ToastGravity.BOTTOM);
+                                });
+                              }
+                              // Timer.periodic(Duration(seconds: 5), (timer) {
+                              //   if (ConnectivityResult.none ==
+                              //   ConnectivityResult.none) {
+                              //      Fluttertoast.showToast(
+                              //       msg: "No Internet",
+                              //       gravity: ToastGravity.CENTER);
+                              //   }else{
+                              //      timer.cancel();
+                              //   }
+
+                              // });
+
+                              // Future.delayed(const Duration(seconds: 1), () {
+                              //   return Fluttertoast.showToast(
+                              //       msg: "No Internet",
+                              //       gravity: ToastGravity.CENTER);
+                              // });
+                              // Future.delayed(const Duration(seconds: 5), () {
+                              //   return Fluttertoast.showToast(
+                              //       msg: "No Internet",
+                              //       gravity: ToastGravity.CENTER);
+                              // });  Future.delayed(const Duration(seconds: 10), () {
+                              //   return Fluttertoast.showToast(
+                              //       msg: "No Internet",
+                              //       gravity: ToastGravity.CENTER);
+                              // });  Future.delayed(const Duration(seconds: 20), () {
+                              //   return Fluttertoast.showToast(
+                              //       msg: "No Internet",
+                              //       gravity: ToastGravity.CENTER);
+                              // });  Future.delayed(const Duration(seconds: 30), () {
+                              //   return Fluttertoast.showToast(
+                              //       msg: "No Internet",
+                              //       gravity: ToastGravity.CENTER);
+                              // });
+                              return Scaffold(
+                                body: Center(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Expanded(
+                                          flex: 3,
+                                          child: Center(
+                                              child: CircularProgressIndicator(
+                                            backgroundColor: Colors.red,
+                                          ))),
+                                      Expanded(
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Check Internet Connection Or You Are Using Poor Connection",
+                                              style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                              );
                             case ConnectivityResult.mobile:
                             case ConnectivityResult.wifi:
                               print("yes net");
+
                               return Admin();
                             default:
                               return Center(
                                   child: Text("No Internet Connection!"));
                           }
-                         
                         });
                   }
                   return VerificationDb();
