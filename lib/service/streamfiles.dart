@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -92,21 +89,18 @@ class DatabaseService {
 
   // stream of data
   Stream<ProductListsView> get productSnapshot {
-    String ref = 'ProductListID';
     return _db
-        .collection(ref)
-        .document(uid.substring(0, 6))
+        .collection("ProductListID")
+        .document(uid)
         .collection(uid)
-        .document()
+        .where("PersonID", isEqualTo: uid)
         .snapshots()
         .map(_productDataFromSnapshot);
   }
 
-  ProductListsView _productDataFromSnapshot(DocumentSnapshot snapshot) {
+  ProductListsView _productDataFromSnapshot(snapshot) {
     return productcollection(snapshot);
   }
-
-
 
 //  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
 //     return UserData(
@@ -149,4 +143,4 @@ class DatabaseService {
         .document(id)
         .delete();
   }
-}     
+}

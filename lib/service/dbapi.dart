@@ -50,9 +50,11 @@ class ProductListsView {
   final String sizes;
   final String userName;
   final String name;
+  final String documentID;
 
   ProductListsView(
       {this.price,
+      this.documentID,
       this.name,
       this.uid,
       this.userName,

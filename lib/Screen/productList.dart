@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -101,8 +100,10 @@ class _ProductListState extends State<ProductList> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        ProductDetaislEdit(
+                                        ProductDetaislEdit(productName: document[index]["ProductName"].toString(),
                                           index: index,
+                                          price: document[index]["price"],
+                                          quantity: document[index]["quantity"],
                                         ))),
                           ),
                         );

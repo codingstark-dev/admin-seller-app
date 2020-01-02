@@ -468,10 +468,24 @@ class _AdminState extends State<Admin> {
                           ),
                         );
                       } else {
-                        return Center(
-                            child: CircularProgressIndicator(
-                          backgroundColor: active,
-                        ));
+                        return Column(
+                          children: <Widget>[
+                             SizedBox(height: 150,),
+                            Center(
+                                child: CircularProgressIndicator(
+                              backgroundColor: active,
+                            )),
+                           SizedBox(height: 90,),
+                            Text(
+                              "If Want To See Dashboard Add Minimum One Products",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.grey[350],
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            )
+                          ],
+                        );
                       }
                     }),
               ],
