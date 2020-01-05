@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,7 +15,8 @@ class AuthService {
   // SharedPreferences sharedPreferences;
   String usernameSign;
   final Firestore firestore = Firestore();
-  String referalId;
+  final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   User usersFromFirebase(FirebaseUser user) {
     if (user != null) {
@@ -129,7 +133,7 @@ class AuthService {
           .getDocuments();
       final List<DocumentSnapshot> documents = results.documents;
       if (documents.length == 0) {
-        Firestore.instance.collection("users").document(user.uid).setData({
+        Firestore.instance.collection("Users").document(user.uid).setData({
           "id": user.uid,
           "username": user.displayName,
           "photo": user.photoUrl
@@ -151,15 +155,15 @@ class AuthService {
       final GoogleSignInAccount googleSignInAccount =
           await googleSignIn.signIn();
       final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+          await googleSignInAccount?.authentication;
       final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
+        accessToken: googleSignInAuthentication?.accessToken,
+        idToken: googleSignInAuthentication?.idToken,
       );
-      final AuthResult authResult = await auth.signInWithCredential(credential);
-      final FirebaseUser user = authResult.user;
+      final AuthResult authResult = await auth?.signInWithCredential(credential);
+      final FirebaseUser user = authResult?.user;
       assert(!user.isAnonymous);
-      assert(await user.getIdToken() != null);
+      assert(await user?.getIdToken() != null);
       assert(user.email != null);
       assert(user.displayName != null);
       assert(user.photoUrl != null);
@@ -201,9 +205,13 @@ class AuthService {
       final FirebaseUser currentUser = await auth.currentUser();
       assert(user.uid == currentUser.uid);
       return true;
-    } catch (e) {
-      print(e.toString());
-      return false;
+    } on PlatformException catch (e) {
+      if (e.code == "sign_in_canceled") {
+        print("object");
+      } 
+     print(e.toString());
+     return false;
+      
     }
   }
 
@@ -345,6 +353,8 @@ class AuthService {
             .where("id", isEqualTo: user.uid)
             .getDocuments();
         final List<DocumentSnapshot> documents = results.documents;
+        final String fcm = await firebaseMessaging.getToken();
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         if (documents.length == 0) {
           Firestore.instance.collection("Sellers").document(user.uid).setData({
             "TimeCreated": Timestamp.now(),
@@ -358,7 +368,13 @@ class AuthService {
             "Verification": true,
             "Reward": 0,
             "Verification": false,
-            "formstatus": false
+            "formstatus": false,
+            "userToken": fcm,
+            "Device": {
+              "product": androidInfo.product,
+              "model": androidInfo.model,
+              "manufacturer": androidInfo.manufacturer
+            }
           });
         } else {
           Firestore.instance
@@ -397,7 +413,7 @@ class AuthService {
   Future emailError(String email) async {
     try {
       return await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-    } catch (e) {
+    } on PlatformException catch (e) {
       print(e.toString());
       return false;
     }

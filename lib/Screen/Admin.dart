@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info/device_info.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'LoginOrSignUp/Signup.dart';
 import 'package:sellerapp/service/auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 enum Page { dashboard, manage } // look here
 
@@ -43,6 +45,7 @@ class _AdminState extends State<Admin> {
   final authService = AuthService();
   TextEditingController brandController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   MaterialColor notActive = Colors.grey;
 
   GlobalKey<FormState> _brandFormKey = GlobalKey();
@@ -50,6 +53,26 @@ class _AdminState extends State<Admin> {
   GlobalKey<FormState> _categoryFormKey = GlobalKey();
   CategoryService _categoryService = CategoryService();
   Page _selectedPage = Page.dashboard;
+
+  @override
+  void initState() {
+    // TODO: notifiy
+    super.initState();
+    firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> massage) async {
+        print("Massage: $massage");
+      },
+      onResume: (Map<String, dynamic> massage) async {
+        print("Massage: $massage");
+      },
+      onLaunch: (Map<String, dynamic> massage) async {
+        print("Massage: $massage");
+      },
+      // onBackgroundMessage: (Map<String, dynamic> massage) async {
+      //   print("Massage: $massage");
+      // },
+    );
+  }
 
   Text buildText(username, User user, String usernameindb) {
     setState(() {});
@@ -83,6 +106,10 @@ class _AdminState extends State<Admin> {
       content: Form(
         key: _categoryFormKey,
         child: TextFormField(
+          inputFormatters: [
+            BlacklistingTextInputFormatter(" "),
+            LengthLimitingTextInputFormatter(8)
+          ],
           controller: categoryController,
           validator: (value) {
             assert(value != null);
@@ -356,7 +383,30 @@ class _AdminState extends State<Admin> {
                                   child: Card(
                                       child: ListTile(
                                           title: FlatButton.icon(
-                                              onPressed: () async {},
+                                              onPressed: () async {
+                                                DeviceInfoPlugin deviceInfo =
+                                                    DeviceInfoPlugin();
+                                                AndroidDeviceInfo androidInfo =
+                                                    await deviceInfo
+                                                        .androidInfo;
+                                                print(
+                                                    'Running on ${androidInfo.product}');
+                                                    
+                                                // print(
+                                                //     'Running on ${androidInfo.androidId}');
+                                                // print(
+                                                //     'Running on ${androidInfo.brand}');
+                                                // print(
+                                                //     'Running on ${androidInfo.device}');
+                                                // print(
+                                                //     'Running on ${androidInfo.id}');
+                                                print(
+                                                    'Running on ${androidInfo.model}');
+                                                print(
+                                                    'Running on ${androidInfo.manufacturer}');
+                                                //   print(
+                                                // 'Running on ${androidInfo.fingerprint}');
+                                              },
                                               icon: Icon(
                                                 Icons.category,
                                                 color: active,
@@ -450,7 +500,7 @@ class _AdminState extends State<Admin> {
                                 child: Card(
                                   child: ListTile(
                                       title: FlatButton.icon(
-                                          onPressed: null,
+                                          onPressed: () {},
                                           icon: Icon(
                                             Icons.close,
                                             color: active,
@@ -470,12 +520,16 @@ class _AdminState extends State<Admin> {
                       } else {
                         return Column(
                           children: <Widget>[
-                             SizedBox(height: 150,),
+                            SizedBox(
+                              height: 150,
+                            ),
                             Center(
                                 child: CircularProgressIndicator(
                               backgroundColor: active,
                             )),
-                           SizedBox(height: 90,),
+                            SizedBox(
+                              height: 90,
+                            ),
                             Text(
                               "If Want To See Dashboard Add Minimum One Products",
                               textAlign: TextAlign.center,
@@ -520,8 +574,18 @@ class _AdminState extends State<Admin> {
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.change_history),
+                leading: Icon(Icons.format_list_numbered),
                 title: Text("Products list"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ProductList();
+                  }));
+                },
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.view_list),
+                title: Text("Oders List"),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return ProductList();

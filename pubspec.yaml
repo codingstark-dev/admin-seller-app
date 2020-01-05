@@ -20,7 +20,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider:
-  cloud_firestore: 
+  cloud_firestore:
   fluttertoast:
   firebase_auth:
   google_sign_in:
@@ -33,10 +33,8 @@ dependencies:
   flare_flutter: ^1.8.3
   cupertino_icons: ^0.1.2
   connectivity: ^0.4.6+1
-
-
-
-
+  device_info: ^0.4.1+4
+  firebase_messaging: ^6.0.9
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"
@@ -44,7 +42,7 @@ dev_dependencies:
     sdk: flutter
 
 flutter_icons:
-  android: "launcher_icon" 
+  android: "launcher_icon"
   ios: true
   image_path: "assets/img/Logo.png"
 # For information on the generic Dart part of this file, see the
@@ -52,7 +50,6 @@ flutter_icons:
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -62,13 +59,10 @@ flutter:
   assets:
     - assets/img/
     - assets/flare/
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

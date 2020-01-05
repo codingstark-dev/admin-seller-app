@@ -530,7 +530,7 @@ class _ButtonCustomGoogleState extends State<ButtonCustomGoogle> {
         ),
         child: InkWell(
           onTap: () async {
-            dynamic result = await _authService.signInWithGoogleeee();
+            dynamic result = await _authService?.signInWithGoogleeee();
             if (result == false) {
               setState(() {
                 Fluttertoast.showToast(msg: "Oops! Samething went wrong!");
