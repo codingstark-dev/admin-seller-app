@@ -536,8 +536,9 @@ class _ButtonCustomGoogleState extends State<ButtonCustomGoogle> {
                 Fluttertoast.showToast(msg: "Oops! Samething went wrong!");
               });
             } else if (result != false) {
-              Navigator.of(context).pushReplacement(
-                  PageRouteBuilder(pageBuilder: (_, __, ___) => new Wrapper()));
+              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>Wrapper()));
+              // Navigator.of(context).pushReplacement(
+              //     PageRouteBuilder(pageBuilder: (context, __, ___) => new ));
               Fluttertoast.showToast(msg: "Succesfull Sign In");
             }
           },

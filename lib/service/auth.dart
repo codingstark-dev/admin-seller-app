@@ -160,7 +160,8 @@ class AuthService {
         accessToken: googleSignInAuthentication?.accessToken,
         idToken: googleSignInAuthentication?.idToken,
       );
-      final AuthResult authResult = await auth?.signInWithCredential(credential);
+      final AuthResult authResult =
+          await auth?.signInWithCredential(credential);
       final FirebaseUser user = authResult?.user;
       assert(!user.isAnonymous);
       assert(await user?.getIdToken() != null);
@@ -208,10 +209,9 @@ class AuthService {
     } on PlatformException catch (e) {
       if (e.code == "sign_in_canceled") {
         print("object");
-      } 
-     print(e.toString());
-     return false;
-      
+      }
+      print(e.toString());
+      return false;
     }
   }
 
@@ -395,6 +395,23 @@ class AuthService {
       return true;
     } catch (e) {
       print(e.toString());
+
+      switch (e.code) {
+        case 'ERROR_INVALID_EMAIL':
+          // authError = 'Invalid Email';
+          Fluttertoast.showToast(msg: "Invaild Email Id");
+          print("object");
+          break;
+        case 'ERROR_USER_NOT_FOUND':
+          // authError = 'User Not Found';
+          break;
+        case 'ERROR_WRONG_PASSWORD':
+          // authError = 'Wrong Password';
+          break;
+        default:
+          // authError = 'Error';
+          break;
+      }
       return false;
     }
   }

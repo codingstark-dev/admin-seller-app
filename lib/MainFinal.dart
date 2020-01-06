@@ -5,14 +5,12 @@ import 'package:sellerapp/service/auth.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'Screen/Wrapper.dart';
 
- Color active = Colors.deepPurple[400];
-void main() =>
-    runApp(MaterialApp(theme: ThemeData(hintColor: active,primaryColor: active), home: MainFinal()));
+Color active = Colors.deepPurple[400];
+void main() => runApp(MainFinal());
 
 class MainFinal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return MultiProvider(
       providers: [
         StreamProvider<User>.value(
@@ -20,15 +18,18 @@ class MainFinal extends StatelessWidget {
         ),
         Provider<AuthService>(
           create: (BuildContext context) => AuthService(),
-
         ),
         Provider<UserDetails>(
           create: (BuildContext context) => UserDetails(),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Wrapper(),
+      child: Consumer<User>(
+        builder: (BuildContext context, value, Widget child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Wrapper(),
+          );
+        },
       ),
     );
   }

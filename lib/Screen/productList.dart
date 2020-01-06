@@ -93,7 +93,8 @@ class _ProductListState extends State<ProductList> {
                                           )
                                         ],
                                       );
-                                    });
+                                    }
+                                    );
                               },
                             ),
                             onTap: () => Navigator.push(

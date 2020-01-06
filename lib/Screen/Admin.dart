@@ -53,6 +53,7 @@ class _AdminState extends State<Admin> {
   GlobalKey<FormState> _categoryFormKey = GlobalKey();
   CategoryService _categoryService = CategoryService();
   Page _selectedPage = Page.dashboard;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -391,7 +392,7 @@ class _AdminState extends State<Admin> {
                                                         .androidInfo;
                                                 print(
                                                     'Running on ${androidInfo.product}');
-                                                    
+
                                                 // print(
                                                 //     'Running on ${androidInfo.androidId}');
                                                 // print(
@@ -646,21 +647,48 @@ class _AdminState extends State<Admin> {
                       "Logout",
                     ),
                     onPressed: () async {
-                      dynamic result = authService.signOut();
+                      showDialog(
+                          context: _scaffoldKey.currentContext,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Are You Sure?"),
+                              content: Text(
+                                  "Are You Sure To Logout From This App??"),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    dynamic result =
+                                        authService.signOut().whenComplete(() {
+                                      Navigator.pop(context);
+                                    });
 
-                      if (result == null) {
-                        setState(() {
-                          Fluttertoast.showToast(
-                              msg: "Oops! Samething went wrong!");
-                        });
-                      } else if (result != null) {
-                        setState(() {
-                          Navigator.of(context).pushReplacement(
-                              PageRouteBuilder(
-                                  pageBuilder: (_, __, ___) => new Signup()));
-                        });
-                        Fluttertoast.showToast(msg: "Succesfull logout!");
-                      }
+                                    if (result == null) {
+                                      setState(() {
+                                        Fluttertoast.showToast(
+                                            msg: "Oops! Samething went wrong!");
+                                      });
+                                    } else if (result != null) {
+                                      setState(() {
+                                        Navigator.of(context).pushReplacement(
+                                            PageRouteBuilder(
+                                                pageBuilder: (_, __, ___) =>
+                                                    new Signup()));
+                                      });
+                                      Fluttertoast.showToast(
+                                          msg: "Succesfull logout!");
+                                    }
+                                  },
+                                  child: Text("Yes"),
+                                ),
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("No"),
+                                )
+                              ],
+                            );
+                          });
                     },
                   ),
                 ],
@@ -674,6 +702,7 @@ class _AdminState extends State<Admin> {
     }
 
     return Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomPadding: true,
         appBar: AppBar(
           automaticallyImplyLeading: false,
