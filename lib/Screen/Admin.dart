@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/Notfication.dart';
+import 'package:sellerapp/Screen/Rewards.dart';
 import 'package:sellerapp/Screen/productList.dart';
 import 'package:sellerapp/Screen/settings.dart';
 import 'package:sellerapp/model/db/brand.dart';
@@ -593,6 +594,16 @@ class _AdminState extends State<Admin> {
                   }));
                 },
               ),
+                Divider(),
+              ListTile(
+                leading: Icon(Icons.monetization_on),
+                title: Text("Your Reward"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return Rewards();
+                  }));
+                },
+              ),
               Divider(),
               ListTile(
                 leading: Icon(Icons.add_circle),
@@ -642,7 +653,7 @@ class _AdminState extends State<Admin> {
                   OutlineButton(
                     highlightedBorderColor: Colors.purple,
                     highlightElevation: 1,
-                    splashColor: Colors.purple[300],
+                    splashColor: Colors.purple[400],
                     child: Text(
                       "Logout",
                     ),

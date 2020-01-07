@@ -5,8 +5,9 @@ class UserDetails {
   final bool verificationWaiting;
   final String userName;
   final String uid;
+  final int rewards;
   // final String points;
-  UserDetails({
+  UserDetails({this.rewards,
     this.uid,
     this.verificationWaiting,
     this.formDetaiVerify,

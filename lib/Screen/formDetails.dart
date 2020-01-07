@@ -70,7 +70,7 @@ class _FormDetailsState extends State<FormDetails> {
               child: Container(
                   alignment: Alignment.bottomLeft,
                   child: Text(
-                    "Service Details Submission",
+                    "Local Details Submission",
                     textAlign: TextAlign.start,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   )),
@@ -130,6 +130,23 @@ class _FormDetailsState extends State<FormDetails> {
                     },
                   ),
                 ),
+                   Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(60),
+                      BlacklistingTextInputFormatter("  "),
+                    ],
+                    errorText: addressVaild ? widget.invalidAddressError : null,
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _address,
+                    obscureText: false,
+                    hintText: "Your State Name *",
+                    onChanged: (address) {
+                      setState(() {});
+                    },
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFieldWidget(
@@ -141,7 +158,41 @@ class _FormDetailsState extends State<FormDetails> {
                     textInputType: TextInputType.multiline,
                     textEditingController: _address,
                     obscureText: false,
-                    hintText: "Your Correct Address *",
+                    hintText: "Your Bussiness Correct Address *",
+                    onChanged: (address) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                  Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(60),
+                      BlacklistingTextInputFormatter("  "),
+                    ],
+                    errorText: addressVaild ? widget.invalidAddressError : null,
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _address,
+                    obscureText: false,
+                    hintText: "Your Area PinCode *",
+                    onChanged: (address) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                 Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(60),
+                      BlacklistingTextInputFormatter("  "),
+                    ],
+                    errorText: addressVaild ? widget.invalidAddressError : null,
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _address,
+                    obscureText: false,
+                    hintText: "Your CityName *",
                     onChanged: (address) {
                       setState(() {});
                     },
@@ -217,7 +268,7 @@ class _FormDetailsState extends State<FormDetails> {
               child: Container(
                   alignment: Alignment.bottomLeft,
                   child: Text(
-                    "Service Details Submission",
+                    "Bussiness Details Submission",
                     textAlign: TextAlign.start,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   )),
@@ -302,7 +353,7 @@ class _FormDetailsState extends State<FormDetails> {
                 textInputType: TextInputType.multiline,
                 textEditingController: _address,
                 obscureText: false,
-                hintText: "Your Correct Address *",
+                hintText: "Your Bussiness Correct Address *",
                 onChanged: (address) {
                   setState(() {});
                 },

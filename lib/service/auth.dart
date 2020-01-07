@@ -247,6 +247,7 @@ class AuthService {
               .collection("joined User")
               .document(user.uid)
               .setData({
+            "RefferalId": refercode,
             "Name": name,
             "Time joined": Timestamp.now(),
             "id": user.uid,

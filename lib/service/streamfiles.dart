@@ -40,6 +40,7 @@ class DatabaseService {
         userName: data["name"] ?? "",
         referalId: data["usedReferCode"] ?? "",
         verificationWaiting: data["Verification"] ?? false,
+        rewards: data["Reward"] ?? "",
         formDetaiVerify: data["formstatus"] ?? false);
   }
 
