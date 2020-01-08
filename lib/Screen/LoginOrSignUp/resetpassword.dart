@@ -2,6 +2,7 @@ import 'dart:async';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'Login.dart';
@@ -193,6 +194,12 @@ class _ResetPasswordState extends State<ResetPassword>
                                             children: <Widget>[
                                               Flexible(
                                                 child: TextFormField(
+                                                  inputFormatters: [
+                                                    LengthLimitingTextInputFormatter(
+                                                        40),
+                                                    BlacklistingTextInputFormatter(
+                                                        " "),
+                                                  ],
                                                   keyboardType: TextInputType
                                                       .emailAddress,
                                                   onChanged: (val) {
@@ -289,24 +296,23 @@ class _ResetPasswordState extends State<ResetPassword>
                   /// Set Animaion after user click buttonLogin
                   Container(
                     child: InkWell(
-                        onTap: () async{
+                        onTap: () async {
                           if (_formkey.currentState.validate()) {
                             _formkey.currentState.save();
                             try {
                               final result =
                                   await _authService.resetPassword(email);
                               if (result != false) {
-                                 Fluttertoast.showToast(
+                                Fluttertoast.showToast(
                                     msg: "Done! Check Your Mail Box");
                               } else if (result == false) {
-                                 Fluttertoast.showToast(
+                                Fluttertoast.showToast(
                                   msg:
                                       "Please Check your Email Is Correct Or SignUp!!",
                                 );
                               }
                             } catch (e) {
                               print(e.toString());
-                             
                             }
                           }
                         },

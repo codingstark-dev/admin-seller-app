@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sellerapp/Screen/Wrapper.dart';
 import 'package:sellerapp/service/auth.dart';
@@ -141,8 +142,8 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                   ),
                                   Padding(
                                       padding:
-                                          EdgeInsets.symmetric(vertical: 30.0)),
-                                  ButtonCustomFacebook(),
+                                          EdgeInsets.symmetric(vertical: 10.0)),
+                                  // ButtonCustomFacebook(),
 
                                   /// ButtonCustomGoogle
                                   Padding(
@@ -218,6 +219,12 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                   children: <Widget>[
                                                     Flexible(
                                                       child: TextFormField(
+                                                        inputFormatters: [
+                                                          LengthLimitingTextInputFormatter(
+                                                              40),
+                                                          BlacklistingTextInputFormatter(
+                                                              " "),
+                                                        ],
                                                         controller: _email,
                                                         keyboardType:
                                                             TextInputType
@@ -301,6 +308,12 @@ class _SignupState extends State<Signup> with TickerProviderStateMixin {
                                                   children: <Widget>[
                                                     Flexible(
                                                       child: TextFormField(
+                                                        inputFormatters: [
+                                                          LengthLimitingTextInputFormatter(
+                                                              8),
+                                                          BlacklistingTextInputFormatter(
+                                                              " "),
+                                                        ],
                                                         controller: _password,
                                                         keyboardType:
                                                             TextInputType.text,
@@ -536,7 +549,10 @@ class _ButtonCustomGoogleState extends State<ButtonCustomGoogle> {
                 Fluttertoast.showToast(msg: "Oops! Samething went wrong!");
               });
             } else if (result != false) {
-              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>Wrapper()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => Wrapper()));
               // Navigator.of(context).pushReplacement(
               //     PageRouteBuilder(pageBuilder: (context, __, ___) => new ));
               Fluttertoast.showToast(msg: "Succesfull Sign In");

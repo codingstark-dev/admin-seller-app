@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +25,7 @@ MaterialColor notActive = Colors.grey;
 final TextEditingController _details = TextEditingController();
 final TextEditingController _email = TextEditingController();
 final TextEditingController _address = TextEditingController();
-final TextEditingController _wirehouse = TextEditingController();
+// final TextEditingController _wirehouse = TextEditingController();
 final TextEditingController _refercode = TextEditingController();
 final TextEditingController _serviceType = TextEditingController();
 final TextEditingController _bussiness = TextEditingController();
@@ -32,13 +33,21 @@ final TextEditingController _phoneNumber = TextEditingController();
 final TextEditingController _pan = TextEditingController();
 final TextEditingController _name = TextEditingController();
 final TextEditingController _gstinORtin = TextEditingController();
+final TextEditingController _state = TextEditingController();
+final TextEditingController _pincode = TextEditingController();
+final TextEditingController _city = TextEditingController();
+final TextEditingController _ifscCode = TextEditingController();
+final TextEditingController _accountNumber = TextEditingController();
+final TextEditingController _branch = TextEditingController();
+final TextEditingController _acState = TextEditingController();
+final TextEditingController _bankName = TextEditingController();
+final TextEditingController _acHolderName = TextEditingController();
+final TextEditingController _acCity = TextEditingController();
 
 bool submitBtn = false;
 bool monVal = false;
-bool tuVal = false;
-bool wedVal = false;
 bool verificationDone = false;
-
+bool serviceBool = false;
 String get email => _email.text;
 String get details => _details.text;
 String get phoneNumber => _phoneNumber.text;
@@ -46,15 +55,38 @@ String get address => _address.text;
 String get bussinedd => _bussiness.text;
 String get pan => _pan.text;
 String get refercode => _refercode.text;
-String get wireHouse => _wirehouse.text;
+// String get wireHouse => _wirehouse.text;
 String get serviceType => _serviceType.text;
 String get name => _name.text;
 String get gstinOrtin => _gstinORtin.text;
+String get city => _city.text;
+String get state => _state.text;
+String get pinCode => _pincode.text;
+String get acCity => _acCity.text;
+String get acHolderName => _acHolderName.text;
+String get bankName => _bankName.text;
+String get ifscCode => _ifscCode.text;
+String get acState => _acState.text;
+String get acBranch => _branch.text;
+String get acBankNumber => _accountNumber.text;
 
 class _FormDetailsState extends State<FormDetails> {
+  String category;
+  // void _onShopDropItemSelected(String newValueSelected) {
+  //   setState(() {
+  //     this.category = newValueSelected;
+  //   });
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Widget _loadscreen(BuildContext context) {
     switch (_selectedPage) {
       case Page.service:
+        bool panVaild = submitBtn && !widget.panValidator.isValid(pan);
         bool emailValid = submitBtn && !widget.emailValidator.isValid(email);
         bool nameVaild = submitBtn && !widget.nameValidator.isValid(name);
         bool phoneValid =
@@ -63,6 +95,25 @@ class _FormDetailsState extends State<FormDetails> {
             submitBtn && !widget.detailsValidator.isValid(details);
         bool addressVaild =
             submitBtn && !widget.addressValidator.isValid(address);
+        bool cityValid = submitBtn && !widget.cityValidator.isValid(city);
+        bool stateVaild = submitBtn && !widget.stateValidator.isValid(state);
+        bool pincodeVaild =
+            submitBtn && !widget.pinCodeValidator.isValid(pinCode);
+        bool acHolderNameVaild =
+            submitBtn && !widget.acHolderNameinValidator.isValid(acHolderName);
+        bool acCityVaild = submitBtn && !widget.acCityValidator.isValid(acCity);
+        bool acStateVaild =
+            submitBtn && !widget.acStateValidator.isValid(acState);
+        bool acBankName =
+            submitBtn && !widget.bankNameValidator.isValid(bankName);
+        bool ifscVaild =
+            submitBtn && !widget.ifscCodeValidator.isValid(ifscCode);
+        bool accountNumberVaild =
+            submitBtn && !widget.accountNumberValidator.isValid(acBankNumber);
+        bool acBranchVaild =
+            submitBtn && !widget.addressValidator.isValid(address);
+        bool gstinOrtinValid =
+            submitBtn && !widget.gstinOrtinValidator.isValid(gstinOrtin);
         return Column(
           children: <Widget>[
             Padding(
@@ -75,6 +126,18 @@ class _FormDetailsState extends State<FormDetails> {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   )),
             ),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Text(
+                    "Remember Star (*) Field Must important",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                  )),
+            ),
+            Divider(),
             Column(
               children: <Widget>[
                 Padding(
@@ -90,6 +153,23 @@ class _FormDetailsState extends State<FormDetails> {
                     obscureText: false,
                     hintText: "Your Full Name Same As (Pan Card Name) *",
                     onChanged: (name) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(10),
+                      BlacklistingTextInputFormatter(" ")
+                    ],
+                    errorText: panVaild ? widget.invalidPanlError : null,
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _pan,
+                    obscureText: false,
+                    hintText: "Enter Your Pan Number Correctly *",
+                    onChanged: (pan) {
                       setState(() {});
                     },
                   ),
@@ -130,19 +210,37 @@ class _FormDetailsState extends State<FormDetails> {
                     },
                   ),
                 ),
-                   Padding(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(15),
+                      BlacklistingTextInputFormatter(" ")
+                    ],
+                    errorText:
+                        gstinOrtinValid ? widget.invalidGstinOrTinError : null,
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _gstinORtin,
+                    obscureText: false,
+                    hintText: "Enter Your GSTIN or TIN *",
+                    onChanged: (gstinORtin) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFieldWidget(
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(60),
                       BlacklistingTextInputFormatter("  "),
                     ],
-                    errorText: addressVaild ? widget.invalidAddressError : null,
+                    errorText: stateVaild ? widget.invalidAddressError : null,
                     textInputType: TextInputType.multiline,
-                    textEditingController: _address,
+                    textEditingController: _state,
                     obscureText: false,
                     hintText: "Your State Name *",
-                    onChanged: (address) {
+                    onChanged: (state) {
                       setState(() {});
                     },
                   ),
@@ -164,36 +262,20 @@ class _FormDetailsState extends State<FormDetails> {
                     },
                   ),
                 ),
-                  Padding(
+                Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFieldWidget(
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(60),
                       BlacklistingTextInputFormatter("  "),
                     ],
-                    errorText: addressVaild ? widget.invalidAddressError : null,
-                    textInputType: TextInputType.multiline,
-                    textEditingController: _address,
+                    errorText: pincodeVaild ? widget.invalidAddressError : null,
+                    textInputType: TextInputType.numberWithOptions(
+                        decimal: false, signed: false),
+                    textEditingController: _pincode,
                     obscureText: false,
                     hintText: "Your Area PinCode *",
-                    onChanged: (address) {
-                      setState(() {});
-                    },
-                  ),
-                ),
-                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFieldWidget(
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(60),
-                      BlacklistingTextInputFormatter("  "),
-                    ],
-                    errorText: addressVaild ? widget.invalidAddressError : null,
-                    textInputType: TextInputType.multiline,
-                    textEditingController: _address,
-                    obscureText: false,
-                    hintText: "Your CityName *",
-                    onChanged: (address) {
+                    onChanged: (pincode) {
                       setState(() {});
                     },
                   ),
@@ -202,18 +284,137 @@ class _FormDetailsState extends State<FormDetails> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextFieldWidget(
                     inputFormatters: [
-                      LengthLimitingTextInputFormatter(40),
+                      LengthLimitingTextInputFormatter(60),
                       BlacklistingTextInputFormatter("  "),
                     ],
-                    errorText: detailsValid ? widget.invalidDetailsError : null,
+                    errorText: cityValid ? widget.invalidAddressError : null,
                     textInputType: TextInputType.multiline,
-                    textEditingController: _details,
+                    textEditingController: _city,
                     obscureText: false,
-                    hintText: "Your Service Details *",
-                    onChanged: (service) {
+                    hintText: "Your CityName *",
+                    onChanged: (cityname) {
                       setState(() {});
                     },
                   ),
+                ),
+                // StreamBuilder<QuerySnapshot>(
+                //   stream:,
+                //   builder: (context, snapshot) {
+                //     return DropdownButton(
+                //       items: categoriesDropDown,
+                //       onChanged: changeSelectedCategory,
+                //       value: _currentCategory,
+                //     );
+                //   }
+                // ),
+
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFieldWidget(
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(40),
+                            BlacklistingTextInputFormatter("  "),
+                          ],
+                          errorText:
+                              detailsValid ? widget.invalidDetailsError : null,
+                          textInputType: TextInputType.multiline,
+                          textEditingController: _details,
+                          obscureText: false,
+                          hintText: "Your Service Details *",
+                          onChanged: (service) {
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: Firestore.instance
+                              .collection("Local Market")
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            // List<DropdownMenuItem> servicess = [];
+                            // final List<DocumentSnapshot> documentss =
+                            //     snapshot?.data?.documents;
+                            if (!snapshot.hasData ||
+                                snapshot.data.documents.length == 0) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            // return InputDecorator(
+                            //   decoration: InputDecoration(
+                            //     //labelText: 'Activity',
+                            //     hintText: 'Choose an category',
+                            //     hintStyle: TextStyle(
+                            //       color: active,
+                            //       fontSize: 16.0,
+                            //       fontFamily: "OpenSans",
+                            //       fontWeight: FontWeight.normal,
+                            //     ),
+                            //   ),
+                            //   isEmpty: category == null,
+                            //   child:
+                            return DropdownButton(
+                              value: category,
+                              isExpanded: true,
+                              hint: Text("Service"),
+                              isDense: true,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  final snackBar = SnackBar(
+                                    backgroundColor: Colors.white,
+                                    content: Text(
+                                      'Your Service Is $newValue',
+                                      style: TextStyle(color: active),
+                                    ),
+                                  );
+                                  Scaffold.of(context).showSnackBar(snackBar);
+                                  category = newValue;
+                                  serviceBool = true;
+                                  // _onShopDropItemSelected(newValue);
+                                });
+                              },
+                              items: snapshot.data != null
+                                  ? snapshot.data.documents.map((f) {
+                                      return DropdownMenuItem(
+                                        value: f.documentID.toString(),
+                                        child: Text(f.documentID.toString()),
+                                      );
+                                    }).toList()
+
+                                  //  snapshot.data != null
+                                  //     ? snapshot.data.documents
+                                  //         .map((DocumentSnapshot document) {
+                                  //         // final List<DocumentSnapshot> documents =
+                                  //         //     document.data["local"];
+
+                                  //           return DropdownMenuItem(
+                                  //               value: document["locals"].toString(),
+                                  //               child: new Container(
+                                  //                 height: 100.0,
+                                  //                 child: new Text(
+                                  //                   document.data["locals"][i].toString(),
+                                  //                 ),
+                                  //               ));
+
+                                  //       }).toList()
+
+                                  : DropdownMenuItem(
+                                      value: 'null',
+                                      child: new Container(
+                                        height: 100.0,
+                                        child: new Text('null'),
+                                      ),
+                                    ),
+                            );
+                            // );
+                          }),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -227,6 +428,141 @@ class _FormDetailsState extends State<FormDetails> {
                     obscureText: false,
                     hintText: "Enter Refferal Code (Optional)",
                     onChanged: (refferal) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                      alignment: Alignment.bottomLeft,
+                      child: Text(
+                        "Bank Details",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    errorText:
+                        acHolderNameVaild ? widget.invalidDetailsError : null,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(55),
+                      BlacklistingTextInputFormatter("  ")
+                    ],
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _acHolderName,
+                    obscureText: false,
+                    hintText: "Account Holder Name *",
+                    onChanged: (acname) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    errorText:
+                        accountNumberVaild ? widget.invalidDetailsError : null,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(21),
+                      BlacklistingTextInputFormatter(" ")
+                    ],
+                    textInputType: TextInputType.numberWithOptions(
+                        decimal: false, signed: false),
+                    textEditingController: _accountNumber,
+                    obscureText: false,
+                    hintText: "Account Number *",
+                    onChanged: (acnumber) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    errorText: ifscVaild ? widget.invalidDetailsError : null,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(11),
+                      BlacklistingTextInputFormatter(" ")
+                    ],
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _ifscCode,
+                    obscureText: false,
+                    hintText: "IFSC Code *",
+                    onChanged: (ifsc) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    errorText: acBankName ? widget.invalidDetailsError : null,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(40),
+                      BlacklistingTextInputFormatter("  ")
+                    ],
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _bankName,
+                    obscureText: false,
+                    hintText: "Bank Name *",
+                    onChanged: (acbankname) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    errorText:
+                        acBranchVaild ? widget.invalidDetailsError : null,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(40),
+                      BlacklistingTextInputFormatter("  ")
+                    ],
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _branch,
+                    obscureText: false,
+                    hintText: "Branch *",
+                    onChanged: (branch) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    errorText: acCityVaild ? widget.invalidDetailsError : null,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(40),
+                      BlacklistingTextInputFormatter("  ")
+                    ],
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _acCity,
+                    obscureText: false,
+                    hintText: "City *",
+                    onChanged: (city) {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldWidget(
+                    errorText: acStateVaild ? widget.invalidDetailsError : null,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(40),
+                      BlacklistingTextInputFormatter("  ")
+                    ],
+                    textInputType: TextInputType.multiline,
+                    textEditingController: _acState,
+                    obscureText: false,
+                    hintText: "State *",
+                    onChanged: (state) {
                       setState(() {});
                     },
                   ),
@@ -447,10 +783,25 @@ class _FormDetailsState extends State<FormDetails> {
                 "SecEmail": email,
                 "usedReferCode": refercode,
                 "PhoneNumber": phoneNumber,
+                "Pan Number": pan,
                 "Address": address,
                 "ServiceDetails": details,
+                "ServiceCategory": category,
                 "Verification": false,
-                "formstatus": true
+                "formstatus": true,
+                "State": state,
+                "PinCode": pinCode,
+                "City": city,
+                "GstorTin Number": gstinOrtin,
+                "Bank Details": {
+                  "Account Holder Name": acHolderName,
+                  "Account Number": acBankNumber,
+                  "Ifsc Code": ifscCode,
+                  "Bank Name": bankName,
+                  "Branch": acBranch,
+                  "City": acCity,
+                  "State": acState
+                }
               }
             : {
                 "name": name,
@@ -483,6 +834,16 @@ class _FormDetailsState extends State<FormDetails> {
     _pan.clear();
     _phoneNumber.clear();
     _refercode.clear();
+    _acCity.clear();
+    _accountNumber.clear();
+    _acHolderName.clear();
+    _acState.clear();
+    _bankName.clear();
+    _branch.clear();
+    _city.clear();
+    _ifscCode.clear();
+    _pincode.clear();
+    _state.clear();
   }
 
   @override
@@ -493,16 +854,27 @@ class _FormDetailsState extends State<FormDetails> {
             widget.phoneNumberValidator.isValid(phoneNumber) &&
             widget.addressValidator.isValid(address) &&
             widget.detailsValidator.isValid(details) &&
+            widget.gstinOrtinValidator.isValid(gstinOrtin) &&
+            widget.acCityValidator.isValid(acCity) &&
+            widget.branchValidator.isValid(acBranch) &&
+            widget.accountNumberValidator.isValid(acBankNumber) &&
+            widget.acHolderNameinValidator.isValid(acHolderName) &&
+            widget.acStateValidator.isValid(acState) &&
+            widget.stateValidator.isValid(state) &&
+            widget.pinCodeValidator.isValid(pinCode) &&
+            widget.ifscCodeValidator.isValid(ifscCode) &&
+            widget.bankNameValidator.isValid(bankName) &&
+            widget.cityValidator.isValid(city) &&
+            widget.panValidator.isValid(pan) &&
+            serviceBool &&
             monVal
         : widget.emailValidator.isValid(email) &&
             widget.nameValidator.isValid(name) &&
             widget.phoneNumberValidator.isValid(phoneNumber) &&
             widget.addressValidator.isValid(address) &&
             widget.detailsValidator.isValid(details) &&
-            widget.gstinOrtinValidator.isValid(gstinOrtin) &&
-            widget.panValidator.isValid(pan) &&
             monVal;
-    final primaryText = _selectedPage == Page.service ? "Bussiness" : "Local";
+    // final primaryText = _selectedPage == Page.service ? "Bussiness" : "Local";
 
     return Scaffold(
       resizeToAvoidBottomPadding: true,
@@ -526,31 +898,45 @@ class _FormDetailsState extends State<FormDetails> {
                 child: Column(
                   children: <Widget>[
                     _loadscreen(context),
-                    FlatButton(
-                      colorBrightness: Brightness.light,
-                      onPressed: () {
-                        setState(() => _selectedPage =
-                            _selectedPage == Page.service
-                                ? Page.local
-                                : Page.service);
-                        submitBtn = false;
-                        _email.clear();
-                        _details.clear();
-                        _address.clear();
-                        _bussiness.clear();
-                        _gstinORtin.clear();
-                        _name.clear();
-                        _pan.clear();
-                        _phoneNumber.clear();
-                        _refercode.clear();
-                      },
-                      child: Text("Switch To $primaryText Plan"),
-                    ),
-                    FlatButton(
+                    // FlatButton(
+                    //   colorBrightness: Brightness.light,
+                    //   onPressed: () {
+                    //     setState(() => _selectedPage =
+                    //         _selectedPage == Page.service
+                    //             ? Page.local
+                    //             : Page.service);
+                    //     submitBtn = false;
+                    //     _email.clear();
+                    //     _details.clear();
+                    //     _address.clear();
+                    //     _bussiness.clear();
+                    //     _gstinORtin.clear();
+                    //     _name.clear();
+                    //     _pan.clear();
+                    //     _phoneNumber.clear();
+                    //     _refercode.clear();
+                    //     _acCity.clear();
+                    //     _accountNumber.clear();
+                    //     _acHolderName.clear();
+                    //     _acState.clear();
+                    //     _bankName.clear();
+                    //     _branch.clear();
+                    //     _city.clear();
+                    //     _ifscCode.clear();
+                    //     _pincode.clear();
+                    //     _state.clear();
+                    //   },
+                    //   child: Text("Switch To $primaryText Plan"),
+                    // ),
+                    OutlineButton(
+                      splashColor: active,
                       onPressed:
                           isValidEmail(email) && submitBtn ? lolos : null,
                       child: Text("Submit Form Details"),
                     ),
+                    SizedBox(
+                      height: 5,
+                    )
                   ],
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sellerapp/Screen/Admin.dart';
 import 'package:sellerapp/Screen/Wrapper.dart';
@@ -158,8 +159,8 @@ class _LoginScreenState extends State<LoginScreen>
                               /// ButtonCustomFacebook
                               Padding(
                                   padding:
-                                      EdgeInsets.symmetric(vertical: 30.0)),
-                              ButtonCustomFacebook(),
+                                      EdgeInsets.symmetric(vertical: 10.0)),
+                              // ButtonCustomFacebook(),
 
                               /// ButtonCustomGoogle
                               Padding(
@@ -239,6 +240,12 @@ class _LoginScreenState extends State<LoginScreen>
                                               children: <Widget>[
                                                 Flexible(
                                                   child: TextFormField(
+                                                    inputFormatters: [
+                                                      LengthLimitingTextInputFormatter(
+                                                          40),
+                                                      BlacklistingTextInputFormatter(
+                                                          " "),
+                                                    ],
                                                     keyboardType: TextInputType
                                                         .emailAddress,
                                                     onChanged: (val) {
@@ -315,6 +322,12 @@ class _LoginScreenState extends State<LoginScreen>
                                               children: <Widget>[
                                                 Flexible(
                                                   child: TextFormField(
+                                                    inputFormatters: [
+                                                      LengthLimitingTextInputFormatter(
+                                                          8),
+                                                      BlacklistingTextInputFormatter(
+                                                          " "),
+                                                    ],
                                                     keyboardType:
                                                         TextInputType.text,
                                                     obscureText: true,
@@ -439,7 +452,7 @@ class _LoginScreenState extends State<LoginScreen>
                               if (result == false) {
                                 setState(() {
                                   Fluttertoast.showToast(
-                                      msg: "Could Not SignIn With Email");
+                                      msg: "Could Not SignIn");
                                   loading = false;
                                 });
                               }

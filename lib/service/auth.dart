@@ -108,6 +108,23 @@ class AuthService {
       assert(await user.getIdToken() != null);
       return true;
     } catch (e) {
+      switch (e.code) {
+        case 'ERROR_USER_NOT_FOUND':
+          // authError = 'Invalid Email';
+          Fluttertoast.showToast(msg: "This Email Does Not Exit");
+          print("object");
+          break;
+        case 'ERROR_USER_NOT_FOUND':
+          // authError = 'User Not Found';
+          break;
+        case 'ERROR_WRONG_PASSWORD':
+          // authError = 'Wrong Password';
+          Fluttertoast.showToast(msg: "Wrong Password Please Check It");
+          break;
+        default:
+          // authError = 'Error';
+          break;
+      }
       print(e.toString());
       return false;
     }
@@ -174,19 +191,28 @@ class AuthService {
             .where("id", isEqualTo: user.uid)
             .getDocuments();
         final List<DocumentSnapshot> documents = results.documents;
+        final String fcm = await firebaseMessaging.getToken();
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
         if (documents.length == 0) {
           Firestore.instance.collection("Sellers").document(user.uid).setData({
             "TimeCreated": Timestamp.now(),
-            "Register By": "Google Sign Up",
+            "Register By": "Register Via Email Password",
             "id": user.uid,
             "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
-            "name": user.displayName ?? user.uid.toString().substring(3, 8),
+            "name": user.displayName ??
+                user.uid.toString().substring(3, 8).toLowerCase(),
             "Email": user.email,
             "photo": user.isEmailVerified,
             "Verification": true,
             "Reward": 0,
             "Verification": false,
-            "formstatus": false
+            "formstatus": false,
+            "userToken": fcm,
+            "Device": {
+              "product": androidInfo.product,
+              "model": androidInfo.model,
+              "manufacturer": androidInfo.manufacturer
+            }
           });
         } else {
           Firestore.instance
@@ -206,10 +232,7 @@ class AuthService {
       final FirebaseUser currentUser = await auth.currentUser();
       assert(user.uid == currentUser.uid);
       return true;
-    } on PlatformException catch (e) {
-      if (e.code == "sign_in_canceled") {
-        print("object");
-      }
+    }  catch (e) {
       print(e.toString());
       return false;
     }
@@ -255,7 +278,7 @@ class AuthService {
           if (results.documents[i].data["refercode"]
               .toString()
               .contains(refercode)) {
-            Fluttertoast.showToast(msg: "OSm Day");
+            Fluttertoast.showToast(msg: "Verification Pending");
           } else if (!results.documents[i].data["refercode"]
               .toString()
               .contains(refercode)) {
