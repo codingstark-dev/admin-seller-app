@@ -30,6 +30,9 @@ class _RewardsState extends State<Rewards> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final data = snapshot.data;
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
               return Column(
                 children: <Widget>[
                   Card(

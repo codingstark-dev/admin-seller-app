@@ -38,7 +38,7 @@ class DatabaseService {
     return UserDetails(
         uid: uid,
         userName: data["name"] ?? "",
-        referalId: data["usedReferCode"] ?? "",
+        referalId: data["refercode"] ?? "",
         verificationWaiting: data["Verification"] ?? false,
         rewards: data["Reward"] ?? "",
         formDetaiVerify: data["formstatus"] ?? false);

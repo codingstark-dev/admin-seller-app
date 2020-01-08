@@ -266,8 +266,8 @@ class _FormDetailsState extends State<FormDetails> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextFieldWidget(
                     inputFormatters: [
-                      LengthLimitingTextInputFormatter(60),
-                      BlacklistingTextInputFormatter("  "),
+                      LengthLimitingTextInputFormatter(6),
+                      BlacklistingTextInputFormatter(" "),
                     ],
                     errorText: pincodeVaild ? widget.invalidAddressError : null,
                     textInputType: TextInputType.numberWithOptions(
