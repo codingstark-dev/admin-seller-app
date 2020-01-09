@@ -201,7 +201,8 @@ class _AdminState extends State<Admin> {
       username: (user?.name == "") ? null : user?.name,
       emailIds: (user?.emailId == "") ? null : user?.emailId,
     );
-    UserDetails userDetails = Provider.of<UserDetails>(context, listen: false);
+    final UserDetails userDetails =
+        Provider.of<UserDetails>(context, listen: false);
     // var ldos = Provider.of<List<UserDetails>>(context);
     var profile = Padding(
       padding: EdgeInsets.only(
@@ -594,7 +595,7 @@ class _AdminState extends State<Admin> {
                   }));
                 },
               ),
-                Divider(),
+              Divider(),
               ListTile(
                 leading: Icon(Icons.monetization_on),
                 title: Text("Your Reward"),

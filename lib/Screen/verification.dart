@@ -68,7 +68,7 @@ class _VerificationDbState extends State<VerificationDb> {
                          SizedBox(height: 5,),
                          Center(
                           child: Text(
-                        "- +919898xxxxx \n- +919898xxxxx \n- xyz@gmail.com",
+                        "- +918999996369 \n- geteasytodaygroup@gmail.com",textAlign: TextAlign.center,
                         style: TextStyle(
                             color: active,
                             fontSize: 16,
