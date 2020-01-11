@@ -133,77 +133,94 @@ class _WrapperState extends State<Wrapper> {
       );
     }
   }
-}
+
 //Prompt users to update app if there is a new version available
 //Uses url_launcher package
 
-const PLAY_STORE_URL =
-    'https://play.google.com/store/apps/details?id=in.citygrow.seller';
+  final playStoreLink =
+      'https://play.google.com/store/apps/details?id=in.citygrow.seller';
 
-versionCheck(context) async {
-  //Get Current installed version of app
-  final PackageInfo info = await PackageInfo.fromPlatform();
-  double currentVersion = double.parse(info.version.trim().replaceAll(".", ""));
+  versionCheck(context) async {
+    //Get Current installed version of app
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    double currentVersion =
+        double.parse(info.version.trim().replaceAll(".", ""));
 
-  //Get Latest version info from firebase config
-  final RemoteConfig remoteConfig = await RemoteConfig.instance;
+    //Get Latest version info from firebase config
+    final RemoteConfig remoteConfig = await RemoteConfig.instance;
 
-  try {
-    // Using default duration to force fetching from remote server.
-    await remoteConfig.fetch(expiration: const Duration(seconds: 0));
-    await remoteConfig.activateFetched();
-    remoteConfig.getString('force_update_current_version');
-    double newVersion = double.parse(remoteConfig
-        .getString('force_update_current_version')
-        .trim()
-        .replaceAll(".", ""));
-    if (newVersion > currentVersion) {
-      _showVersionDialog(context);
+    try {
+      // Using default duration to force fetching from remote server.
+      await remoteConfig.fetch(expiration: const Duration(seconds: 0));
+      await remoteConfig.activateFetched();
+      remoteConfig.getString('force_update_current_version');
+      double newVersion = double.parse(remoteConfig
+          .getString('force_update_current_version')
+          .trim()
+          .replaceAll(".", ""));
+      if (newVersion > currentVersion) {
+        _showVersionDialog(context);
+      }
+    } on FetchThrottledException catch (exception) {
+      // Fetch throttled.
+      print(exception);
+    } catch (exception) {
+      print('Unable to fetch remote config. Cached or default values will be '
+          'used');
     }
-  } on FetchThrottledException catch (exception) {
-    // Fetch throttled.
-    print(exception);
-  } catch (exception) {
-    print('Unable to fetch remote config. Cached or default values will be '
-        'used');
   }
-}
 
 //Show Dialog to force user to update
-_showVersionDialog(context) async {
-  await showDialog<String>(
-    useRootNavigator: false,
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      String title = "New Update Available";
-      String message =
-          "There is a newer version of app available please update it now. If your not going to update your app will not work!!";
-      String btnLabel = "Update Now";
-      // String btnLabelCancel = "Later";
-      
-      return AlertDialog(
-        title: Text(title),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(btnLabel),
-            onPressed: () => _launchURL(PLAY_STORE_URL),
-          ),
-          // FlatButton(
-          //   child: Text(btnLabelCancel),
-          //   onPressed: () => Navigator.pop(context),
-          // ),
-        ],
-      );
-    },
-  );
-}
+  _showVersionDialog(context) async {
+    await showDialog<String>(
+      useRootNavigator: false,
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        String title = "New Update Available!!";
+        String message =
+            "There is a newer version of app available please update it now. If your not going to update your app will not work!!";
+        String btnLabel = "Update Now!";
+        // String btnLabelCancel = "Later";
 
-_launchURL(String url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+            elevation: 0.5,
+            title: Text(title),
+            content: Text(message),
+            scrollable: true,
+            actions: <Widget>[
+              RaisedButton(
+                color: Colors.deepPurple[400],
+                onPressed: () => _launchURL(playStoreLink),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(4.0))),
+                child: Text(btnLabel),
+              ),
+              // FlatButton(
+              //   color: Colors.deepPurple[400],
+              //   child: Text(btnLabel),
+              //   onPressed: () => _launchURL(playStoreLink),
+              // ),
+              // FlatButton(
+              //   child: Text(btnLabelCancel),
+              //   onPressed: () => Navigator.pop(context),
+              // ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

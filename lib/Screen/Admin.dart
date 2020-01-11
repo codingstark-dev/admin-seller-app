@@ -4,6 +4,7 @@ import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/Notfication.dart';
@@ -58,7 +59,6 @@ class _AdminState extends State<Admin> {
 
   @override
   void initState() {
-    // TODO: notifiy
     super.initState();
     firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> massage) async {
@@ -273,97 +273,97 @@ class _AdminState extends State<Admin> {
           return SafeArea(
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 60,
-                    color: Colors.white,
-                    child: ListTile(
-                      title: InkWell(
-                          onTap: () {},
-                          child: Text(
-                              "Shri Ram Janmbhumi, Sai Nagar, Ayodhya, Uttar Pradesh 224123")),
-                      // leading: Icon(
-                      //   Icons.location_searching,
-                      //   color: active,
-                      // ),
-                      subtitle: InkWell(
-                          onTap: () {},
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: <Widget>[
-                                Text("128 Days Left"),
-                                Text(
-                                  "#1-Premium Package",
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          )),
-                      dense: true,
-                      trailing: Container(
-                          child: InkWell(
-                        onTap: () {
-                          print("App");
-                        },
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Column(
-                            children: <Widget>[
-                              Expanded(
-                                child: Icon(
-                                  Icons.location_on,
-                                  color: active,
-                                ),
-                              ),
-                              // Expanded(child: Text("10 KM")),
-                              Expanded(
-                                flex: 3,
-                                child: DropdownButton<String>(
-                                  items: <String>[
-                                    '10Km',
-                                    '20Km',
-                                    '30Km',
-                                    '40Km'
-                                  ].map((String value) {
-                                    return new DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (_) {},
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                          //     Icon(
-                          //   Icons.location_on,
-                          //   color: active,
-                          // )
-                          ),
-                      // subtitle: Container(
-                      //   alignment: Alignment.centerRight,
-                      //   child: DropdownButton(
-                      //     hint: Text('5km'), // Not necessary for Option 1
-                      //     value: _selectedLocation,
-                      //     onChanged: (newValue) {
-                      //       setState(() {
-                      //         _selectedLocation = newValue;
-                      //       });
-                      //     },
-                      //     items: _locations.map((location) {
-                      //       return DropdownMenuItem(
-                      //         child: new Text(location),
-                      //         value: location,
-                      //       );
-                      //     }).toList(),
-                      //   ),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: Container(
+                //     height: 60,
+                //     color: Colors.white,
+                //     child: ListTile(
+                //       title: InkWell(
+                //           onTap: () {},
+                //           child: Text(
+                //               "Shri Ram Janmbhumi, Sai Nagar, Ayodhya, Uttar Pradesh 224123")),
+                //       // leading: Icon(
+                //       //   Icons.location_searching,
+                //       //   color: active,
+                //       // ),
+                //       subtitle: InkWell(
+                //           onTap: () {},
+                //           child: SingleChildScrollView(
+                //             scrollDirection: Axis.horizontal,
+                //             child: Row(
+                //               children: <Widget>[
+                //                 Text("128 Days Left"),
+                //                 Text(
+                //                   "#1-Premium Package",
+                //                   textAlign: TextAlign.center,
+                //                 ),
+                //               ],
+                //             ),
+                //           )),
+                //       dense: true,
+                //       trailing: Container(
+                //           child: InkWell(
+                //         onTap: () {
+                //           print("App");
+                //         },
+                //         child: SingleChildScrollView(
+                //           scrollDirection: Axis.horizontal,
+                //           child: Column(
+                //             children: <Widget>[
+                //               Expanded(
+                //                 child: Icon(
+                //                   Icons.location_on,
+                //                   color: active,
+                //                 ),
+                //               ),
+                //               // Expanded(child: Text("10 KM")),
+                //               Expanded(
+                //                 flex: 3,
+                //                 child: DropdownButton<String>(
+                //                   items: <String>[
+                //                     '10Km',
+                //                     '20Km',
+                //                     '30Km',
+                //                     '40Km'
+                //                   ].map((String value) {
+                //                     return new DropdownMenuItem<String>(
+                //                       value: value,
+                //                       child: Text(value),
+                //                     );
+                //                   }).toList(),
+                //                   onChanged: (_) {},
+                //                 ),
+                //               )
+                //             ],
+                //           ),
+                //         ),
+                //       )
+                //           //     Icon(
+                //           //   Icons.location_on,
+                //           //   color: active,
+                //           // )
+                //           ),
+                //       // subtitle: Container(
+                //       //   alignment: Alignment.centerRight,
+                //       //   child: DropdownButton(
+                //       //     hint: Text('5km'), // Not necessary for Option 1
+                //       //     value: _selectedLocation,
+                //       //     onChanged: (newValue) {
+                //       //       setState(() {
+                //       //         _selectedLocation = newValue;
+                //       //       });
+                //       //     },
+                //       //     items: _locations.map((location) {
+                //       //       return DropdownMenuItem(
+                //       //         child: new Text(location),
+                //       //         value: location,
+                //       //       );
+                //       //     }).toList(),
+                //       //   ),
+                //     ),
+                //   ),
+                // ),
                 StreamBuilder(
                     stream: Firestore.instance
                         .collection("ProductListID")
@@ -387,28 +387,14 @@ class _AdminState extends State<Admin> {
                                       child: ListTile(
                                           title: FlatButton.icon(
                                               onPressed: () async {
-                                                DeviceInfoPlugin deviceInfo =
-                                                    DeviceInfoPlugin();
-                                                AndroidDeviceInfo androidInfo =
-                                                    await deviceInfo
-                                                        .androidInfo;
-                                                print(
-                                                    'Running on ${androidInfo.product}');
-
-                                                // print(
-                                                //     'Running on ${androidInfo.androidId}');
-                                                // print(
-                                                //     'Running on ${androidInfo.brand}');
-                                                // print(
-                                                //     'Running on ${androidInfo.device}');
-                                                // print(
-                                                //     'Running on ${androidInfo.id}');
-                                                print(
-                                                    'Running on ${androidInfo.model}');
-                                                print(
-                                                    'Running on ${androidInfo.manufacturer}');
-                                                //   print(
-                                                // 'Running on ${androidInfo.fingerprint}');
+                                                final PackageInfo info =
+                                                    await PackageInfo
+                                                        .fromPlatform();
+                                                double currentVersion =
+                                                    double.parse(info.version
+                                                        .trim()
+                                                        .replaceAll(".", ""));
+                                                        print(currentVersion);
                                               },
                                               icon: Icon(
                                                 Icons.category,

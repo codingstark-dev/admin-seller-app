@@ -24,7 +24,7 @@ class _ProductListState extends State<ProductList> {
         backgroundColor: active,
         centerTitle: true,
       ),
-      body: StreamBuilder(
+      body: StreamBuilder<QuerySnapshot>(
           stream: Firestore.instance
               .collection("ProductListID")
               .document(user.uid)
@@ -93,15 +93,17 @@ class _ProductListState extends State<ProductList> {
                                           )
                                         ],
                                       );
-                                    }
-                                    );
+                                    });
                               },
                             ),
                             onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        ProductDetaislEdit(productName: document[index]["ProductName"].toString(),
+                                        ProductDetaislEdit(
+                                          productName: document[index]
+                                                  ["ProductName"]
+                                              .toString(),
                                           index: index,
                                           price: document[index]["price"],
                                           quantity: document[index]["quantity"],
