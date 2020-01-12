@@ -6,6 +6,9 @@ import 'package:sellerapp/Screen/ProductDetails.dart';
 import 'package:sellerapp/model/user.dart';
 
 class ProductList extends StatefulWidget {
+  final payload;
+
+  const ProductList({Key key, this.payload}) : super(key: key);
   @override
   _ProductListState createState() => _ProductListState();
 }

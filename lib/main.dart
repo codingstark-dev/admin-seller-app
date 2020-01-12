@@ -16,7 +16,6 @@ void main() {
 
   // Pass all uncaught errors to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
-
   runZoned(() {
     runApp(MyApp());
   }, onError: Crashlytics.instance.recordError);
@@ -50,7 +49,7 @@ class MyApp extends StatelessWidget {
       /// Move splash screen to ChoseLogin Layout
       /// Routes
       routes: <String, WidgetBuilder>{
-        "main": (BuildContext context) => new MainFinal()
+        "main": (BuildContext context) =>  MainFinal()
       },
     );
   }

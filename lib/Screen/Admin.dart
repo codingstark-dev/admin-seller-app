@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_info/device_info.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/Notfication.dart';
 import 'package:sellerapp/Screen/Rewards.dart';
 import 'package:sellerapp/Screen/productList.dart';
 import 'package:sellerapp/Screen/settings.dart';
+import 'package:sellerapp/Screen/widget/localNotification.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:sellerapp/model/db/category.dart';
 import 'package:sellerapp/model/user.dart';
@@ -60,6 +59,7 @@ class _AdminState extends State<Admin> {
   @override
   void initState() {
     super.initState();
+    firebaseMessaging.subscribeToTopic("oders");
     firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> massage) async {
         print("Massage: $massage");
@@ -270,269 +270,272 @@ class _AdminState extends State<Admin> {
           //   List<String> _locations = ['A', 'B', 'C', 'D']; // Option 2
           //   String _selectedLocation; // Option 2
 
-          return SafeArea(
-            child: Column(
-              children: <Widget>[
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: Container(
-                //     height: 60,
-                //     color: Colors.white,
-                //     child: ListTile(
-                //       title: InkWell(
-                //           onTap: () {},
-                //           child: Text(
-                //               "Shri Ram Janmbhumi, Sai Nagar, Ayodhya, Uttar Pradesh 224123")),
-                //       // leading: Icon(
-                //       //   Icons.location_searching,
-                //       //   color: active,
-                //       // ),
-                //       subtitle: InkWell(
-                //           onTap: () {},
-                //           child: SingleChildScrollView(
-                //             scrollDirection: Axis.horizontal,
-                //             child: Row(
-                //               children: <Widget>[
-                //                 Text("128 Days Left"),
-                //                 Text(
-                //                   "#1-Premium Package",
-                //                   textAlign: TextAlign.center,
-                //                 ),
-                //               ],
-                //             ),
-                //           )),
-                //       dense: true,
-                //       trailing: Container(
-                //           child: InkWell(
-                //         onTap: () {
-                //           print("App");
-                //         },
-                //         child: SingleChildScrollView(
-                //           scrollDirection: Axis.horizontal,
-                //           child: Column(
-                //             children: <Widget>[
-                //               Expanded(
-                //                 child: Icon(
-                //                   Icons.location_on,
-                //                   color: active,
-                //                 ),
-                //               ),
-                //               // Expanded(child: Text("10 KM")),
-                //               Expanded(
-                //                 flex: 3,
-                //                 child: DropdownButton<String>(
-                //                   items: <String>[
-                //                     '10Km',
-                //                     '20Km',
-                //                     '30Km',
-                //                     '40Km'
-                //                   ].map((String value) {
-                //                     return new DropdownMenuItem<String>(
-                //                       value: value,
-                //                       child: Text(value),
-                //                     );
-                //                   }).toList(),
-                //                   onChanged: (_) {},
-                //                 ),
-                //               )
-                //             ],
-                //           ),
-                //         ),
-                //       )
-                //           //     Icon(
-                //           //   Icons.location_on,
-                //           //   color: active,
-                //           // )
-                //           ),
-                //       // subtitle: Container(
-                //       //   alignment: Alignment.centerRight,
-                //       //   child: DropdownButton(
-                //       //     hint: Text('5km'), // Not necessary for Option 1
-                //       //     value: _selectedLocation,
-                //       //     onChanged: (newValue) {
-                //       //       setState(() {
-                //       //         _selectedLocation = newValue;
-                //       //       });
-                //       //     },
-                //       //     items: _locations.map((location) {
-                //       //       return DropdownMenuItem(
-                //       //         child: new Text(location),
-                //       //         value: location,
-                //       //       );
-                //       //     }).toList(),
-                //       //   ),
-                //     ),
-                //   ),
-                // ),
-                StreamBuilder(
-                    stream: Firestore.instance
-                        .collection("ProductListID")
-                        .document(user.uid)
-                        .collection(user.uid)
-                        .where("PersonID", isEqualTo: user.uid)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData &&
-                          snapshot.data.documents.length > 0) {
-                        return Expanded(
-                          child: GridView(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2),
-                            children: <Widget>[
-                              Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                                  child: Card(
-                                      child: ListTile(
-                                          title: FlatButton.icon(
-                                              onPressed: () async {
-                                                final PackageInfo info =
-                                                    await PackageInfo
-                                                        .fromPlatform();
-                                                double currentVersion =
-                                                    double.parse(info.version
-                                                        .trim()
-                                                        .replaceAll(".", ""));
-                                                        print(currentVersion);
-                                              },
-                                              icon: Icon(
-                                                Icons.category,
-                                                color: active,
-                                              ),
-                                              label: Text("Category")),
-                                          subtitle: Text(
-                                            '16',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: active, fontSize: 60.0),
-                                          )))),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                                child: Card(
-                                  child: ListTile(
-                                      title: FlatButton.icon(
-                                          onPressed: null,
-                                          icon: Icon(
-                                            Icons.people_outline,
-                                            color: active,
-                                          ),
-                                          label: Text("Users")),
-                                      subtitle: Text(
-                                        '7',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: active, fontSize: 60.0),
-                                      )),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                                child: Card(
-                                  child: ListTile(
-                                      title: FlatButton.icon(
-                                          onPressed: null,
-                                          icon: Icon(
-                                            Icons.track_changes,
-                                            color: active,
-                                          ),
-                                          label: Text("Products")),
-                                      subtitle: Text(
-                                        snapshot.data.documents.length
-                                            .toString(),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: active, fontSize: 60.0),
-                                      )),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                                child: Card(
-                                  child: ListTile(
-                                      title: FlatButton.icon(
-                                          onPressed: null,
-                                          icon: Icon(
-                                            Icons.tag_faces,
-                                            color: active,
-                                          ),
-                                          label: Text("Sold")),
-                                      subtitle: Text(
-                                        '23',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: active, fontSize: 60.0),
-                                      )),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                                child: Card(
-                                  child: ListTile(
-                                      title: FlatButton.icon(
-                                          onPressed: null,
-                                          icon: Icon(
-                                            Icons.shopping_cart,
-                                            color: active,
-                                          ),
-                                          label: Text("Orders")),
-                                      subtitle: Text(
-                                        '4',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: active, fontSize: 60.0),
-                                      )),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
-                                child: Card(
-                                  child: ListTile(
-                                      title: FlatButton.icon(
-                                          onPressed: () {},
-                                          icon: Icon(
-                                            Icons.close,
-                                            color: active,
-                                          ),
-                                          label: Text("Return")),
-                                      subtitle: Text(
-                                        '1',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: active, fontSize: 60.0),
-                                      )),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return Column(
+          return Column(
+            children: <Widget>[
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Container(
+              //     height: 60,
+              //     color: Colors.white,
+              //     child: ListTile(
+              //       title: InkWell(
+              //           onTap: () {},
+              //           child: Text(
+              //               "Shri Ram Janmbhumi, Sai Nagar, Ayodhya, Uttar Pradesh 224123")),
+              //       // leading: Icon(
+              //       //   Icons.location_searching,
+              //       //   color: active,
+              //       // ),
+              //       subtitle: InkWell(
+              //           onTap: () {},
+              //           child: SingleChildScrollView(
+              //             scrollDirection: Axis.horizontal,
+              //             child: Row(
+              //               children: <Widget>[
+              //                 Text("128 Days Left"),
+              //                 Text(
+              //                   "#1-Premium Package",
+              //                   textAlign: TextAlign.center,
+              //                 ),
+              //               ],
+              //             ),
+              //           )),
+              //       dense: true,
+              //       trailing: Container(
+              //           child: InkWell(
+              //         onTap: () {
+              //           print("App");
+              //         },
+              //         child: SingleChildScrollView(
+              //           scrollDirection: Axis.horizontal,
+              //           child: Column(
+              //             children: <Widget>[
+              //               Expanded(
+              //                 child: Icon(
+              //                   Icons.location_on,
+              //                   color: active,
+              //                 ),
+              //               ),
+              //               // Expanded(child: Text("10 KM")),
+              //               Expanded(
+              //                 flex: 3,
+              //                 child: DropdownButton<String>(
+              //                   items: <String>[
+              //                     '10Km',
+              //                     '20Km',
+              //                     '30Km',
+              //                     '40Km'
+              //                   ].map((String value) {
+              //                     return new DropdownMenuItem<String>(
+              //                       value: value,
+              //                       child: Text(value),
+              //                     );
+              //                   }).toList(),
+              //                   onChanged: (_) {},
+              //                 ),
+              //               )
+              //             ],
+              //           ),
+              //         ),
+              //       )
+              //           //     Icon(
+              //           //   Icons.location_on,
+              //           //   color: active,
+              //           // )
+              //           ),
+              //       // subtitle: Container(
+              //       //   alignment: Alignment.centerRight,
+              //       //   child: DropdownButton(
+              //       //     hint: Text('5km'), // Not necessary for Option 1
+              //       //     value: _selectedLocation,
+              //       //     onChanged: (newValue) {
+              //       //       setState(() {
+              //       //         _selectedLocation = newValue;
+              //       //       });
+              //       //     },
+              //       //     items: _locations.map((location) {
+              //       //       return DropdownMenuItem(
+              //       //         child: new Text(location),
+              //       //         value: location,
+              //       //       );
+              //       //     }).toList(),
+              //       //   ),
+              //     ),
+              //   ),
+              // ),
+              StreamBuilder(
+                  stream: Firestore.instance
+                      .collection("ProductListID")
+                      .document(user.uid)
+                      .collection(user.uid)
+                      .where("PersonID", isEqualTo: user.uid)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData &&
+                        snapshot.data.documents.length > 0) {
+                      return Expanded(
+                        child: GridView(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2),
                           children: <Widget>[
-                            SizedBox(
-                              height: 150,
+                            Padding(
+                                padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                                child: Card(
+                                    child: ListTile(
+                                        title: FlatButton.icon(
+                                            onPressed: () async {
+                                              // final PackageInfo info =
+                                              //     await PackageInfo
+                                              //         .fromPlatform();
+                                              // double currentVersion =
+                                              //     double.parse(info.version
+                                              //         .trim()
+                                              //         .replaceAll(".", ""));
+                                              //         print(currentVersion);
+
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          HomePage()));
+                                            },
+                                            icon: Icon(
+                                              Icons.category,
+                                              color: active,
+                                            ),
+                                            label: Text("Category")),
+                                        subtitle: Text(
+                                          '16',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: active, fontSize: 60.0),
+                                        )))),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                              child: Card(
+                                child: ListTile(
+                                    title: FlatButton.icon(
+                                        onPressed: null,
+                                        icon: Icon(
+                                          Icons.people_outline,
+                                          color: active,
+                                        ),
+                                        label: Text("Users")),
+                                    subtitle: Text(
+                                      '7',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: active, fontSize: 60.0),
+                                    )),
+                              ),
                             ),
-                            Center(
-                                child: CircularProgressIndicator(
-                              backgroundColor: active,
-                            )),
-                            SizedBox(
-                              height: 90,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                              child: Card(
+                                child: ListTile(
+                                    title: FlatButton.icon(
+                                        onPressed: null,
+                                        icon: Icon(
+                                          Icons.track_changes,
+                                          color: active,
+                                        ),
+                                        label: Text("Products")),
+                                    subtitle: Text(
+                                      snapshot.data.documents.length.toString(),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: active, fontSize: 60.0),
+                                    )),
+                              ),
                             ),
-                            Text(
-                              "If Want To See Dashboard Add Minimum One Products",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.grey[350],
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
-                            )
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                              child: Card(
+                                child: ListTile(
+                                    title: FlatButton.icon(
+                                        onPressed: null,
+                                        icon: Icon(
+                                          Icons.tag_faces,
+                                          color: active,
+                                        ),
+                                        label: Text("Sold")),
+                                    subtitle: Text(
+                                      '23',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: active, fontSize: 60.0),
+                                    )),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                              child: Card(
+                                child: ListTile(
+                                    title: FlatButton.icon(
+                                        onPressed: null,
+                                        icon: Icon(
+                                          Icons.shopping_cart,
+                                          color: active,
+                                        ),
+                                        label: Text("Orders")),
+                                    subtitle: Text(
+                                      '4',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: active, fontSize: 60.0),
+                                    )),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
+                              child: Card(
+                                child: ListTile(
+                                    title: FlatButton.icon(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.close,
+                                          color: active,
+                                        ),
+                                        label: Text("Return")),
+                                    subtitle: Text(
+                                      '1',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: active, fontSize: 60.0),
+                                    )),
+                              ),
+                            ),
                           ],
-                        );
-                      }
-                    }),
-              ],
-            ),
+                        ),
+                      );
+                    } else {
+                      return Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 150,
+                          ),
+                          Center(
+                              child: CircularProgressIndicator(
+                            backgroundColor: active,
+                          )),
+                          SizedBox(
+                            height: 90,
+                          ),
+                          Text(
+                            "If Want To See Dashboard Add Minimum One Products",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.grey[350],
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          )
+                        ],
+                      );
+                    }
+                  }),
+            ],
           );
           break;
         case Page.manage:
