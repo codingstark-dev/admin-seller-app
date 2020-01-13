@@ -55,62 +55,87 @@ class _ProductListState extends State<ProductList> {
                           child: ListTile(
                             isThreeLine: true,
                             title: Text(document[index]["price"].toString()),
-                            leading: Image.network(
-                              document[index]["images"][0],
-                              fit: BoxFit.fill,
+                            leading: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text("${index + 1}",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 15),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                GestureDetector(onTap: (){},
+                                  child: Image.network(
+                                    document[index]["images"][0],
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ],
                             ),
                             subtitle:
                                 Text(document[index]["ProductName"].toString()),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text("Are You Sure?"),
-                                        content: Text(
-                                            "The Product Where Going to delete Permanetly Means They Will Not Recover"),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            onPressed: () async {
-                                              await Firestore.instance
-                                                  .collection("ProductListID")
-                                                  .document(user.uid)
-                                                  .collection(user.uid)
-                                                  .document(documentID)
-                                                  .delete()
-                                                  .whenComplete(() {
-                                                Fluttertoast.showToast(
-                                                    msg: "Deleted");
-                                                Navigator.pop(context);
-                                              });
-                                            },
-                                            child: Text("Yes"),
-                                          ),
-                                          FlatButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text("No"),
-                                          )
-                                        ],
-                                      );
-                                    });
-                              },
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ProductDetaislEdit(
+                                                productName: document[index]
+                                                        ["ProductName"]
+                                                    .toString(),
+                                                index: index,
+                                                price: document[index]["price"],
+                                                quantity: document[index]
+                                                    ["quantity"],
+                                              ))),
+                                  icon: Icon(Icons.edit),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Are You Sure?"),
+                                            content: Text(
+                                                "The Product Where Going to delete Permanetly Means They Will Not Recover"),
+                                            actions: <Widget>[
+                                              FlatButton(
+                                                onPressed: () async {
+                                                  await Firestore.instance
+                                                      .collection(
+                                                          "ProductListID")
+                                                      .document(user.uid)
+                                                      .collection(user.uid)
+                                                      .document(documentID)
+                                                      .delete()
+                                                      .whenComplete(() {
+                                                    Fluttertoast.showToast(
+                                                        msg: "Deleted");
+                                                    Navigator.pop(context);
+                                                  });
+                                                },
+                                                child: Text("Yes"),
+                                              ),
+                                              FlatButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("No"),
+                                              )
+                                            ],
+                                          );
+                                        });
+                                  },
+                                ),
+                              ],
                             ),
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        ProductDetaislEdit(
-                                          productName: document[index]
-                                                  ["ProductName"]
-                                              .toString(),
-                                          index: index,
-                                          price: document[index]["price"],
-                                          quantity: document[index]["quantity"],
-                                        ))),
                           ),
                         );
                       } else {

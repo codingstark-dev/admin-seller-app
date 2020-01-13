@@ -57,10 +57,10 @@ class _WrapperState extends State<Wrapper> {
                   if (snapshot.data.verificationWaiting == true) {
                     return StreamBuilder<ConnectivityResult>(
                         stream: Connectivity().onConnectivityChanged,
-                        builder: (context, snapshot) {
+                        builder: (context, network) {
                           if (!snapshot.hasData)
                             return CircularProgressIndicator();
-                          var result = snapshot.data;
+                          var result = network.data;
                           switch (result) {
                             case ConnectivityResult.none:
                               print("no net");
@@ -111,10 +111,15 @@ class _WrapperState extends State<Wrapper> {
                             case ConnectivityResult.wifi:
                               print("yes net");
 
-                              return Admin();
+                              return Consumer<User>(
+                                builder: (BuildContext context, User lols,
+                                    Widget child) {
+                                  return Admin();
+                                },
+                              );
                             default:
                               return Center(
-                                  child: Text("No Internet Connection!"));
+                                  child: CircularProgressIndicator());
                           }
                         });
                   }

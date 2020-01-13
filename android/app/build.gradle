@@ -51,7 +51,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-       multiDexEnabled true
+        multiDexEnabled true
 
     }
 

@@ -12,25 +12,20 @@ class MainFinal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        StreamProvider<User>.value(
-          value: AuthService().user,
-        ),
-        Provider<AuthService>(
-          create: (BuildContext context) => AuthService(),
-        ),
-        Provider<UserDetails>(
-          create: (BuildContext context) => UserDetails(),
-        ),
-      ],
-      child: Consumer<User>(
-        builder: (BuildContext context, value, Widget child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: Wrapper(),
-          );
-        },
-      ),
-    );
+        providers: [
+          StreamProvider<User>.value(
+            value: AuthService().user,
+          ),
+          Provider<AuthService>(
+            create: (BuildContext context) => AuthService(),
+          ),
+          Provider<UserDetails>(
+            create: (BuildContext context) => UserDetails(),
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Wrapper(),
+        ));
   }
 }

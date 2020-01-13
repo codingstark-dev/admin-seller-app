@@ -214,6 +214,19 @@ class AuthService {
               "manufacturer": androidInfo.manufacturer
             }
           });
+          firestore
+              .collection("Sellers")
+              .document(user.uid)
+              .collection("Token")
+              .document(fcm)
+              .setData({
+            "Email": user.email,
+            "Token": fcm,
+            "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
+            "name": user.displayName ??
+                user.uid.toString().substring(3, 8).toLowerCase(),
+            "TimeCreated": Timestamp.now(),
+          });
         } else {
           Firestore.instance
               .collection("Sellers")
@@ -232,8 +245,15 @@ class AuthService {
       final FirebaseUser currentUser = await auth.currentUser();
       assert(user.uid == currentUser.uid);
       return true;
-    }  catch (e) {
+    } catch (e) {
       print(e.toString());
+      switch (e.code) {
+        case "sign_in_failed":
+          Fluttertoast.showToast(msg: "Opps! Something went wrong!");
+          break;
+        default:
+          break;
+      }
       return false;
     }
   }
@@ -399,6 +419,19 @@ class AuthService {
               "model": androidInfo.model,
               "manufacturer": androidInfo.manufacturer
             }
+          });
+          firestore
+              .collection("Sellers")
+              .document(user.uid)
+              .collection("Token")
+              .document(fcm)
+              .setData({
+            "Email": user.email,
+            "Token": fcm,
+            "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
+            "name": user.displayName ??
+                user.uid.toString().substring(3, 8).toLowerCase(),
+            "TimeCreated": Timestamp.now(),
           });
         } else {
           Firestore.instance

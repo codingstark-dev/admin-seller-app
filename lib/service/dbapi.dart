@@ -1,4 +1,3 @@
-
 class UserDetails {
   final String referalId;
   final bool formDetaiVerify;
@@ -6,8 +5,11 @@ class UserDetails {
   final String userName;
   final String uid;
   final int rewards;
+  final bool bankDetailBool;
   // final String points;
-  UserDetails({this.rewards,
+  UserDetails({
+    this.rewards,
+    this.bankDetailBool,
     this.uid,
     this.verificationWaiting,
     this.formDetaiVerify,
@@ -64,5 +66,4 @@ class ProductListsView {
       this.images,
       this.quantity,
       this.sizes});
-
 }

@@ -36,6 +36,7 @@ class DatabaseService {
   UserDetails collectionDataOfDb(DocumentSnapshot snapshot) {
     Map data = snapshot.data;
     return UserDetails(
+        bankDetailBool: data["Bank Details"] ?? false,
         uid: uid,
         userName: data["name"] ?? "",
         referalId: data["refercode"] ?? "",

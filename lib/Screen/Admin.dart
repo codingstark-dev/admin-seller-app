@@ -9,6 +9,8 @@ import 'package:sellerapp/Screen/Notfication.dart';
 import 'package:sellerapp/Screen/Rewards.dart';
 import 'package:sellerapp/Screen/productList.dart';
 import 'package:sellerapp/Screen/settings.dart';
+import 'package:sellerapp/Screen/widget/NotificationWidget.dart';
+import 'package:sellerapp/Screen/widget/formerror.dart';
 import 'package:sellerapp/Screen/widget/localNotification.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:sellerapp/model/db/category.dart';
@@ -74,33 +76,6 @@ class _AdminState extends State<Admin> {
       //   print("Massage: $massage");
       // },
     );
-  }
-
-  Text buildText(username, User user, String usernameindb) {
-    setState(() {});
-    if (username != null) {
-      return Text(
-        username,
-        style: _txtName,
-      );
-      // } else if ( username == null) {
-      //   return Text(
-      //     "Guest person",
-      //     style: _txtName,
-      //   );
-      // } else if(authService.signAnon() != null){
-      //   return Text(
-      //     "Hello",
-      //     style: _txtName,
-      //   );
-    } else {
-      var email = user?.emailId;
-      return Text(
-          (email == null)
-              ? "Guest person"
-              : (email != null) ? usernameindb ?? "" : "Something Wents Wrong",
-          style: _txtName);
-    }
   }
 
   void _categoryAlert(BuildContext context) {
@@ -204,6 +179,35 @@ class _AdminState extends State<Admin> {
     final UserDetails userDetails =
         Provider.of<UserDetails>(context, listen: false);
     // var ldos = Provider.of<List<UserDetails>>(context);
+    Text buildText(username, User user, String usernameindb) {
+      setState(() {});
+      if (username != null) {
+        return Text(
+          username,
+          style: _txtName,
+        );
+        // } else if ( username == null) {
+        //   return Text(
+        //     "Guest person",
+        //     style: _txtName,
+        //   );
+        // } else if(authService.signAnon() != null){
+        //   return Text(
+        //     "Hello",
+        //     style: _txtName,
+        //   );
+      } else {
+        var email = user?.emailId;
+        return Text(
+            (email == null)
+                ? "Guest person"
+                : (email != null)
+                    ? usernameindb ?? ""
+                    : "Something Wents Wrong",
+            style: _txtName);
+      }
+    }
+
     var profile = Padding(
       padding: EdgeInsets.only(
         top: 140.0,
@@ -272,6 +276,13 @@ class _AdminState extends State<Admin> {
 
           return Column(
             children: <Widget>[
+              FormDetailNotifications(
+                title: "Important Notice!",
+                message: "Please Add Your Bank Details.",
+                buttonTile: "Add Details",
+                buttonFuc: (){},
+              ),
+
               // Padding(
               //   padding: const EdgeInsets.all(8.0),
               //   child: Container(
@@ -394,12 +405,12 @@ class _AdminState extends State<Admin> {
                                               //         .replaceAll(".", ""));
                                               //         print(currentVersion);
 
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          HomePage()));
+                                              // Navigator.push(
+                                              //     context,
+                                              //     MaterialPageRoute(
+                                              //         builder: (BuildContext
+                                              //                 context) =>
+                                              //             MessagingWidget()));
                                             },
                                             icon: Icon(
                                               Icons.category,

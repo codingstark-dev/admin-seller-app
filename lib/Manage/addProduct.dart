@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:sellerapp/Screen/widget/formerror.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sellerapp/model/db/category.dart';
@@ -182,7 +183,7 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  void validateAndUpload(String username,String uid) async {
+  void validateAndUpload(String username, String uid) async {
     try {
       if (_formKey.currentState.validate()) {
         setState(() => isLoading = true);
@@ -195,16 +196,28 @@ class _AddProductState extends State<AddProduct> {
             final FirebaseStorage storage = FirebaseStorage.instance;
             final String picture1 =
                 "1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-            StorageUploadTask task1 =
-                storage.ref().child(uid).child(productNameController.text).child(picture1).putFile(_image1);
+            StorageUploadTask task1 = storage
+                .ref()
+                .child(uid)
+                .child(productNameController.text)
+                .child(picture1)
+                .putFile(_image1);
             final String picture2 =
                 "2${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-            StorageUploadTask task2 =
-                storage.ref().child(uid).child(productNameController.text).child(picture2).putFile(_image2);
+            StorageUploadTask task2 = storage
+                .ref()
+                .child(uid)
+                .child(productNameController.text)
+                .child(picture2)
+                .putFile(_image2);
             final String picture3 =
                 "3${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-            StorageUploadTask task3 =
-                storage.ref().child(uid).child(productNameController.text).child(picture3).putFile(_image3);
+            StorageUploadTask task3 = storage
+                .ref()
+                .child(uid)
+                .child(productNameController.text)
+                .child(picture3)
+                .putFile(_image3);
 
             StorageTaskSnapshot snapshot1 =
                 await task1.onComplete.then((snapshot) => snapshot);
@@ -226,7 +239,7 @@ class _AddProductState extends State<AddProduct> {
                 "quantity": int.parse(quatityController.text),
                 "brand": _currentBrand,
                 "category": _currentCategory
-              },username);
+              }, username);
               _formKey.currentState.reset();
               setState(() => isLoading = false);
               Fluttertoast.showToast(msg: 'Product added');
@@ -292,6 +305,12 @@ class _AddProductState extends State<AddProduct> {
                     ? Center(child: CircularProgressIndicator())
                     : Column(
                         children: <Widget>[
+                          FormDetailNotifications(
+                            title: "Important Notice!",
+                            message: "Please Add Your Bank Details.",
+                            buttonTile: "Add Details",
+                            buttonFuc: () {},
+                          ),
                           Row(
                             children: <Widget>[
                               Expanded(
@@ -359,8 +378,8 @@ class _AddProductState extends State<AddProduct> {
                             padding: const EdgeInsets.all(12.0),
                             child: TextFormField(
                               controller: productNameController,
-                              decoration:
-                                  InputDecoration(hintText: 'Product name',focusColor: active),
+                              decoration: InputDecoration(
+                                  hintText: 'Product name', focusColor: active),
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return 'You must enter the product name';
@@ -570,7 +589,12 @@ class _AddProductState extends State<AddProduct> {
                             textColor: white,
                             child: Text('add product'),
                             onPressed: () {
-                              validateAndUpload(snapshot.data.userName.toString(),snapshot.data.uid.toString());
+                              if (snapshot.data.bankDetailBool == false) {
+                                Fluttertoast.showToast(msg: "Please Add Your Bank Detail");
+                              } else
+                                validateAndUpload(
+                                    snapshot.data.userName.toString(),
+                                    snapshot.data.uid.toString());
                             },
                           )
                         ],
