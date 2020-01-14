@@ -61,22 +61,46 @@ class _AdminState extends State<Admin> {
   @override
   void initState() {
     super.initState();
-   
+
     firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> massage) async {
         print("Massage: $massage");
       },
       onResume: (Map<String, dynamic> massage) async {
+        final data = await massage["data"]["screen"];
+
+        if (data == "OderPage") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => ProductList()));
+        }
+
         print("onResume: $massage");
       },
       onLaunch: (Map<String, dynamic> massage) async {
+        final data = await massage["data"]["screen"];
+        if (data == "OderPage") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => ProductList()));
+        }
         print("onLaunch: $massage");
       },
       // onBackgroundMessage: (Map<String, dynamic> massage) async {
       //   print("Massage: $massage");
       // },
     );
-  }
+  } 
+  // void _navigateToItemDetail(Map<String, dynamic> message) {
+  //   final MessageBean item = _itemForMessage(message);
+  //   // Clear away dialogs
+  //   Navigator.popUntil(context, (Route<dynamic> route) => route is PageRoute);
+  //   if (!item.route.isCurrent) {
+  //     Navigator.push(context, item.route);
+  //   }
+  // }
 
   void _categoryAlert(BuildContext context) {
     var alert = AlertDialog(
@@ -280,7 +304,7 @@ class _AdminState extends State<Admin> {
                 title: "Important Notice!",
                 message: "Please Add Your Bank Details.",
                 buttonTile: "Add Details",
-                buttonFuc: (){},
+                buttonFuc: () {},
               ),
 
               // Padding(
@@ -743,15 +767,40 @@ class _AdminState extends State<Admin> {
                     ),
                     label: Text('Manage')),
               ),
-              IconButton(
-                icon: Icon(Icons.notifications),
-                color: Colors.grey,
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => NotificationO()));
-                },
+              Stack(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.notifications),
+                    color: Colors.grey,
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  NotificationO()));
+                    },
+                  ),
+                  new Positioned(
+                      child: new Stack(
+                    alignment: Alignment.bottomRight,
+                    children: <Widget>[
+                      new Icon(Icons.brightness_1,
+                          size: 22.0, color: Colors.red),
+                      new Positioned(
+                          top: 3.0,
+                          right: 4.0,
+                          child: new Center(
+                            child: new Text(
+                              "90",
+                              style: new TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          )),
+                    ],
+                  )),
+                ],
               ),
             ],
           ),

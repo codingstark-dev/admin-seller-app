@@ -81,7 +81,16 @@ exports.OderNotifications = functions.firestore
       notification: {
         title: user + " Buyed Your Product!",
         body: oderTitle,
-        click_action: "FLUTTER_NOTIFICATION_CLICK"
+        click_action: "FLUTTER_NOTIFICATION_CLICK",
+        sound: "default"
+      },
+      data: {
+        title: user + " Buyed Your Product!",
+        body: oderTitle,
+        click_action: "FLUTTER_NOTIFICATION_CLICK",
+        sound: "default",
+        status: "done",
+        screen: "OderPage"
       }
     };
 
