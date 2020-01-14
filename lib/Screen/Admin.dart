@@ -61,16 +61,16 @@ class _AdminState extends State<Admin> {
   @override
   void initState() {
     super.initState();
-    firebaseMessaging.subscribeToTopic("oders");
+   
     firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> massage) async {
         print("Massage: $massage");
       },
       onResume: (Map<String, dynamic> massage) async {
-        print("Massage: $massage");
+        print("onResume: $massage");
       },
       onLaunch: (Map<String, dynamic> massage) async {
-        print("Massage: $massage");
+        print("onLaunch: $massage");
       },
       // onBackgroundMessage: (Map<String, dynamic> massage) async {
       //   print("Massage: $massage");
