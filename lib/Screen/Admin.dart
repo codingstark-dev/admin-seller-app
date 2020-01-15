@@ -5,13 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
+import 'package:sellerapp/Screen/FormDetailsUSer/bankdetails.dart';
 import 'package:sellerapp/Screen/Notfication.dart';
 import 'package:sellerapp/Screen/Rewards.dart';
 import 'package:sellerapp/Screen/productList.dart';
 import 'package:sellerapp/Screen/settings.dart';
-import 'package:sellerapp/Screen/widget/NotificationWidget.dart';
 import 'package:sellerapp/Screen/widget/formerror.dart';
-import 'package:sellerapp/Screen/widget/localNotification.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:sellerapp/model/db/category.dart';
 import 'package:sellerapp/model/user.dart';
@@ -49,14 +48,16 @@ class _AdminState extends State<Admin> {
   TextEditingController brandController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  String massageBody;
+  String massageTitle;
   MaterialColor notActive = Colors.grey;
 
   GlobalKey<FormState> _brandFormKey = GlobalKey();
   BrandService _brandService = BrandService();
   GlobalKey<FormState> _categoryFormKey = GlobalKey();
   CategoryService _categoryService = CategoryService();
-  Page _selectedPage = Page.dashboard;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Page _selectedPage = Page.dashboard;
 
   @override
   void initState() {
@@ -65,34 +66,59 @@ class _AdminState extends State<Admin> {
     firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> massage) async {
         print("Massage: $massage");
+        final msgTitle = await massage["data"]["title"];
+        final msgBody = await massage["data"]["body"];
+        setState(() {
+          massageBody = msgBody;
+          massageTitle = msgTitle;
+        });
       },
       onResume: (Map<String, dynamic> massage) async {
         final data = await massage["data"]["screen"];
-
-        if (data == "OderPage") {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => ProductList()));
-        }
-
+        handleRouting(data);
+        final msgTitle = await massage["data"]["title"];
+        final msgBody = await massage["data"]["body"];
+        setState(() {
+          massageBody = msgBody;
+          massageTitle = msgTitle;
+        });
         print("onResume: $massage");
       },
       onLaunch: (Map<String, dynamic> massage) async {
-        final data = await massage["data"]["screen"];
-        if (data == "OderPage") {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => ProductList()));
-        }
+        // final data = await massage["data"]["screen"];
+        // if (data == "OderPage") {
+        //   Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (BuildContext context) => ProductList()));
+        // }
+        final msgTitle = await massage["data"]["title"];
+        final msgBody = await massage["data"]["body"];
+        setState(() {
+          massageBody = msgBody;
+          massageTitle = msgTitle;
+        });
+
         print("onLaunch: $massage");
       },
       // onBackgroundMessage: (Map<String, dynamic> massage) async {
       //   print("Massage: $massage");
       // },
     );
-  } 
+  }
+
+  void handleRouting(dynamic notification) {
+    switch (notification) {
+      case 'OderPage':
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => ProductList()));
+        break;
+      default:
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (BuildContext context) => Admin()));
+    }
+  }
+
   // void _navigateToItemDetail(Map<String, dynamic> message) {
   //   final MessageBean item = _itemForMessage(message);
   //   // Clear away dialogs
@@ -304,7 +330,13 @@ class _AdminState extends State<Admin> {
                 title: "Important Notice!",
                 message: "Please Add Your Bank Details.",
                 buttonTile: "Add Details",
-                buttonFuc: () {},
+                buttonFuc: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              BankDetailsSubmit()));
+                },
               ),
 
               // Padding(
@@ -420,21 +452,28 @@ class _AdminState extends State<Admin> {
                                     child: ListTile(
                                         title: FlatButton.icon(
                                             onPressed: () async {
-                                              // final PackageInfo info =
-                                              //     await PackageInfo
-                                              //         .fromPlatform();
-                                              // double currentVersion =
-                                              //     double.parse(info.version
-                                              //         .trim()
-                                              //         .replaceAll(".", ""));
-                                              //         print(currentVersion);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          BankDetailsSubmit()));
 
-                                              // Navigator.push(
-                                              //     context,
-                                              //     MaterialPageRoute(
-                                              //         builder: (BuildContext
-                                              //                 context) =>
-                                              //             MessagingWidget()));
+                                              //   // final PackageInfo info =
+                                              //   //     await PackageInfo
+                                              //   //         .fromPlatform();
+                                              //   // double currentVersion =
+                                              //   //     double.parse(info.version
+                                              //   //         .trim()
+                                              //   //         .replaceAll(".", ""));
+                                              //   //         print(currentVersion);
+
+                                              //   // Navigator.push(
+                                              //   //     context,
+                                              //   //     MaterialPageRoute(
+                                              //   //         builder: (BuildContext
+                                              //   //                 context) =>
+                                              //   //             MessagingWidget()));
                                             },
                                             icon: Icon(
                                               Icons.category,
@@ -442,7 +481,7 @@ class _AdminState extends State<Admin> {
                                             ),
                                             label: Text("Category")),
                                         subtitle: Text(
-                                          '16',
+                                          '0',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               color: active, fontSize: 60.0),
@@ -459,7 +498,7 @@ class _AdminState extends State<Admin> {
                                         ),
                                         label: Text("Users")),
                                     subtitle: Text(
-                                      '7',
+                                      '0',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: active, fontSize: 60.0),
@@ -497,7 +536,7 @@ class _AdminState extends State<Admin> {
                                         ),
                                         label: Text("Sold")),
                                     subtitle: Text(
-                                      '23',
+                                      '0',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: active, fontSize: 60.0),
@@ -516,7 +555,7 @@ class _AdminState extends State<Admin> {
                                         ),
                                         label: Text("Orders")),
                                     subtitle: Text(
-                                      '4',
+                                      '0',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: active, fontSize: 60.0),
@@ -528,14 +567,14 @@ class _AdminState extends State<Admin> {
                               child: Card(
                                 child: ListTile(
                                     title: FlatButton.icon(
-                                        onPressed: () {},
+                                        onPressed: null,
                                         icon: Icon(
                                           Icons.close,
                                           color: active,
                                         ),
                                         label: Text("Return")),
                                     subtitle: Text(
-                                      '1',
+                                      '0',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: active, fontSize: 60.0),
@@ -782,16 +821,15 @@ class _AdminState extends State<Admin> {
                   ),
                   new Positioned(
                       child: new Stack(
-                    alignment: Alignment.bottomRight,
                     children: <Widget>[
                       new Icon(Icons.brightness_1,
                           size: 22.0, color: Colors.red),
                       new Positioned(
-                          top: 3.0,
+                          top: 5.0,
                           right: 4.0,
                           child: new Center(
                             child: new Text(
-                              "90",
+                              "!  ",
                               style: new TextStyle(
                                   color: Colors.white,
                                   fontSize: 11.0,

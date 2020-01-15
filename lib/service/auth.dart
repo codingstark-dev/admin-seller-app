@@ -211,7 +211,9 @@ class AuthService {
             "Device": {
               "product": androidInfo.product,
               "model": androidInfo.model,
-              "manufacturer": androidInfo.manufacturer
+              "manufacturer": androidInfo.manufacturer,
+              "version": androidInfo.version.baseOS,
+              "sdkVersion": androidInfo.version.sdkInt
             }
           });
           firestore
@@ -417,7 +419,9 @@ class AuthService {
             "Device": {
               "product": androidInfo.product,
               "model": androidInfo.model,
-              "manufacturer": androidInfo.manufacturer
+              "manufacturer": androidInfo.manufacturer,
+              "version": androidInfo.version.baseOS,
+              "sdkVersion": androidInfo.version.sdkInt
             }
           });
           firestore

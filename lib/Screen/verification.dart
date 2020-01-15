@@ -34,8 +34,7 @@ class _VerificationDbState extends State<VerificationDb> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 240, 0, 0),
-                child: SafeArea(
-                                child: Column(
+                child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -76,7 +75,6 @@ class _VerificationDbState extends State<VerificationDb> {
                       )),
                     ],
                   ),
-                ),
               )
             ],
           )),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:sellerapp/Screen/FormDetailsUSer/bankdetails.dart';
 import 'package:sellerapp/Screen/widget/formerror.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -229,21 +230,27 @@ class _AddProductState extends State<AddProduct> {
               imageUrl2 = await snapshot2.ref.getDownloadURL();
               imageUrl3 = await snapshot3.ref.getDownloadURL();
               List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
-
-              productService.uploadProduct({
-                "ProductName": productNameController.text,
-                "UploaderName": username,
-                "price": double.parse(priceController.text),
-                "sizes": selectedSizes,
-                "images": imageList,
-                "quantity": int.parse(quatityController.text),
-                "brand": _currentBrand,
-                "category": _currentCategory
-              }, username);
-              _formKey.currentState.reset();
-              setState(() => isLoading = false);
-              Fluttertoast.showToast(msg: 'Product added');
-              Navigator.pop(context);
+              if (_currentBrand != null && _currentCategory != null) {
+                productService.uploadProduct({
+                  "ProductName": productNameController.text,
+                  "UploaderName": username,
+                  "price": double.parse(priceController.text),
+                  "sizes": selectedSizes,
+                  "images": imageList,
+                  "quantity": int.parse(quatityController.text),
+                  "brand": _currentBrand,
+                  "category": _currentCategory
+                }, username);
+                _formKey.currentState.reset();
+                setState(() => isLoading = false);
+                Fluttertoast.showToast(msg: 'Product added');
+                Navigator.pop(context);
+              } else {
+                setState(() => isLoading = false);
+                Fluttertoast.showToast(
+                    msg:
+                        "Add Category And Brand Go Manage Section Scroll Down And Both Thing");
+              }
             });
           } else {
             setState(() => isLoading = false);
@@ -309,7 +316,13 @@ class _AddProductState extends State<AddProduct> {
                             title: "Important Notice!",
                             message: "Please Add Your Bank Details.",
                             buttonTile: "Add Details",
-                            buttonFuc: () {},
+                            buttonFuc: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          BankDetailsSubmit()));
+                            },
                           ),
                           Row(
                             children: <Widget>[
@@ -590,7 +603,8 @@ class _AddProductState extends State<AddProduct> {
                             child: Text('add product'),
                             onPressed: () {
                               if (snapshot.data.bankDetailBool == false) {
-                                Fluttertoast.showToast(msg: "Please Add Your Bank Detail");
+                                Fluttertoast.showToast(
+                                    msg: "Please Add Your Bank Detail");
                               } else
                                 validateAndUpload(
                                     snapshot.data.userName.toString(),

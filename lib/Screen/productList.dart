@@ -6,9 +6,10 @@ import 'package:sellerapp/Screen/ProductDetails.dart';
 import 'package:sellerapp/model/user.dart';
 
 class ProductList extends StatefulWidget {
+  const ProductList({Key key, this.payload}) : super(key: key);
+
   final payload;
 
-  const ProductList({Key key, this.payload}) : super(key: key);
   @override
   _ProductListState createState() => _ProductListState();
 }
@@ -54,11 +55,25 @@ class _ProductListState extends State<ProductList> {
                         return Card(
                           child: ListTile(
                             isThreeLine: true,
-                            title: Text(document[index]["price"].toString()),
+                            title: RichText(
+                              text: TextSpan(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .body1
+                                      .copyWith(fontSize: 16),
+                                  children: [
+                                    TextSpan(
+                                        text: document[index]["ProductName"]
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500))
+                                  ]),
+                            ),
                             leading: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Text("${index + 1}",
+                                Text(
+                                  "${index + 1}.",
                                   style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 15),
@@ -66,7 +81,8 @@ class _ProductListState extends State<ProductList> {
                                 SizedBox(
                                   width: 10,
                                 ),
-                                GestureDetector(onTap: (){},
+                                GestureDetector(
+                                  onTap: () {},
                                   child: Image.network(
                                     document[index]["images"][0],
                                     fit: BoxFit.fill,
@@ -74,8 +90,69 @@ class _ProductListState extends State<ProductList> {
                                 ),
                               ],
                             ),
-                            subtitle:
-                                Text(document[index]["ProductName"].toString()),
+                            subtitle: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                RichText(
+                                  text: TextSpan(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body1
+                                          .copyWith(fontSize: 14),
+                                      children: [
+                                        TextSpan(
+                                            text: "Price: ",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500)),
+                                        TextSpan(
+                                            text:
+                                                "${document[index]["price"].toString()} ",
+                                            style: TextStyle(
+                                                color: Colors.grey[600],
+                                                fontWeight: FontWeight.w400)),
+                                        TextSpan(
+                                            text: "₹",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold)),
+                                      ]),
+                                ),
+
+                                RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(
+                                        text: "Category: ",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500)),
+                                    TextSpan(
+                                        text: document[index]["category"],
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400))
+                                  ]),
+                                ),
+                                RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(
+                                        text: "Brand: ",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500)),
+                                    TextSpan(
+                                        text: document[index]["brand"],
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400))
+                                  ]),
+                                )
+                                // Text("Quntytus" +
+                                //     "${document[index]["ProductName"].toString()}"),
+                                // Text(document[index]["ProductName"].toString()),
+                              ],
+                            ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
@@ -138,6 +215,7 @@ class _ProductListState extends State<ProductList> {
                             ),
                           ),
                         );
+                        // print(i);
                       } else {
                         return Center(
                             child: CircularProgressIndicator(

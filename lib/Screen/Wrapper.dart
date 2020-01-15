@@ -7,7 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Screen/Admin.dart';
-import 'package:sellerapp/Screen/formDetails.dart';
+import 'package:sellerapp/Screen/FormDetailsUSer/formDetails.dart';
 import 'package:sellerapp/Screen/verification.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
@@ -63,7 +63,6 @@ class _WrapperState extends State<Wrapper> {
                           var result = network.data;
                           switch (result) {
                             case ConnectivityResult.none:
-                              print("no net");
                               if (ConnectivityResult.none ==
                                   ConnectivityResult.none) {
                                 Future.delayed(const Duration(seconds: 25),
@@ -109,17 +108,10 @@ class _WrapperState extends State<Wrapper> {
                               );
                             case ConnectivityResult.mobile:
                             case ConnectivityResult.wifi:
-                              print("yes net");
+                              return Admin();
 
-                              return Consumer<User>(
-                                builder: (BuildContext context, User lols,
-                                    Widget child) {
-                                  return Admin();
-                                },
-                              );
                             default:
-                              return Center(
-                                  child: CircularProgressIndicator());
+                              return Center(child: CircularProgressIndicator());
                           }
                         });
                   }
