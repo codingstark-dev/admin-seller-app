@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,6 +9,7 @@ import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Screen/Admin.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/formDetails.dart';
+import 'package:sellerapp/Screen/productList.dart';
 import 'package:sellerapp/Screen/verification.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
@@ -21,14 +23,68 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  String massageBody;
+  String massageTitle;
   @override
   void initState() {
+    firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> massage) async {
+        print("Massage: $massage");
+        final msgTitle = await massage["data"]["title"];
+        final msgBody = await massage["data"]["body"];
+        setState(() {
+          massageBody = msgBody;
+          massageTitle = msgTitle;
+        });
+      },
+      onResume: (Map<String, dynamic> massage) async {
+        final data = await massage["data"]["screen"];
+        handleRouting(data);
+        final msgTitle = await massage["data"]["title"];
+        final msgBody = await massage["data"]["body"];
+        setState(() {
+          massageBody = msgBody;
+          massageTitle = msgTitle;
+        });
+        print("onResume: $massage");
+      },
+      onLaunch: (Map<String, dynamic> massage) async {
+        // final data = await massage["data"]["screen"];
+        // if (data == "OderPage") {
+        //   Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (BuildContext context) => ProductList()));
+        // }
+        final msgTitle = await massage["data"]["title"];
+        final msgBody = await massage["data"]["body"];
+        setState(() {
+          massageBody = msgBody;
+          massageTitle = msgTitle;
+        });
+
+        print("onLaunch: $massage");
+      },
+      // onBackgroundMessage: (Map<String, dynamic> massage) async {
+      //   print("Massage: $massage");
+      // },
+    );
     try {
       versionCheck(context);
     } catch (e) {
       print(e);
     }
     super.initState();
+  }
+
+  void handleRouting(dynamic notification) {
+    switch (notification) {
+      case 'OderPage':
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => ProductList()));
+        break;
+    }
   }
 
   @override

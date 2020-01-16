@@ -130,3 +130,76 @@ exports.OderNotifications = functions.firestore
     //     registrationTokens: stillRegisteredTokens
     //   });
   });
+
+exports.AccountApprove = functions.firestore
+  .document("Sellers/{uid}")
+  .onUpdate(async (docSnapshot, context) => {
+    const oders = docSnapshot.after.data();
+    const uid = oders["id"];
+    const name = oders["name"];
+    // const senderName = oders["senderName"];
+    console.log(oders);
+    const userDoc = await admin
+      .firestore()
+      .doc("Sellers/" + uid)
+      .get();
+    const Verification = userDoc.get("Verification");
+    const registrationTokens = userDoc.get("userToken");
+    console.log(Verification);
+    console.log(registrationTokens);
+    // const notificationBody =
+    //   message["type"] === "TEXT"
+    //     ? message["text"]
+    //     : "You received a new image message.";
+    //verification
+    if (Verification === true) {
+      const payload = {
+        notification: {
+          title: name + " - Your Account Now Is Approved!",
+          body: "Check Your Impression Initial Impression On This App",
+          click_action: "FLUTTER_NOTIFICATION_CLICK",
+          sound: "default"
+        }
+      };
+
+      return await admin
+        .messaging()
+        .sendToDevice(registrationTokens, payload)
+        .then(response => {
+          console.log("Successfully sent message:", response);
+        })
+        .catch(error => {
+          console.log("Error sending message:", error);
+        });
+    } else if (Verification === false) {
+      console.log("Account in Pending");
+    }
+
+  
+    // const stillRegisteredTokens = registrationTokens;
+    // response.results.forEach((result, index) => {
+    //   const error = result.error;
+    //   if (error) {
+    //     const failedRegistrationToken = registrationTokens[index];
+    //     console.error("blah", failedRegistrationToken, error);
+    //     if (
+    //       error.code === "messaging/invalid-registration-token" ||
+    //       error.code === "messaging/registration-token-not-registered"
+    //     ) {
+    //       const failedIndex = stillRegisteredTokens.indexOf(
+    //         failedRegistrationToken
+    //       );
+    //       if (failedIndex > -1) {
+    //         stillRegisteredTokens.splice(failedIndex, 1);
+    //       }
+    //     }
+    //   }
+    // });
+
+    // admin
+    //   .firestore()
+    //   .doc("users/" + uid)
+    //   .update({
+    //     registrationTokens: stillRegisteredTokens
+    //   });
+  });

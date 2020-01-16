@@ -63,48 +63,48 @@ class _AdminState extends State<Admin> {
   void initState() {
     super.initState();
 
-    firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> massage) async {
-        print("Massage: $massage");
-        final msgTitle = await massage["data"]["title"];
-        final msgBody = await massage["data"]["body"];
-        setState(() {
-          massageBody = msgBody;
-          massageTitle = msgTitle;
-        });
-      },
-      onResume: (Map<String, dynamic> massage) async {
-        final data = await massage["data"]["screen"];
-        handleRouting(data);
-        final msgTitle = await massage["data"]["title"];
-        final msgBody = await massage["data"]["body"];
-        setState(() {
-          massageBody = msgBody;
-          massageTitle = msgTitle;
-        });
-        print("onResume: $massage");
-      },
-      onLaunch: (Map<String, dynamic> massage) async {
-        // final data = await massage["data"]["screen"];
-        // if (data == "OderPage") {
-        //   Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (BuildContext context) => ProductList()));
-        // }
-        final msgTitle = await massage["data"]["title"];
-        final msgBody = await massage["data"]["body"];
-        setState(() {
-          massageBody = msgBody;
-          massageTitle = msgTitle;
-        });
+    // firebaseMessaging.configure(
+    //   onMessage: (Map<String, dynamic> massage) async {
+    //     print("Massage: $massage");
+    //     final msgTitle = await massage["data"]["title"];
+    //     final msgBody = await massage["data"]["body"];
+    //     setState(() {
+    //       massageBody = msgBody;
+    //       massageTitle = msgTitle;
+    //     });
+    //   },
+    //   onResume: (Map<String, dynamic> massage) async {
+    //     final data = await massage["data"]["screen"];
+    //     handleRouting(data);
+    //     final msgTitle = await massage["data"]["title"];
+    //     final msgBody = await massage["data"]["body"];
+    //     setState(() {
+    //       massageBody = msgBody;
+    //       massageTitle = msgTitle;
+    //     });
+    //     print("onResume: $massage");
+    //   },
+    //   onLaunch: (Map<String, dynamic> massage) async {
+    //     // final data = await massage["data"]["screen"];
+    //     // if (data == "OderPage") {
+    //     //   Navigator.push(
+    //     //       context,
+    //     //       MaterialPageRoute(
+    //     //           builder: (BuildContext context) => ProductList()));
+    //     // }
+    //     final msgTitle = await massage["data"]["title"];
+    //     final msgBody = await massage["data"]["body"];
+    //     setState(() {
+    //       massageBody = msgBody;
+    //       massageTitle = msgTitle;
+    //     });
 
-        print("onLaunch: $massage");
-      },
-      // onBackgroundMessage: (Map<String, dynamic> massage) async {
-      //   print("Massage: $massage");
-      // },
-    );
+    //     print("onLaunch: $massage");
+    //   },
+    //   // onBackgroundMessage: (Map<String, dynamic> massage) async {
+    //   //   print("Massage: $massage");
+    //   // },
+    // );
   }
 
   void handleRouting(dynamic notification) {
@@ -252,7 +252,7 @@ class _AdminState extends State<Admin> {
             (email == null)
                 ? "Guest person"
                 : (email != null)
-                    ? usernameindb ?? ""
+                    ? usernameindb ?? "Error!! Try To Exit And Restart The App"
                     : "Something Wents Wrong",
             style: _txtName);
       }
@@ -731,27 +731,27 @@ class _AdminState extends State<Admin> {
                                   "Are You Sure To Logout From This App??"),
                               actions: <Widget>[
                                 FlatButton(
-                                  onPressed: () {
-                                    dynamic result =
-                                        authService.signOut().whenComplete(() {
+                                  onPressed: () async {
+                                    return await authService
+                                        .signOut()
+                                        .whenComplete(() {
                                       Navigator.pop(context);
+                                      Navigator.of(context).pushReplacement(
+                                          PageRouteBuilder(
+                                              pageBuilder: (_, __, ___) =>
+                                                  new Signup()));
                                     });
 
-                                    if (result == null) {
-                                      setState(() {
-                                        Fluttertoast.showToast(
-                                            msg: "Oops! Samething went wrong!");
-                                      });
-                                    } else if (result != null) {
-                                      setState(() {
-                                        Navigator.of(context).pushReplacement(
-                                            PageRouteBuilder(
-                                                pageBuilder: (_, __, ___) =>
-                                                    new Signup()));
-                                      });
-                                      Fluttertoast.showToast(
-                                          msg: "Succesfull logout!");
-                                    }
+                                    // if (result == null) {
+                                    // setState(() {
+                                    //   Fluttertoast.showToast(
+                                    //       msg: "Oops! Samething went wrong!");
+                                    // });
+                                    // // } else if (result != null) {
+                                    // setState(() {});
+                                    // Fluttertoast.showToast(
+                                    //     msg: "Succesfull logout!");
+                                    // // }
                                   },
                                   child: Text("Yes"),
                                 ),

@@ -16,7 +16,11 @@ class ProductDetaislEdit extends StatefulWidget {
   final num quantity;
 
   const ProductDetaislEdit(
-      {Key key, @required this.index, @required this.productName, @required this.price,@required this.quantity})
+      {Key key,
+      @required this.index,
+      @required this.productName,
+      @required this.price,
+      @required this.quantity})
       : super(key: key);
   @override
   _ProductDetaislEditState createState() => _ProductDetaislEditState();
@@ -250,7 +254,7 @@ class _ProductDetaislEditState extends State<ProductDetaislEdit> {
           }, documentID);
           _formKey.currentState.reset();
           setState(() => isLoading = false);
-         
+
           Navigator.pop(context);
           // }
 

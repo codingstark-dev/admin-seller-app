@@ -36,17 +36,17 @@ class AuthService {
   }
 
   // ! ananomy as gust
-  Future signAnon() async {
-    try {
-      final result = await auth.signInAnonymously();
-      FirebaseUser user = result.user;
-      assert(user.isAnonymous != null);
-      return true;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
+  // Future signAnon() async {
+  //   try {
+  //     final result = await auth.signInAnonymously();
+  //     FirebaseUser user = result.user;
+  //     assert(user.isAnonymous != null);
+  //     return true;
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return null;
+  //   }
+  // }
 
   // ! Google SignIn
   Future googleSignin() async {
@@ -106,6 +106,36 @@ class AuthService {
       FirebaseUser user = result.user;
       assert(user != null);
       assert(await user.getIdToken() != null);
+      final String fcm = await firebaseMessaging.getToken();
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      Firestore.instance.collection("Sellers").document(user.uid).updateData({
+        "TimeCreated": Timestamp.now(),
+        "Register By": "Register Via Email Password",
+        "id": user.uid,
+        "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
+        "Email": user.email,
+        "photo": user.isEmailVerified,
+        "userToken": fcm,
+        "Device": {
+          "product": androidInfo.product,
+          "model": androidInfo.model,
+          "manufacturer": androidInfo.manufacturer,
+          "version": androidInfo.version.release,
+          "sdkVersion": androidInfo.version.sdkInt
+        }
+      });
+      firestore
+          .collection("Sellers")
+          .document(user.uid)
+          .collection("Token")
+          .document(fcm)
+          .setData({
+        "Email": user.email,
+        "Token": fcm,
+        "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
+        "name": user.displayName ??
+            user.uid.toString().substring(3, 8).toLowerCase(),
+      });
       return true;
     } catch (e) {
       switch (e.code) {
@@ -132,40 +162,40 @@ class AuthService {
 
   //! gooogle signinnnn
 
-  Future signinn() async {
-    // sharedPreferences = await SharedPreferences.getInstance();
-    GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-    GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
-    AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
-    AuthResult authResult = await auth.signInWithCredential(credential);
-    FirebaseUser user = authResult.user;
-    if (authResult != null) {
-      final QuerySnapshot results = await Firestore.instance
-          .collection("path")
-          .where("id", isEqualTo: user.uid)
-          .getDocuments();
-      final List<DocumentSnapshot> documents = results.documents;
-      if (documents.length == 0) {
-        Firestore.instance.collection("Users").document(user.uid).setData({
-          "id": user.uid,
-          "username": user.displayName,
-          "photo": user.photoUrl
-        });
-        // await sharedPreferences.setString("id", user.uid);
-        // await sharedPreferences.setString("username", user.displayName);
-        // await sharedPreferences.setString("photo", user.photoUrl);
-      } else {
-        // await sharedPreferences.setString("id", documents[0]["id"]);
-        // await sharedPreferences.setString("username", documents[0]["username"]);
-        // await sharedPreferences.setString("photo", documents[0]["photo"]);
-      }
-      Fluttertoast.showToast(msg: 'login sucessed');
-    }
-  }
+  // Future signinn() async {
+  //   // sharedPreferences = await SharedPreferences.getInstance();
+  //   GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+  //   GoogleSignInAuthentication googleSignInAuthentication =
+  //       await googleSignInAccount.authentication;
+  //   AuthCredential credential = GoogleAuthProvider.getCredential(
+  //     accessToken: googleSignInAuthentication.accessToken,
+  //     idToken: googleSignInAuthentication.idToken,
+  //   );
+  //   AuthResult authResult = await auth.signInWithCredential(credential);
+  //   FirebaseUser user = authResult.user;
+  //   if (authResult != null) {
+  //     final QuerySnapshot results = await Firestore.instance
+  //         .collection("path")
+  //         .where("id", isEqualTo: user.uid)
+  //         .getDocuments();
+  //     final List<DocumentSnapshot> documents = results.documents;
+  //     if (documents.length == 0) {
+  //       Firestore.instance.collection("Users").document(user.uid).setData({
+  //         "id": user.uid,
+  //         "username": user.displayName,
+  //         "photo": user.photoUrl
+  //       });
+  //       // await sharedPreferences.setString("id", user.uid);
+  //       // await sharedPreferences.setString("username", user.displayName);
+  //       // await sharedPreferences.setString("photo", user.photoUrl);
+  //     } else {
+  //       // await sharedPreferences.setString("id", documents[0]["id"]);
+  //       // await sharedPreferences.setString("username", documents[0]["username"]);
+  //       // await sharedPreferences.setString("photo", documents[0]["photo"]);
+  //     }
+  //     Fluttertoast.showToast(msg: 'login sucessed');
+  //   }
+  // }
 
   Future<bool> signInWithGoogleeee() async {
     try {
@@ -226,8 +256,7 @@ class AuthService {
             "Token": fcm,
             "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
             "name": user.displayName ??
-                user.uid.toString().substring(3, 8).toLowerCase(),
-            "TimeCreated": Timestamp.now(),
+                user.uid.toString().substring(3, 8).toLowerCase()
           });
         } else {
           Firestore.instance
@@ -235,12 +264,31 @@ class AuthService {
               .document(user.uid)
               .updateData({
             "TimeCreated": Timestamp.now(),
-            "Register By": "Google Sign Up",
+            "Register By": "Register Via Google Sign In",
             "id": user.uid,
-            "refercode": user.uid.toString().substring(0, 6),
-            "name": user.displayName ?? user.uid.toString().substring(3, 8),
+            "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
             "Email": user.email,
             "photo": user.isEmailVerified,
+            "userToken": fcm,
+            "Device": {
+              "product": androidInfo.product,
+              "model": androidInfo.model,
+              "manufacturer": androidInfo.manufacturer,
+              "version": androidInfo.version.release,
+              "sdkVersion": androidInfo.version.sdkInt
+            }
+          });
+          firestore
+              .collection("Sellers")
+              .document(user.uid)
+              .collection("Token")
+              .document(fcm)
+              .setData({
+            "Email": user.email,
+            "Token": fcm,
+            "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
+            "name": user.displayName ??
+                user.uid.toString().substring(3, 8).toLowerCase(),
           });
         }
       }
@@ -435,7 +483,6 @@ class AuthService {
             "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
             "name": user.displayName ??
                 user.uid.toString().substring(3, 8).toLowerCase(),
-            "TimeCreated": Timestamp.now(),
           });
         } else {
           Firestore.instance
@@ -446,10 +493,28 @@ class AuthService {
             "Register By": "Register Via Email Password",
             "id": user.uid,
             "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
-            "name": user.displayName ??
-                user.uid.toString().substring(3, 8).toLowerCase(),
             "Email": user.email,
             "photo": user.isEmailVerified,
+            "userToken": fcm,
+            "Device": {
+              "product": androidInfo.product,
+              "model": androidInfo.model,
+              "manufacturer": androidInfo.manufacturer,
+              "version": androidInfo.version.release,
+              "sdkVersion": androidInfo.version.sdkInt
+            }
+          });
+          firestore
+              .collection("Sellers")
+              .document(user.uid)
+              .collection("Token")
+              .document(fcm)
+              .setData({
+            "Email": user.email,
+            "Token": fcm,
+            "refercode": user.uid.toString().substring(0, 6).toLowerCase(),
+            "name": user.displayName ??
+                user.uid.toString().substring(3, 8).toLowerCase(),
           });
         }
       }
@@ -497,18 +562,18 @@ class AuthService {
     }
   }
 
-  //! data load
-  dataload() async {
-    final ss = auth.signInAnonymously();
-    try {
-      if (ss != null) {
-        return true;
-      }
-    } catch (e) {
-      print(e.toString());
-      return false;
-    }
-  }
+  // //! data load
+  // dataload() async {
+  //   final ss = auth.signInAnonymously();
+  //   try {
+  //     if (ss != null) {
+  //       return true;
+  //     }
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return false;
+  //   }
+  // }
 
   // // ! facebook login
   // Future facebookLogin() async {
@@ -570,12 +635,8 @@ class AuthService {
 
   // !signout for anomn
   Future signOut() async {
-    try {
-      // await fblogin.logOut();
-      await auth.signOut();
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
+    // await fblogin.logOut();
+
+    return await auth.signOut();
   }
 }

@@ -3,6 +3,7 @@ import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sellerapp/MainFinal.dart';
 import 'package:sellerapp/Screen/Admin.dart';
 import 'package:sellerapp/Screen/Wrapper.dart';
 import 'package:sellerapp/service/auth.dart';
@@ -444,10 +445,11 @@ class _LoginScreenState extends State<LoginScreen>
                               if (result == true) {
                                 Fluttertoast.showToast(
                                     msg: "Successfull Login");
-                                return Navigator.of(context).pushReplacement(
-                                    PageRouteBuilder(
-                                        pageBuilder: (_, __, ___) =>
-                                            new Admin()));
+                                return Navigator.of(context)
+                                    .pushReplacement(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      new MainFinal(),
+                                ));
                               }
                               if (result == false) {
                                 setState(() {
