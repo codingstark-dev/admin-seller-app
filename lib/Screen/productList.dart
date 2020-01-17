@@ -72,12 +72,6 @@ class _ProductListState extends State<ProductList> {
                             leading: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Text(
-                                  "${index + 1}.",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15),
-                                ),
                                 SizedBox(
                                   width: 10,
                                 ),

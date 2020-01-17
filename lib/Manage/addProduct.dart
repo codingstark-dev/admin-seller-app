@@ -14,6 +14,7 @@ import 'package:sellerapp/model/db/product.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/streamfiles.dart';
+import 'package:uuid/uuid.dart';
 
 class AddProduct extends StatefulWidget {
   @override
@@ -186,51 +187,52 @@ class _AddProductState extends State<AddProduct> {
 
   void validateAndUpload(String username, String uid) async {
     try {
-      if (_formKey.currentState.validate()) {
-        setState(() => isLoading = true);
-        if (_image1 != null && _image2 != null && _image3 != null) {
-          if (selectedSizes.isNotEmpty) {
-            String imageUrl1;
-            String imageUrl2;
-            String imageUrl3;
+      if (_currentBrand != null && _currentCategory != null) {
+        if (_formKey.currentState.validate()) {
+          setState(() => isLoading = true);
+          if (_image1 != null && _image2 != null && _image3 != null) {
+            if (selectedSizes.isNotEmpty) {
+              String imageUrl1;
+              String imageUrl2;
+              String imageUrl3;
 
-            final FirebaseStorage storage = FirebaseStorage.instance;
-            final String picture1 =
-                "1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-            StorageUploadTask task1 = storage
-                .ref()
-                .child(uid)
-                .child(productNameController.text)
-                .child(picture1)
-                .putFile(_image1);
-            final String picture2 =
-                "2${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-            StorageUploadTask task2 = storage
-                .ref()
-                .child(uid)
-                .child(productNameController.text)
-                .child(picture2)
-                .putFile(_image2);
-            final String picture3 =
-                "3${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
-            StorageUploadTask task3 = storage
-                .ref()
-                .child(uid)
-                .child(productNameController.text)
-                .child(picture3)
-                .putFile(_image3);
+              final FirebaseStorage storage = FirebaseStorage.instance;
+              final String picture1 =
+                  "1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+              StorageUploadTask task1 = storage
+                  .ref()
+                  .child(uid)
+                  .child(productNameController.text)
+                  .child(picture1)
+                  .putFile(_image1);
+              final String picture2 =
+                  "2${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+              StorageUploadTask task2 = storage
+                  .ref()
+                  .child(uid)
+                  .child(productNameController.text)
+                  .child(picture2)
+                  .putFile(_image2);
+              final String picture3 =
+                  "3${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+              StorageUploadTask task3 = storage
+                  .ref()
+                  .child(uid)
+                  .child(productNameController.text)
+                  .child(picture3)
+                  .putFile(_image3);
 
-            StorageTaskSnapshot snapshot1 =
-                await task1.onComplete.then((snapshot) => snapshot);
-            StorageTaskSnapshot snapshot2 =
-                await task2.onComplete.then((snapshot) => snapshot);
+              StorageTaskSnapshot snapshot1 =
+                  await task1.onComplete.then((snapshot) => snapshot);
+              StorageTaskSnapshot snapshot2 =
+                  await task2.onComplete.then((snapshot) => snapshot);
 
-            task3.onComplete.then((snapshot3) async {
-              imageUrl1 = await snapshot1.ref.getDownloadURL();
-              imageUrl2 = await snapshot2.ref.getDownloadURL();
-              imageUrl3 = await snapshot3.ref.getDownloadURL();
-              List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
-              if (_currentBrand != null && _currentCategory != null) {
+              task3.onComplete.then((snapshot3) async {
+                imageUrl1 = await snapshot1.ref.getDownloadURL();
+                imageUrl2 = await snapshot2.ref.getDownloadURL();
+                imageUrl3 = await snapshot3.ref.getDownloadURL();
+                List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
+                String productIds = Uuid().v4().substring(0,6);
                 productService.uploadProduct({
                   "ProductName": productNameController.text,
                   "UploaderName": username,
@@ -239,28 +241,30 @@ class _AddProductState extends State<AddProduct> {
                   "images": imageList,
                   "quantity": int.parse(quatityController.text),
                   "brand": _currentBrand,
-                  "category": _currentCategory
+                  "category": _currentCategory,
+                  "Reference": productIds,
+                  "TimeStamp": Timestamp.now()
                 }, username);
                 _formKey.currentState.reset();
                 setState(() => isLoading = false);
                 Fluttertoast.showToast(msg: 'Product added');
                 Navigator.pop(context);
-              } else {
-                setState(() => isLoading = false);
-                Fluttertoast.showToast(
-                    msg:
-                        "Add Category And Brand Go Manage Section Scroll Down And Both Thing");
-              }
-            });
+              });
+            } else {
+              setState(() => isLoading = false);
+
+              Fluttertoast.showToast(msg: 'select atleast one size');
+            }
           } else {
             setState(() => isLoading = false);
-
-            Fluttertoast.showToast(msg: 'select atleast one size');
+            Fluttertoast.showToast(msg: 'all the images must be provided');
           }
-        } else {
-          setState(() => isLoading = false);
-          Fluttertoast.showToast(msg: 'all the images must be provided');
         }
+      } else {
+        setState(() => isLoading = false);
+        Fluttertoast.showToast(
+            msg:
+                "Add Category And Brand Go Manage Section Scroll Down And Both Thing");
       }
     } catch (e) {
       print(e.toString());
