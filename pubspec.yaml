@@ -41,6 +41,7 @@ dependencies:
   firebase_crashlytics: ^0.1.2+4
   rxdart: ^0.23.1
   flushbar: ^1.9.1
+  pin_code_fields: ^2.3.0+3
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"

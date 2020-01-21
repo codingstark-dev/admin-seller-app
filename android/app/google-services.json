@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1042985976846:android:14713286947e9731a5e85f",
+        "android_client_info": {
+          "package_name": "com.citygrow.in"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1042985976846-nvjhk1hunvksgc7ja004ec5ds9a59j8v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.citygrow.in",
+            "certificate_hash": "b8380ba47071536746e3e97e5e50b243b7b59e1a"
+          }
+        },
+        {
+          "client_id": "1042985976846-k1imdm746qo5tocngamv5uivluflml1c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1MC9wzHJki_QjHBajYLiHaRQqdBcG5iM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1042985976846-k1imdm746qo5tocngamv5uivluflml1c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1042985976846:android:8766fb5b4cfe178aa5e85f",
         "android_client_info": {
           "package_name": "in.citygrow.seller"
@@ -15,11 +52,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1042985976846-iatccak2dd40r11kgk36jsb1v5r2uugn.apps.googleusercontent.com",
+          "client_id": "1042985976846-d97m2q6b9kv2r48i8nqp882g0qrjeqa8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "in.citygrow.seller",
-            "certificate_hash": "b8380ba47071536746e3e97e5e50b243b7b59e1a"
+            "certificate_hash": "bbe3e7ba4a7abc578259ea9e6e05f53ff1176d5f"
           }
         },
         {

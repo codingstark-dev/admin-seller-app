@@ -560,9 +560,9 @@ class _FormDetailsState extends State<FormDetails> {
     );
   }
 
-  // bool isValidEmail(String val) {
-  //   final RegExp regex = new RegExp(
-  //       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
-  //   return regex.hasMatch(val);
-  // }
+  bool isValidEmail(String val) {
+    final RegExp regex = new RegExp(
+        r"[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}");
+    return regex.hasMatch(val);
+  }
 }
