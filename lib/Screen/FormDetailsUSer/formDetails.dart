@@ -43,6 +43,7 @@ final TextEditingController _acState = TextEditingController();
 final TextEditingController _bankName = TextEditingController();
 final TextEditingController _acHolderName = TextEditingController();
 final TextEditingController _acCity = TextEditingController();
+GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 bool submitBtn = false;
 bool monVal = false;
@@ -95,323 +96,337 @@ class _FormDetailsState extends State<FormDetails> {
     bool pincodeVaild = submitBtn && !widget.pinCodeValidator.isValid(pinCode);
     bool gstinOrtinValid =
         submitBtn && !widget.gstinOrtinValidator.isValid(gstinOrtin);
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                "Local Details Submission",
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              )),
-        ),
-        Divider(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                "Remember Star (*) Field Must important",
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-              )),
-        ),
-        Divider(),
-        Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(40),
-                  BlacklistingTextInputFormatter("  "),
-                ],
-                errorText: nameVaild ? widget.invalidNameError : null,
-                textInputType: TextInputType.multiline,
-                textEditingController: _name,
-                obscureText: false,
-                hintText: "Your Full Name Same As (Pan Card Name) *",
-                onChanged: (name) {
-                  setState(() {});
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(10),
-                  BlacklistingTextInputFormatter(" ")
-                ],
-                errorText: panVaild ? widget.invalidPanlError : null,
-                textInputType: TextInputType.multiline,
-                textEditingController: _pan,
-                obscureText: false,
-                hintText: "Enter Your Pan Number Correctly *",
-                onChanged: (pan) {
-                  setState(() {});
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(10),
-                  BlacklistingTextInputFormatter(" "),
-                ],
-                errorText: phoneValid ? widget.invalidPhoneNumberError : null,
-                textInputType: TextInputType.numberWithOptions(
-                    decimal: false, signed: false),
-                textEditingController: _phoneNumber,
-                obscureText: false,
-                hintText: "Your Phone Number *",
-                onChanged: (number) {
-                  setState(() {});
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(15),
-                  BlacklistingTextInputFormatter(" ")
-                ],
-                errorText:
-                    gstinOrtinValid ? widget.invalidGstinOrTinError : null,
-                textInputType: TextInputType.multiline,
-                textEditingController: _gstinORtin,
-                obscureText: false,
-                hintText: "Enter Your GST or TIN Number (Optional)",
-                onChanged: (gstinORtin) {
-                  setState(() {});
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(60),
-                  BlacklistingTextInputFormatter("  "),
-                ],
-                errorText: stateVaild ? widget.stateError : null,
-                textInputType: TextInputType.multiline,
-                textEditingController: _state,
-                obscureText: false,
-                hintText: "Your State Name *",
-                onChanged: (state) {
-                  setState(() {});
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(60),
-                  BlacklistingTextInputFormatter("  "),
-                ],
-                errorText: addressVaild ? widget.invalidAddressError : null,
-                textInputType: TextInputType.multiline,
-                textEditingController: _address,
-                obscureText: false,
-                hintText: "Your Bussiness Correct Address *",
-                onChanged: (address) {
-                  setState(() {});
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(6),
-                  BlacklistingTextInputFormatter(" "),
-                ],
-                errorText: pincodeVaild ? widget.pinCodeError : null,
-                textInputType: TextInputType.numberWithOptions(
-                    decimal: false, signed: false),
-                textEditingController: _pincode,
-                obscureText: false,
-                hintText: "Your Area PinCode *",
-                onChanged: (pincode) {
-                  setState(() {});
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(60),
-                  BlacklistingTextInputFormatter("  "),
-                ],
-                errorText: cityValid ? widget.cityError : null,
-                textInputType: TextInputType.multiline,
-                textEditingController: _city,
-                obscureText: false,
-                hintText: "Your City Name *",
-                onChanged: (cityname) {
-                  setState(() {});
-                },
-              ),
-            ),
-            // StreamBuilder<QuerySnapshot>(
-            //   stream:,
-            //   builder: (context, snapshot) {
-            //     return DropdownButton(
-            //       items: categoriesDropDown,
-            //       onChanged: changeSelectedCategory,
-            //       value: _currentCategory,
-            //     );
-            //   }
-            // ),
-
-            Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFieldWidget(
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(40),
-                        BlacklistingTextInputFormatter("  "),
-                      ],
-                      errorText:
-                          detailsValid ? widget.invalidDetailsError : null,
-                      textInputType: TextInputType.multiline,
-                      textEditingController: _details,
-                      obscureText: false,
-                      hintText: "Your Shop Name *",
-                      onChanged: (service) {
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: StreamBuilder<QuerySnapshot>(
-                      stream: Firestore.instance
-                          .collection("Local Market")
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        // List<DropdownMenuItem> servicess = [];
-                        // final List<DocumentSnapshot> documentss =
-                        //     snapshot?.data?.documents;
-                        if (!snapshot.hasData ||
-                            snapshot.data.documents.length == 0) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                        // return InputDecorator(
-                        //   decoration: InputDecoration(
-                        //     //labelText: 'Activity',
-                        //     hintText: 'Choose an category',
-                        //     hintStyle: TextStyle(
-                        //       color: active,
-                        //       fontSize: 16.0,
-                        //       fontFamily: "OpenSans",
-                        //       fontWeight: FontWeight.normal,
-                        //     ),
-                        //   ),
-                        //   isEmpty: category == null,
-                        //   child:
-                        return DropdownButton(
-                          value: category,
-                          isExpanded: true,
-                          hint: Text("Service"),
-                          isDense: true,
-                          onChanged: (String newValue) {
-                            setState(() {
-                              final snackBar = SnackBar(
-                                backgroundColor: Colors.white,
-                                content: Text(
-                                  'Your Service Is $newValue',
-                                  style: TextStyle(color: active),
-                                ),
-                              );
-                              Scaffold.of(context).showSnackBar(snackBar);
-                              category = newValue;
-                              serviceBool = true;
-                              // _onShopDropItemSelected(newValue);
-                            });
-                          },
-                          items: snapshot.data != null
-                              ? snapshot.data.documents.map((f) {
-                                  return DropdownMenuItem(
-                                    value: f.documentID.toString(),
-                                    child: Text(f.documentID.toString()),
-                                  );
-                                }).toList()
-
-                              //  snapshot.data != null
-                              //     ? snapshot.data.documents
-                              //         .map((DocumentSnapshot document) {
-                              //         // final List<DocumentSnapshot> documents =
-                              //         //     document.data["local"];
-
-                              //           return DropdownMenuItem(
-                              //               value: document["locals"].toString(),
-                              //               child: new Container(
-                              //                 height: 100.0,
-                              //                 child: new Text(
-                              //                   document.data["locals"][i].toString(),
-                              //                 ),
-                              //               ));
-
-                              //       }).toList()
-
-                              : DropdownMenuItem(
-                                  value: 'null',
-                                  child: new Container(
-                                    height: 100.0,
-                                    child: new Text('null'),
-                                  ),
-                                ),
-                        );
-                        // );
-                      }),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFieldWidget(
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(6),
-                  BlacklistingTextInputFormatter(" ")
-                ],
-                textInputType: TextInputType.multiline,
-                textEditingController: _refercode,
-                obscureText: false,
-                hintText: "Enter Refferal Code (Optional)",
-                onChanged: (refferal) {
-                  setState(() {});
-                },
-              ),
-            ),
-
-            ListTile(
-                leading: CheckBoxWidget(
-                  valueBool: monVal,
-                  onChanged: (value) {
-                    setState(() {
-                      monVal = value;
-                    });
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  "Local Details Submission",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                )),
+          ),
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "Remember Star (*) Field Must important",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                )),
+          ),
+          Divider(),
+          Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(40),
+                    BlacklistingTextInputFormatter("  "),
+                  ],
+                  errorText: nameVaild ? widget.invalidNameError : null,
+                  textInputType: TextInputType.multiline,
+                  textEditingController: _name,
+                  obscureText: false,
+                  hintText: "Your Full Name Same As (Pan Card Name) *",
+                  onChanged: (name) {
+                    setState(() {});
                   },
                 ),
-                title: Text(
-                  "Agree Our Term Conditons",
-                  style: TextStyle(color: active),
-                ))
-          ],
-        )
-      ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+
+                  validator: (value) {
+                    if (value.length < 10) {
+                      return 'Enter 10 Digit Pan';
+                    }
+                  },
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(10),
+                    BlacklistingTextInputFormatter(" ")
+                  ],
+                  errorText: panVaild ? widget.invalidPanlError : null,
+                  textInputType: TextInputType.multiline,
+                  textEditingController: _pan,
+                  obscureText: false,
+                  hintText: "Enter Your Pan Number Correctly *",
+                  onChanged: (pan) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  validator: (value) {
+                    if (value.length < 10) {
+                      return 'Enter 10 Digit Number';
+                    }
+                  },
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(10),
+                    BlacklistingTextInputFormatter(" "),
+                  ],
+                  errorText: phoneValid ? widget.invalidPhoneNumberError : null,
+                  textInputType: TextInputType.numberWithOptions(
+                      decimal: false, signed: false),
+                  textEditingController: _phoneNumber,
+                  obscureText: false,
+                  hintText: "Your Phone Number *",
+                  onChanged: (number) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(15),
+                    BlacklistingTextInputFormatter(" ")
+                  ],
+                  errorText:
+                      gstinOrtinValid ? widget.invalidGstinOrTinError : null,
+                  textInputType: TextInputType.multiline,
+                  textEditingController: _gstinORtin,
+                  obscureText: false,
+                  hintText: "Enter Your GST or TIN Number (Optional)",
+                  onChanged: (gstinORtin) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(60),
+                    BlacklistingTextInputFormatter("  "),
+                  ],
+                  errorText: stateVaild ? widget.stateError : null,
+                  textInputType: TextInputType.multiline,
+                  textEditingController: _state,
+                  obscureText: false,
+                  hintText: "Your State Name *",
+                  onChanged: (state) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(60),
+                    BlacklistingTextInputFormatter("  "),
+                  ],
+                  errorText: addressVaild ? widget.invalidAddressError : null,
+                  textInputType: TextInputType.multiline,
+                  textEditingController: _address,
+                  obscureText: false,
+                  hintText: "Your Bussiness Correct Address *",
+                  onChanged: (address) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(6),
+                    BlacklistingTextInputFormatter(" "),
+                  ],
+                  errorText: pincodeVaild ? widget.pinCodeError : null,
+                  textInputType: TextInputType.numberWithOptions(
+                      decimal: false, signed: false),
+                  textEditingController: _pincode,
+                  obscureText: false,
+                  hintText: "Your Area PinCode *",
+                  onChanged: (pincode) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(60),
+                    BlacklistingTextInputFormatter("  "),
+                  ],
+                  errorText: cityValid ? widget.cityError : null,
+                  textInputType: TextInputType.multiline,
+                  textEditingController: _city,
+                  obscureText: false,
+                  hintText: "Your City Name *",
+                  onChanged: (cityname) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              // StreamBuilder<QuerySnapshot>(
+              //   stream:,
+              //   builder: (context, snapshot) {
+              //     return DropdownButton(
+              //       items: categoriesDropDown,
+              //       onChanged: changeSelectedCategory,
+              //       value: _currentCategory,
+              //     );
+              //   }
+              // ),
+
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFieldWidget(
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(40),
+                          BlacklistingTextInputFormatter("  "),
+                        ],
+                        errorText:
+                            detailsValid ? widget.invalidDetailsError : null,
+                        textInputType: TextInputType.multiline,
+                        textEditingController: _details,
+                        obscureText: false,
+                        hintText: "Your Shop Name *",
+                        onChanged: (service) {
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance
+                            .collection("Local Market")
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          // List<DropdownMenuItem> servicess = [];
+                          // final List<DocumentSnapshot> documentss =
+                          //     snapshot?.data?.documents;
+                          if (!snapshot.hasData ||
+                              snapshot.data.documents.length == 0) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          // return InputDecorator(
+                          //   decoration: InputDecoration(
+                          //     //labelText: 'Activity',
+                          //     hintText: 'Choose an category',
+                          //     hintStyle: TextStyle(
+                          //       color: active,
+                          //       fontSize: 16.0,
+                          //       fontFamily: "OpenSans",
+                          //       fontWeight: FontWeight.normal,
+                          //     ),
+                          //   ),
+                          //   isEmpty: category == null,
+                          //   child:
+                          return DropdownButton(
+                            value: category,
+                            isExpanded: true,
+                            hint: Text("Service"),
+                            isDense: true,
+                            onChanged: (String newValue) {
+                              setState(() {
+                                final snackBar = SnackBar(
+                                  backgroundColor: Colors.white,
+                                  content: Text(
+                                    'Your Service Is $newValue',
+                                    style: TextStyle(color: active),
+                                  ),
+                                );
+                                Scaffold.of(context).showSnackBar(snackBar);
+                                category = newValue;
+                                serviceBool = true;
+                                // _onShopDropItemSelected(newValue);
+                              });
+                            },
+                            items: snapshot.data != null
+                                ? snapshot.data.documents.map((f) {
+                                    return DropdownMenuItem(
+                                      value: f.documentID.toString(),
+                                      child: Text(f.documentID.toString()),
+                                    );
+                                  }).toList()
+
+                                //  snapshot.data != null
+                                //     ? snapshot.data.documents
+                                //         .map((DocumentSnapshot document) {
+                                //         // final List<DocumentSnapshot> documents =
+                                //         //     document.data["local"];
+
+                                //           return DropdownMenuItem(
+                                //               value: document["locals"].toString(),
+                                //               child: new Container(
+                                //                 height: 100.0,
+                                //                 child: new Text(
+                                //                   document.data["locals"][i].toString(),
+                                //                 ),
+                                //               ));
+
+                                //       }).toList()
+
+                                : DropdownMenuItem(
+                                    value: 'null',
+                                    child: new Container(
+                                      height: 100.0,
+                                      child: new Text('null'),
+                                    ),
+                                  ),
+                          );
+                          // );
+                        }),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFieldWidget(
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(6),
+                    BlacklistingTextInputFormatter(" ")
+                  ],
+                  textInputType: TextInputType.multiline,
+                  textEditingController: _refercode,
+                  obscureText: false,
+                  hintText: "Enter Refferal Code (Optional)",
+                  onChanged: (refferal) {
+                    setState(() {});
+                  },
+                ),
+              ),
+
+              ListTile(
+                  leading: CheckBoxWidget(
+                    valueBool: monVal,
+                    onChanged: (value) {
+                      setState(() {
+                        monVal = value;
+                      });
+                    },
+                  ),
+                  title: Text(
+                    "Agree Our Term Conditons",
+                    style: TextStyle(color: active),
+                  ))
+            ],
+          )
+        ],
+      ),
     );
   }
 
@@ -419,35 +434,39 @@ class _FormDetailsState extends State<FormDetails> {
     final auth = Provider.of<AuthService>(context);
     bool result = await auth.refferal(refercode, name);
     final user = Provider.of<User>(context);
-    setState(() {
-      submitBtn = true;
-      if (result == false) {
-        Fluttertoast.showToast(
-            msg: "Invalid Refer Code Please Check It Properly");
-      } else if(category != null){
-        DatabaseService(uid: user.uid).addDataToDb({
-          "name": name,
-          "usedReferCode": refercode,
-          "PhoneNumber": phoneNumber,
-          "Pan Number": pan,
-          "Address": address,
-          "Shop Name": details,
-          "ServiceCategory": category,
-          "Verification": false,
-          "formstatus": true,
-          "State": state,
-          "PinCode": pinCode,
-          "City": city,
-          "GstorTin Number": gstinOrtin,
-          "BankDetailsBool": false
-        });
-        auth.refferal(refercode, name);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Wrapper()));
-      }else{
-        Fluttertoast.showToast(msg: "Please Select Your Service");
-      }
-    });
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        submitBtn = true;
+        if (result == false) {
+          Fluttertoast.showToast(
+              msg: "Invalid Refer Code Please Check It Properly");
+        } else if (category != null) {
+          DatabaseService(uid: user.uid).addDataToDb({
+            "name": name,
+            "usedReferCode": refercode,
+            "PhoneNumber": phoneNumber,
+            "Pan Number": pan,
+            "Address": address,
+            "Shop Name": details,
+            "ServiceCategory": category,
+            "Verification": false,
+            "formstatus": true,
+            "State": state,
+            "PinCode": pinCode,
+            "City": city,
+            "GstorTin Number": gstinOrtin,
+            "BankDetailsBool": false
+          });
+          auth.refferal(refercode, name);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Wrapper()));
+        } else {
+          Fluttertoast.showToast(msg: "Please Select Your Service");
+        }
+      });
+    } else {
+      Fluttertoast.showToast(msg: "Please Fill From Properly");
+    }
   }
 
   @override
@@ -542,9 +561,7 @@ class _FormDetailsState extends State<FormDetails> {
                     // ),
                     OutlineButton(
                       splashColor: active,
-                      onPressed:
-                          // isValidEmail(email) &&
-                          submitBtn ? lolos : null,
+                      onPressed: isValidPan(pan) && submitBtn ? lolos : null,
                       child: Text("Submit Form Details"),
                     ),
                     SizedBox(
@@ -560,9 +577,9 @@ class _FormDetailsState extends State<FormDetails> {
     );
   }
 
-  bool isValidEmail(String val) {
-    final RegExp regex = new RegExp(
-        r"[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}");
+  bool isValidPan(String val) {
+    final RegExp regex =
+        new RegExp(r"[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}");
     return regex.hasMatch(val);
   }
 }

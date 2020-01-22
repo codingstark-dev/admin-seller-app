@@ -249,11 +249,14 @@ class _AdminState extends State<Admin> {
         //   );
       } else {
         var email = user?.emailId;
+        String delimiter = ' ';
+        int lastIndex = usernameindb.indexOf(delimiter);
+        String trimmed = usernameindb.substring(0, lastIndex);
         return Text(
             (email == null)
                 ? "Guest person"
                 : (email != null)
-                    ? usernameindb ?? "Error!! Try To Exit And Restart The App"
+                    ? trimmed ?? "Error!! Try To Exit And Restart The App"
                     : "Something Wents Wrong",
             style: _txtName);
       }

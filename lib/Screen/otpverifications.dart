@@ -5,23 +5,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-
 class PinCodeVerificationScreen extends StatefulWidget {
-  final String phoneNumber;
   PinCodeVerificationScreen(this.phoneNumber);
+
+  final String phoneNumber;
+
   @override
   _PinCodeVerificationScreenState createState() =>
       _PinCodeVerificationScreenState();
 }
 
 class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
-  var onTapRecognizer;
-
-  TextEditingController textEditingController = TextEditingController();
-
-  bool hasError = false;
+  Color active = Colors.deepPurple[400];
   String currentText = "";
+  String errorMessage = '';
+  bool hasError = false;
+  var onTapRecognizer;
+  String phoneNo;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  String smsOTP;
+  TextEditingController textEditingController = TextEditingController();
+  String verificationId;
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   void initState() {
     onTapRecognizer = TapGestureRecognizer()
@@ -32,23 +44,11 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  String phoneNo;
-  String smsOTP;
-  String verificationId;
-  String errorMessage = '';
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  Color active = Colors.deepPurple[400];
-
   Future<void> verifyPhone() async {
     final PhoneCodeSent smsOTPSent = (String verId, [int forceCodeResend]) {
       this.verificationId = verId;
-      smsOTPDialog(context).then((value) {
-        print('sign in');
+      smsOTPDialog(context).catchError((onError) {
+        print(onError.toString());
       });
     };
     try {
@@ -85,7 +85,9 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
               child: Column(children: [
                 TextField(
                   onChanged: (value) {
-                    this.smsOTP = value;
+                    setState(() {
+                      this.smsOTP = value;
+                    });
                   },
                 ),
                 (errorMessage != ''
@@ -102,7 +104,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                 child: Text('Done'),
                 onPressed: () {
                   _auth.currentUser().then((user) {
-                    if (user != null) {
+                    if (user == true) {
                       Navigator.of(context).pop();
                     } else {
                       signIn();
@@ -126,9 +128,9 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
       final FirebaseUser currentUser = await _auth.currentUser();
       assert(user.uid == currentUser.uid);
       Navigator.of(context).pop();
-      Navigator.of(context).pushReplacementNamed('/homepage');
+      // Navigator.of(context).pushReplacementNamed('/homepage');
     } catch (e) {
-      handleError(e);
+      // handleError(e);
     }
   }
 
@@ -249,22 +251,25 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
               SizedBox(
                 height: 20,
               ),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                    text: "Didn't receive the code? ",
-                    style: TextStyle(color: Colors.black54, fontSize: 15),
-                    children: [
-                      TextSpan(
-                          text: " RESEND",
-                          recognizer: onTapRecognizer,
-                          style: TextStyle(
-                              color: active
-                              // Color(0xFF91D3B3)
-                              ,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16))
-                    ]),
+              InkWell(
+                onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (BuildContext context) => PinCodeVerificationScreen(widget.phoneNumber))),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                      text: "Didn't receive the code? ",
+                      style: TextStyle(color: Colors.black54, fontSize: 15),
+                      children: [
+                        TextSpan(
+                            text: " RESEND",
+                            style: TextStyle(
+                                color: active
+                                // Color(0xFF91D3B3)
+                                ,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16))
+                      ]),
+                ),
               ),
               SizedBox(
                 height: 14,

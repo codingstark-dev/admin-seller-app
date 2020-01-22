@@ -147,6 +147,8 @@ exports.AccountApprove = functions.firestore
     const registrationTokens = userDoc.get("userToken");
     console.log(Verification);
     console.log(registrationTokens);
+    var trim = name.indexOf(" ");
+    var sendingName = name.slice(0, trim);
     // const notificationBody =
     //   message["type"] === "TEXT"
     //     ? message["text"]
@@ -155,8 +157,8 @@ exports.AccountApprove = functions.firestore
     if (Verification === true) {
       const payload = {
         notification: {
-          title: name + " - Your Account Now Is Approved!",
-          body: "Check Your Impression Initial Impression On This App",
+          title: sendingName + " - Your Account Is Now  Approved!",
+          body: "Check Your First impression 😊",
           click_action: "FLUTTER_NOTIFICATION_CLICK",
           sound: "default"
         }
@@ -175,7 +177,6 @@ exports.AccountApprove = functions.firestore
       console.log("Account in Pending");
     }
 
-  
     // const stillRegisteredTokens = registrationTokens;
     // response.results.forEach((result, index) => {
     //   const error = result.error;
