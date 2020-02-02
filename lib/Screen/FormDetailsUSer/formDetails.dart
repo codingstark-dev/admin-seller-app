@@ -127,6 +127,11 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  validator: (value) {
+                    if (value.length < 5) {
+                      return 'Enter Your Full Name';
+                    }
+                  },
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(40),
                     BlacklistingTextInputFormatter("  "),
@@ -144,10 +149,9 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
-
                   validator: (value) {
                     if (value.length < 10) {
-                      return 'Enter 10 Digit Pan';
+                      return 'Enter Rright 10 Digit Pan Card Number';
                     }
                   },
                   inputFormatters: [
@@ -169,7 +173,7 @@ class _FormDetailsState extends State<FormDetails> {
                 child: TextFieldWidget(
                   validator: (value) {
                     if (value.length < 10) {
-                      return 'Enter 10 Digit Number';
+                      return 'Enter 10 Digit Phone Number';
                     }
                   },
                   inputFormatters: [
@@ -194,6 +198,11 @@ class _FormDetailsState extends State<FormDetails> {
                     LengthLimitingTextInputFormatter(15),
                     BlacklistingTextInputFormatter(" ")
                   ],
+                  validator: (value) {
+                    if (value.length < 9) {
+                      return 'Fill Correctly';
+                    }
+                  },
                   errorText:
                       gstinOrtinValid ? widget.invalidGstinOrTinError : null,
                   textInputType: TextInputType.multiline,
@@ -208,6 +217,11 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  validator: (value) {
+                    if (value.length < 3) {
+                      return 'Enter Your State Name Properly';
+                    }
+                  },
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(60),
                     BlacklistingTextInputFormatter("  "),
@@ -225,6 +239,11 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  validator: (value) {
+                    if (value.length < 10) {
+                      return 'Enter Full Address give in your pan card';
+                    }
+                  },
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(60),
                     BlacklistingTextInputFormatter("  "),
@@ -242,6 +261,11 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  validator: (value) {
+                    if (value.length < 5) {
+                      return 'Enter Correct Pin Code';
+                    }
+                  },
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(6),
                     BlacklistingTextInputFormatter(" "),
@@ -260,6 +284,11 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  validator: (value) {
+                    if (value.length < 2) {
+                      return 'Enter Proper City Name';
+                    }
+                  },
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(60),
                     BlacklistingTextInputFormatter("  "),
@@ -292,6 +321,11 @@ class _FormDetailsState extends State<FormDetails> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFieldWidget(
+                        validator: (value) {
+                          if (value.length < 3) {
+                            return 'Enter Proper Shop Name';
+                          }
+                        },
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(40),
                           BlacklistingTextInputFormatter("  "),
@@ -396,6 +430,11 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  validator: (value) {
+                    if (value.length < 6) {
+                      return 'Enter 6 Digit Refferal Number';
+                    }
+                  },
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(6),
                     BlacklistingTextInputFormatter(" ")

@@ -318,7 +318,7 @@ class _AddProductState extends State<AddProduct> {
                         children: <Widget>[
                           FormDetailNotifications(
                             title: "Important Notice!",
-                            message: "Please Add Your Bank Details.",
+                            message: "Please Add Your Bank Details. To Add Products!",
                             buttonTile: "Add Details",
                             buttonFuc: () {
                               Navigator.push(

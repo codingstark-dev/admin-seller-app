@@ -59,7 +59,7 @@ class _ProductListState extends State<ProductList> {
                               text: TextSpan(
                                   style: Theme.of(context)
                                       .textTheme
-                                      .body1
+                                      .bodyText1
                                       .copyWith(fontSize: 16),
                                   children: [
                                     TextSpan(
@@ -92,7 +92,7 @@ class _ProductListState extends State<ProductList> {
                                   text: TextSpan(
                                       style: Theme.of(context)
                                           .textTheme
-                                          .body1
+                                          .bodyText1
                                           .copyWith(fontSize: 14),
                                       children: [
                                         TextSpan(

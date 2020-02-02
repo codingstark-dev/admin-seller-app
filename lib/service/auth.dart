@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 // import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
 import 'package:sellerapp/model/user.dart';
 
 class AuthService {

@@ -3,6 +3,11 @@ import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:getflutter/components/badge/gf_badge.dart';
+import 'package:getflutter/components/badge/gf_icon_badge.dart';
+import 'package:getflutter/components/button/gf_icon_button.dart';
+import 'package:getflutter/shape/gf_badge_shape.dart';
+import 'package:getflutter/types/gf_button_type.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/bankdetails.dart';
@@ -249,14 +254,14 @@ class _AdminState extends State<Admin> {
         //   );
       } else {
         var email = user?.emailId;
-        String delimiter = ' ';
-        int lastIndex = usernameindb.indexOf(delimiter);
-        String trimmed = usernameindb.substring(0, lastIndex);
+        // String delimiter = ' ';
+        // int lastIndex = usernameindb.indexOf(delimiter);
+        // String trimmed = usernameindb.substring(0, lastIndex);
         return Text(
             (email == null)
                 ? "Guest person"
                 : (email != null)
-                    ? trimmed ?? "Error!! Try To Exit And Restart The App"
+                    ? usernameindb ?? "Error!! Try To Exit And Restart The App"
                     : "Something Wents Wrong",
             style: _txtName);
       }
@@ -811,40 +816,59 @@ class _AdminState extends State<Admin> {
                     ),
                     label: Text('Manage')),
               ),
-              Stack(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.notifications),
-                    color: Colors.grey,
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  NotificationO()));
-                    },
+              GFIconBadge(
+                child: GFIconButton(
+                  iconSize: 22,
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => NotificationO())),
+                  icon: Icon(
+                    Icons.notifications,
+                    color: active,
                   ),
-                  new Positioned(
-                      child: new Stack(
-                    children: <Widget>[
-                      new Icon(Icons.brightness_1,
-                          size: 22.0, color: Colors.red),
-                      new Positioned(
-                          top: 5.0,
-                          right: 4.0,
-                          child: new Center(
-                            child: new Text(
-                              "!  ",
-                              style: new TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11.0,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          )),
-                    ],
-                  )),
-                ],
+                  type: GFButtonType.transparent,
+                ),
+                counterChild: GFBadge(
+                  shape: GFBadgeShape.circle,
+                  child: Text("0"),
+                ),
               ),
+
+              // Stack(
+              //   children: <Widget>[
+              //     IconButton(
+              //       icon: Icon(Icons.notifications),
+              //       color: Colors.grey,
+              //       onPressed: () {
+              //         Navigator.push(
+              //             context,
+              //             MaterialPageRoute(
+              //                 builder: (BuildContext context) =>
+              //                     NotificationO()));
+              //       },
+              //     ),
+              //     new Positioned(
+              //         child: new Stack(
+              //       children: <Widget>[
+              //         new Icon(Icons.brightness_1,
+              //             size: 22.0, color: Colors.red),
+              //         new Positioned(
+              //             top: 5.0,
+              //             right: 4.0,
+              //             child: new Center(
+              //               child: new Text(
+              //                 "!  ",
+              //                 style: new TextStyle(
+              //                     color: Colors.white,
+              //                     fontSize: 11.0,
+              //                     fontWeight: FontWeight.w500),
+              //               ),
+              //             )),
+              //       ],
+              //     )),
+              //   ],
+              // ),
             ],
           ),
           elevation: 0.0,
