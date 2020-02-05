@@ -31,8 +31,6 @@ class _ProductListState extends State<ProductList> {
       body: StreamBuilder<QuerySnapshot>(
           stream: Firestore.instance
               .collection("ProductListID")
-              .document(user.uid)
-              .collection(user.uid)
               .where("PersonID", isEqualTo: user.uid)
               .snapshots(),
           builder: (context, snapshot) {
@@ -156,6 +154,7 @@ class _ProductListState extends State<ProductList> {
                                       MaterialPageRoute(
                                           builder: (BuildContext context) =>
                                               ProductDetaislEdit(
+                                                documentID: documentID,
                                                 productName: document[index]
                                                         ["ProductName"]
                                                     .toString(),
@@ -182,8 +181,6 @@ class _ProductListState extends State<ProductList> {
                                                   await Firestore.instance
                                                       .collection(
                                                           "ProductListID")
-                                                      .document(user.uid)
-                                                      .collection(user.uid)
                                                       .document(documentID)
                                                       .delete()
                                                       .whenComplete(() {
@@ -191,6 +188,7 @@ class _ProductListState extends State<ProductList> {
                                                         msg: "Deleted");
                                                     Navigator.pop(context);
                                                   });
+                                                  
                                                 },
                                                 child: Text("Yes"),
                                               ),

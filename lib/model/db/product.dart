@@ -20,12 +20,7 @@ class ProductService {
     String productIds = id.v1();
     data["PersonID"] = productId;
     // ProductListsView(uid: uid, userName: username, name: name);
-    _firestore
-        .collection(ref)
-        .document(uid)
-        .collection(productId)
-        .document(productIds)
-        .setData(data);
+    _firestore.collection(ref).document(productIds).setData(data);
   }
 
   void updateProduct(Map<String, dynamic> data, String documentID) async {
@@ -40,8 +35,6 @@ class ProductService {
 
     _firestore
         .collection(ref)
-        .document(uid)
-        .collection(productId)
         .document(documentID)
         .updateData(data)
         .whenComplete(() {

@@ -127,6 +127,7 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  textCapitalization: TextCapitalization.none,
                   validator: (value) {
                     if (value.length < 5) {
                       return 'Enter Your Full Name';
@@ -149,9 +150,10 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  textCapitalization: TextCapitalization.characters,
                   validator: (value) {
                     if (value.length < 10) {
-                      return 'Enter Rright 10 Digit Pan Card Number';
+                      return 'Enter Right 10 Digit Pan Card Number';
                     }
                   },
                   inputFormatters: [
@@ -171,6 +173,7 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  textCapitalization: TextCapitalization.none,
                   validator: (value) {
                     if (value.length < 10) {
                       return 'Enter 10 Digit Phone Number';
@@ -194,15 +197,11 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  textCapitalization: TextCapitalization.none,
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(15),
                     BlacklistingTextInputFormatter(" ")
                   ],
-                  validator: (value) {
-                    if (value.length < 9) {
-                      return 'Fill Correctly';
-                    }
-                  },
                   errorText:
                       gstinOrtinValid ? widget.invalidGstinOrTinError : null,
                   textInputType: TextInputType.multiline,
@@ -217,6 +216,7 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  textCapitalization: TextCapitalization.none,
                   validator: (value) {
                     if (value.length < 3) {
                       return 'Enter Your State Name Properly';
@@ -239,6 +239,7 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  textCapitalization: TextCapitalization.none,
                   validator: (value) {
                     if (value.length < 10) {
                       return 'Enter Full Address give in your pan card';
@@ -261,6 +262,7 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  textCapitalization: TextCapitalization.none,
                   validator: (value) {
                     if (value.length < 5) {
                       return 'Enter Correct Pin Code';
@@ -284,6 +286,7 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
+                  textCapitalization: TextCapitalization.none,
                   validator: (value) {
                     if (value.length < 2) {
                       return 'Enter Proper City Name';
@@ -321,6 +324,7 @@ class _FormDetailsState extends State<FormDetails> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFieldWidget(
+                        textCapitalization: TextCapitalization.none,
                         validator: (value) {
                           if (value.length < 3) {
                             return 'Enter Proper Shop Name';
@@ -430,11 +434,7 @@ class _FormDetailsState extends State<FormDetails> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFieldWidget(
-                  validator: (value) {
-                    if (value.length < 6) {
-                      return 'Enter 6 Digit Refferal Number';
-                    }
-                  },
+                  textCapitalization: TextCapitalization.characters,
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(6),
                     BlacklistingTextInputFormatter(" ")
@@ -619,6 +619,15 @@ class _FormDetailsState extends State<FormDetails> {
   bool isValidPan(String val) {
     final RegExp regex =
         new RegExp(r"[A-Z]{3}[ABCFGHLJPTF]{1}[A-Z]{1}[0-9]{4}[A-Z]{1}");
-    return regex.hasMatch(val);
+    var result = regex.hasMatch(val);
+    if (val.length == 10) {
+      if (result == false) {
+        Fluttertoast.showToast(
+            timeInSecForIos: 1,
+            msg: "Please Enter Vaild Pan Card Number!",
+            toastLength: Toast.LENGTH_SHORT);
+      }
+    }
+    return result;
   }
 }

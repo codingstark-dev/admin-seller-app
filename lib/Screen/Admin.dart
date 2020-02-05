@@ -442,8 +442,6 @@ class _AdminState extends State<Admin> {
               StreamBuilder(
                   stream: Firestore.instance
                       .collection("ProductListID")
-                      .document(user.uid)
-                      .collection(user.uid)
                       .where("PersonID", isEqualTo: user.uid)
                       .snapshots(),
                   builder: (context, snapshot) {

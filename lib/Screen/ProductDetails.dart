@@ -14,13 +14,15 @@ class ProductDetaislEdit extends StatefulWidget {
   final String productName;
   final num price;
   final num quantity;
+  final String documentID;
 
   const ProductDetaislEdit(
       {Key key,
       @required this.index,
       @required this.productName,
       @required this.price,
-      @required this.quantity})
+      @required this.quantity,
+      this.documentID})
       : super(key: key);
   @override
   _ProductDetaislEditState createState() => _ProductDetaislEditState();
@@ -319,8 +321,6 @@ class _ProductDetaislEditState extends State<ProductDetaislEdit> {
             return StreamBuilder(
                 stream: Firestore.instance
                     .collection("ProductListID")
-                    .document(user.uid)
-                    .collection(user.uid)
                     .where("PersonID", isEqualTo: user.uid)
                     .snapshots(),
                 builder: (context, editData) {

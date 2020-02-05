@@ -75,7 +75,7 @@ exports.OderNotifications = functions.firestore
     console.log(registrationTokens);
     // const notificationBody =
     //   message["type"] === "TEXT"
-    //     ? message["text"]
+    //     ? m ]
     //     : "You received a new image message.";
     const payload = {
       notification: {
@@ -145,6 +145,8 @@ exports.AccountApprove = functions.firestore
       .get();
     const Verification = userDoc.get("Verification");
     const registrationTokens = userDoc.get("userToken");
+    const BankDetailsBool = userDoc.get("BankDetailsBool");
+    const formstatus = userDoc.get("formstatus");
     console.log(Verification);
     console.log(registrationTokens);
     var trim = name.indexOf(" ");
@@ -154,27 +156,31 @@ exports.AccountApprove = functions.firestore
     //     ? message["text"]
     //     : "You received a new image message.";
     //verification
-    if (Verification === true) {
-      const payload = {
-        notification: {
-          title: sendingName + " - Your Account Is Now  Approved!",
-          body: "Check Your First impression 😊",
-          click_action: "FLUTTER_NOTIFICATION_CLICK",
-          sound: "default"
-        }
-      };
+    if (BankDetailsBool === false) {
+      if (formstatus === true) {
+        if (Verification === true) {
+          const payload = {
+            notification: {
+              title: sendingName + " - Your Account Is Now Ready!",
+              body: "Check What Things Has Changed 😊",
+              click_action: "FLUTTER_NOTIFICATION_CLICK",
+              sound: "default"
+            }
+          };
 
-      return await admin
-        .messaging()
-        .sendToDevice(registrationTokens, payload)
-        .then(response => {
-          console.log("Successfully sent message:", response);
-        })
-        .catch(error => {
-          console.log("Error sending message:", error);
-        });
-    } else if (Verification === false) {
-      console.log("Account in Pending");
+          return await admin
+            .messaging()
+            .sendToDevice(registrationTokens, payload)
+            .then(response => {
+              console.log("Successfully sent message:", response);
+            })
+            .catch(error => {
+              console.log("Error sending message:", error);
+            });
+        } else if (Verification === false) {
+          console.log("Account in Pending");
+        }
+      }
     }
 
     // const stillRegisteredTokens = registrationTokens;

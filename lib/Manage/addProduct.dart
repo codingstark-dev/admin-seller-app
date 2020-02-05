@@ -31,10 +31,11 @@ class _AddProductState extends State<AddProduct> {
 
   Color grey = Colors.grey;
   bool isLoading = false;
-  final priceController = TextEditingController();
-  TextEditingController productNameController = TextEditingController();
+  final TextEditingController sellingPriceController = TextEditingController();
+  final TextEditingController productNameController = TextEditingController();
   ProductService productService = ProductService();
-  TextEditingController quatityController = TextEditingController();
+  final TextEditingController quatityController = TextEditingController();
+  final TextEditingController originalPriceController = TextEditingController();
   Color active = Colors.deepPurple[400];
   List<String> selectedSizes = <String>[];
   Color white = Colors.white;
@@ -47,6 +48,9 @@ class _AddProductState extends State<AddProduct> {
   File _image1;
   File _image2;
   File _image3;
+
+  int get sellingPrice => int.parse(sellingPriceController.text);
+  int get orginalPrice => int.parse(originalPriceController.text);
 
   List<DropdownMenuItem<String>> getCategoriesDropdown() {
     List<DropdownMenuItem<String>> items = new List();
@@ -186,6 +190,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void validateAndUpload(String username, String uid) async {
+    var id = Uuid().v1();
     try {
       if (_currentBrand != null && _currentCategory != null) {
         if (_formKey.currentState.validate()) {
@@ -197,24 +202,21 @@ class _AddProductState extends State<AddProduct> {
               String imageUrl3;
 
               final FirebaseStorage storage = FirebaseStorage.instance;
-              final String picture1 =
-                  "1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+              final String picture1 = "1${id.substring(0, 8)}.jpg";
               StorageUploadTask task1 = storage
                   .ref()
                   .child(uid)
                   .child(productNameController.text)
                   .child(picture1)
                   .putFile(_image1);
-              final String picture2 =
-                  "2${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+              final String picture2 = "2${id.substring(0, 8)}.jpg";
               StorageUploadTask task2 = storage
                   .ref()
                   .child(uid)
                   .child(productNameController.text)
                   .child(picture2)
                   .putFile(_image2);
-              final String picture3 =
-                  "3${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+              final String picture3 = "3${id.substring(0, 8)}.jpg";
               StorageUploadTask task3 = storage
                   .ref()
                   .child(uid)
@@ -232,15 +234,28 @@ class _AddProductState extends State<AddProduct> {
                 imageUrl2 = await snapshot2.ref.getDownloadURL();
                 imageUrl3 = await snapshot3.ref.getDownloadURL();
                 List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
-                String productIds = Uuid().v4().substring(0,6);
+
+                List<String> spiltList = productNameController.text.split(" ");
+                List<String> indexList = [];
+                String productIds = Uuid().v4().substring(0, 6);
+                for (var i = 0; i < spiltList.length; i++) {
+                  for (var y = 1; y < spiltList[i].length + 1; y++) {
+                    indexList.add(spiltList[i].substring(0, y).toLowerCase());
+                  }
+                }
                 productService.uploadProduct({
+                  "indexList": indexList,
+                  "ProductReview": false,
                   "ProductName": productNameController.text,
                   "UploaderName": username,
-                  "price": double.parse(priceController.text),
+                  "price": double.parse(sellingPriceController.text),
+                  "Orignal Price": int.parse(originalPriceController.text),
                   "sizes": selectedSizes,
                   "images": imageList,
                   "quantity": int.parse(quatityController.text),
                   "brand": _currentBrand,
+                  "Discount":
+                      (orginalPrice - sellingPrice) / orginalPrice * 100,
                   "category": _currentCategory,
                   "Reference": productIds,
                   "TimeStamp": Timestamp.now()
@@ -302,7 +317,7 @@ class _AddProductState extends State<AddProduct> {
         ,
         brightness: Brightness.light,
         title: Text(
-          "add product",
+          "Add Product",
           style: TextStyle(color: black),
         ),
       ),
@@ -318,7 +333,8 @@ class _AddProductState extends State<AddProduct> {
                         children: <Widget>[
                           FormDetailNotifications(
                             title: "Important Notice!",
-                            message: "Please Add Your Bank Details. To Add Products!",
+                            message:
+                                "Please Add Your Bank Details. To Add Products!",
                             buttonTile: "Add Details",
                             buttonFuc: () {
                               Navigator.push(
@@ -327,6 +343,14 @@ class _AddProductState extends State<AddProduct> {
                                       builder: (BuildContext context) =>
                                           BankDetailsSubmit()));
                             },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Select The Clear And Proper Images',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: active, fontSize: 12),
+                            ),
                           ),
                           Row(
                             children: <Widget>[
@@ -385,7 +409,7 @@ class _AddProductState extends State<AddProduct> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              'enter a product name with 10 characters at maximum',
+                              'Enter Full Product Name And Fill Properly',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: active, fontSize: 12),
                             ),
@@ -396,12 +420,16 @@ class _AddProductState extends State<AddProduct> {
                             child: TextFormField(
                               controller: productNameController,
                               decoration: InputDecoration(
-                                  hintText: 'Product name', focusColor: active),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: active),
+                                  ),
+                                  hintText: 'Product Name',
+                                  focusColor: active),
                               validator: (value) {
                                 if (value.isEmpty) {
-                                  return 'You must enter the product name';
-                                } else if (value.length > 10) {
-                                  return 'Product name cant have more than 10 letters';
+                                  return 'You Must Enter The Product Name';
+                                } else if (value.length < 3) {
+                                  return 'Add Full Product Name';
                                 }
                               },
                             ),
@@ -438,42 +466,79 @@ class _AddProductState extends State<AddProduct> {
                           ),
 
 //
+
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: TextFormField(
+                                    controller: originalPriceController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: active),
+                                      ),
+
+                                      hintText: 'Orginal Price',
+                                      // suffixIcon: InkWell(
+                                      //   onTap: () {
+                                      //     Fluttertoast.showToast(
+                                      //         msg: "Long Press To Question Mark");
+                                      //   },
+                                      //   child: Tooltip(s
+                                      //     child: Icon(Icons.help_outline,color: Colors.red,),
+                                      //     message: "Add Products",
+                                      //     waitDuration: Duration(milliseconds: 1),
+                                      //   ),
+                                      // ),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'You Must Need Add Orginal Price';
+                                      } else if (value.length > 5) {
+                                        return "Must Add only 5 digit number";
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: TextFormField(
+                                    controller: sellingPriceController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: active),
+                                      ),
+                                      hintText: 'Selling Price',
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'You Must Need Add Price Of The Product';
+                                      } else if (value.length > 5) {
+                                        return "Add Number Less Then 5";
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: TextFormField(
                               controller: quatityController,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
-                                hintText: 'Add Of Products Quantity',
-                                // suffixIcon: InkWell(
-                                //   onTap: () {
-                                //     Fluttertoast.showToast(
-                                //         msg: "Long Press To Question Mark");
-                                //   },
-                                //   child: Tooltip(
-                                //     child: Icon(Icons.help_outline,color: Colors.red,),
-                                //     message: "Add Products",
-                                //     waitDuration: Duration(milliseconds: 1),
-                                //   ),
-                                // ),
-                              ),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'You Must Need Add Quantity';
-                                } else if (value.length > 5) {
-                                  return "Must Add only 5 digit number";
-                                }
-                              },
-                            ),
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: TextFormField(
-                              controller: priceController,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                hintText: 'Price',
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: active),
+                                ),
+                                hintText: 'Stock Quantity',
                               ),
                               validator: (value) {
                                 if (value.isEmpty) {
@@ -484,7 +549,6 @@ class _AddProductState extends State<AddProduct> {
                               },
                             ),
                           ),
-
                           Text('Available Sizes'),
 
                           SingleChildScrollView(
@@ -492,31 +556,37 @@ class _AddProductState extends State<AddProduct> {
                             child: Row(
                               children: <Widget>[
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('XS'),
                                     onChanged: (value) =>
                                         changeSelectedSize('XS')),
                                 Text('XS'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('S'),
                                     onChanged: (value) =>
                                         changeSelectedSize('S')),
                                 Text('S'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('M'),
                                     onChanged: (value) =>
                                         changeSelectedSize('M')),
                                 Text('M'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('L'),
                                     onChanged: (value) =>
                                         changeSelectedSize('L')),
                                 Text('L'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('XL'),
                                     onChanged: (value) =>
                                         changeSelectedSize('XL')),
                                 Text('XL'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('XXL'),
                                     onChanged: (value) =>
                                         changeSelectedSize('XXL')),
@@ -530,31 +600,37 @@ class _AddProductState extends State<AddProduct> {
                             child: Row(
                               children: <Widget>[
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('28'),
                                     onChanged: (value) =>
                                         changeSelectedSize('28')),
                                 Text('28'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('30'),
                                     onChanged: (value) =>
                                         changeSelectedSize('30')),
                                 Text('30'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('32'),
                                     onChanged: (value) =>
                                         changeSelectedSize('32')),
                                 Text('32'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('34'),
                                     onChanged: (value) =>
                                         changeSelectedSize('34')),
                                 Text('34'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('36'),
                                     onChanged: (value) =>
                                         changeSelectedSize('36')),
                                 Text('36'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('38'),
                                     onChanged: (value) =>
                                         changeSelectedSize('38')),
@@ -568,31 +644,37 @@ class _AddProductState extends State<AddProduct> {
                             child: Row(
                               children: <Widget>[
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('40'),
                                     onChanged: (value) =>
                                         changeSelectedSize('40')),
                                 Text('40'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('42'),
                                     onChanged: (value) =>
                                         changeSelectedSize('42')),
                                 Text('42'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('44'),
                                     onChanged: (value) =>
                                         changeSelectedSize('44')),
                                 Text('44'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('46'),
                                     onChanged: (value) =>
                                         changeSelectedSize('46')),
                                 Text('46'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('48'),
                                     onChanged: (value) =>
                                         changeSelectedSize('48')),
                                 Text('48'),
                                 Checkbox(
+                                    activeColor: active,
                                     value: selectedSizes.contains('50'),
                                     onChanged: (value) =>
                                         changeSelectedSize('50')),
@@ -604,7 +686,7 @@ class _AddProductState extends State<AddProduct> {
                           FlatButton(
                             color: active,
                             textColor: white,
-                            child: Text('add product'),
+                            child: Text('Add Product'),
                             onPressed: () {
                               if (snapshot.data.bankDetailBool == false) {
                                 Fluttertoast.showToast(

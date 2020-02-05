@@ -11,6 +11,7 @@ class TextFieldWidget extends StatefulWidget {
   final Function onChanged;
   final Function validator;
   final String errorText;
+  final TextCapitalization textCapitalization;
   final List<TextInputFormatter> inputFormatters;
   TextFieldWidget({
     Key key,
@@ -23,6 +24,7 @@ class TextFieldWidget extends StatefulWidget {
     this.textInputType,
     this.inputFormatters,
     this.validator,
+    this.textCapitalization,
   }) : super(key: key);
 
   @override
@@ -39,6 +41,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
       fontSize: 15.0,
     );
     return TextFormField(
+        textCapitalization: widget.textCapitalization,
         validator: widget.validator,
         maxLengthEnforced: true,
         enableSuggestions: true,
