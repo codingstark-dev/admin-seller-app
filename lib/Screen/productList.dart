@@ -1,3 +1,4 @@
+import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -47,7 +48,208 @@ class _ProductListState extends State<ProductList> {
                           snapshot?.data?.documents[index]?.documentID;
                       // print(documentID.toString());
                       //firestore
-
+                      return Card(
+                        child: SizedBox.fromSize(
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      SizedBox.fromSize(
+                                          size: Size(100, 100),
+                                          child: Carousel(
+                                            overlayShadow: false,
+                                            autoplay: false,
+                                            boxFit: BoxFit.fill,
+                                            dotIncreaseSize: 0,
+                                            showIndicator: true,
+                                            dotSize: 6,
+                                            indicatorBgPadding: 5.0,
+                                            dotBgColor: Colors.transparent,
+                                            dotSpacing: 10,
+                                            images: [
+                                              NetworkImage(
+                                                  document[index]["images"][0]),
+                                              NetworkImage(
+                                                  document[index]["images"][1]),
+                                              NetworkImage(
+                                                  document[index]["images"][2]),
+                                            ],
+                                          )),
+                                    ],
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          4, 0, 0, 10),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          RichText(
+                                            overflow: TextOverflow.ellipsis,
+                                            text: TextSpan(
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(fontSize: 16),
+                                                children: [
+                                                  TextSpan(
+                                                      text: document[index]
+                                                              ["ProductName"]
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500))
+                                                ]),
+                                          ),
+                                          SizedBox(
+                                            height: 4,
+                                          ),
+                                          RichText(
+                                            overflow: TextOverflow.fade,
+                                            text: TextSpan(
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1
+                                                    .copyWith(fontSize: 14),
+                                                children: [
+                                                  TextSpan(
+                                                      text: "Price: ",
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w500)),
+                                                  TextSpan(
+                                                      text:
+                                                          "${document[index]["price"].toString()} ",
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.grey[600],
+                                                          fontWeight:
+                                                              FontWeight.w400)),
+                                                  TextSpan(
+                                                      text: "₹",
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                ]),
+                                          ),
+                                          RichText(
+                                            text: TextSpan(children: [
+                                              TextSpan(
+                                                  text: "Category: ",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w500)),
+                                              TextSpan(
+                                                  text: document[index]
+                                                      ["category"],
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w400))
+                                            ]),
+                                          ),
+                                          RichText(
+                                            text: TextSpan(children: [
+                                              TextSpan(
+                                                  text: "Brand: ",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w500)),
+                                              TextSpan(
+                                                  text: document[index]
+                                                      ["brand"],
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w400))
+                                            ]),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    children: <Widget>[
+                                      IconButton(color: active,
+                                        onPressed: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (BuildContext
+                                                        context) =>
+                                                    ProductDetaislEdit(
+                                                      documentID: documentID,
+                                                      productName: document[
+                                                                  index]
+                                                              ["ProductName"]
+                                                          .toString(),
+                                                      index: index,
+                                                      price: document[index]
+                                                          ["price"],
+                                                      quantity: document[index]
+                                                          ["quantity"],
+                                                    ))),
+                                        icon: Icon(Icons.edit),
+                                      ),
+                                      IconButton(color: active,
+                                        icon: Icon(Icons.delete),
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Text("Are You Sure?"),
+                                                  content: Text(
+                                                      "The Product Where Going to delete Permanetly Means They Will Not Recover"),
+                                                  actions: <Widget>[
+                                                    FlatButton(
+                                                      onPressed: () async {
+                                                        await Firestore.instance
+                                                            .collection(
+                                                                "ProductListID")
+                                                            .document(
+                                                                documentID)
+                                                            .delete()
+                                                            .whenComplete(() {
+                                                          Fluttertoast.showToast(
+                                                              msg: "Deleted");
+                                                          Navigator.pop(
+                                                              context);
+                                                        });
+                                                      },
+                                                      child: Text("Yes"),
+                                                    ),
+                                                    FlatButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("No"),
+                                                    )
+                                                  ],
+                                                );
+                                              });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          size: Size(100, 100),
+                        ),
+                      );
                       if (snapshot.hasData &&
                           snapshot.data.documents.length > 0) {
                         return Card(
@@ -188,7 +390,6 @@ class _ProductListState extends State<ProductList> {
                                                         msg: "Deleted");
                                                     Navigator.pop(context);
                                                   });
-                                                  
                                                 },
                                                 child: Text("Yes"),
                                               ),

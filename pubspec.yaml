@@ -42,7 +42,11 @@ dependencies:
   rxdart: ^0.23.1
   pin_code_fields: ^2.3.0+3
   getflutter: ^1.0.2
-
+  carousel_pro: ^1.0.0
+  google_maps_flutter:
+  geolocator: 
+  permission_handler: 
+  location: 
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"
@@ -67,6 +71,7 @@ flutter:
   assets:
     - assets/img/
     - assets/flare/
+    - assets/car_icon.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

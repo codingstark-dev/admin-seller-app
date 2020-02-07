@@ -238,7 +238,9 @@ class _AddProductState extends State<AddProduct> {
                 List<String> spiltList = productNameController.text.split(" ");
                 List<String> indexList = [];
                 String productIds = Uuid().v4().substring(0, 6);
-                for (var i = 0; i < spiltList.length; i++) {
+               // making search
+               
+               for (var i = 0; i < spiltList.length; i++) {
                   for (var y = 1; y < spiltList[i].length + 1; y++) {
                     indexList.add(spiltList[i].substring(0, y).toLowerCase());
                   }

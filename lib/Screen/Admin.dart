@@ -13,6 +13,7 @@ import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/bankdetails.dart';
 import 'package:sellerapp/Screen/Notfication.dart';
 import 'package:sellerapp/Screen/Rewards.dart';
+import 'package:sellerapp/Screen/map.dart';
 import 'package:sellerapp/Screen/otpverifications.dart';
 import 'package:sellerapp/Screen/productList.dart';
 import 'package:sellerapp/Screen/settings.dart';
@@ -464,8 +465,7 @@ class _AdminState extends State<Admin> {
                                                   MaterialPageRoute(
                                                       builder: (BuildContext
                                                               context) =>
-                                                          PinCodeVerificationScreen(
-                                                              "+918149963853")));
+                                                          MapProject(title: "SSSs",)));
 
                                               //   // final PackageInfo info =
                                               //   //     await PackageInfo
