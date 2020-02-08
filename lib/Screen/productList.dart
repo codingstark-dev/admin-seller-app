@@ -83,6 +83,7 @@ class _ProductListState extends State<ProductList> {
                                     ],
                                   ),
                                   Expanded(
+                                    flex: 4,
                                     child: Padding(
                                       padding: const EdgeInsets.fromLTRB(
                                           4, 0, 0, 10),
@@ -180,9 +181,45 @@ class _ProductListState extends State<ProductList> {
                                       ),
                                     ),
                                   ),
+                                  Container(
+                                      margin: EdgeInsets.all(30),
+                                      width: 10,
+                                      height: 10,
+                                      child: (document[index]
+                                                  ["ProductReview"] ==
+                                              true)
+                                          ? ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(20),
+                                                  bottomRight:
+                                                      Radius.circular(20),
+                                                  topLeft:
+                                                      Radius.circular(20),
+                                                  topRight:
+                                                      Radius.circular(20)),
+                                              child: Container(
+                                                color: Colors.green,
+                                              ),
+                                            )
+                                          : ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(20),
+                                                  bottomRight:
+                                                      Radius.circular(20),
+                                                  topLeft:
+                                                      Radius.circular(20),
+                                                  topRight:
+                                                      Radius.circular(20)),
+                                              child: Container(
+                                                color: Colors.red,
+                                              ),
+                                            )),
                                   Column(
                                     children: <Widget>[
-                                      IconButton(color: active,
+                                      IconButton(
+                                        color: active,
                                         onPressed: () => Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -202,7 +239,8 @@ class _ProductListState extends State<ProductList> {
                                                     ))),
                                         icon: Icon(Icons.edit),
                                       ),
-                                      IconButton(color: active,
+                                      IconButton(
+                                        color: active,
                                         icon: Icon(Icons.delete),
                                         onPressed: () {
                                           showDialog(

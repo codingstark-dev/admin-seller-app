@@ -44,9 +44,11 @@ dependencies:
   getflutter: ^1.0.2
   carousel_pro: ^1.0.0
   google_maps_flutter:
-  geolocator: 
-  permission_handler: 
-  location: 
+  geolocator:
+  permission_handler:
+  location:
+  font_awesome_flutter: ^8.5.0 
+
 
 dev_dependencies:
   flutter_launcher_icons: "^0.7.3"
