@@ -11,17 +11,16 @@ import 'package:getflutter/types/gf_button_type.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/bankdetails.dart';
-import 'package:sellerapp/Screen/Notfication.dart';
-import 'package:sellerapp/Screen/Rewards.dart';
-import 'package:sellerapp/Screen/map.dart';
-import 'package:sellerapp/Screen/productList.dart';
-import 'package:sellerapp/Screen/settings.dart';
+import 'package:sellerapp/Screen/LoginOrSignUp/Signup.dart';
+import 'package:sellerapp/Screen/Notification/Notfication.dart';
+import 'package:sellerapp/Screen/reward/Rewards.dart';
+import 'package:sellerapp/Screen/locations/map.dart';
+import 'package:sellerapp/Screen/productInfo/productList.dart';
 import 'package:sellerapp/Screen/widget/formerror.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:sellerapp/model/db/category.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
-import 'LoginOrSignUp/Signup.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -710,10 +709,11 @@ class _AdminState extends State<Admin> {
                 leading: Icon(Icons.settings),
                 title: Text("Settings"),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => Settings()));
+                  Fluttertoast.showToast(msg: "Under Construction");
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (BuildContext context) => Settings()));
                 },
               ),
               Divider(),

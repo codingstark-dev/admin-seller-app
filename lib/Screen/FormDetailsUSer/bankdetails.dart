@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:sellerapp/Screen/Admin.dart';
-import 'package:sellerapp/Screen/validator.dart';
+import 'package:sellerapp/Screen/Home/Admin.dart';
+import 'package:sellerapp/Screen/FormDetailsUser/validator.dart';
 import 'package:sellerapp/Screen/widget/commonwidgets.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/streamfiles.dart';

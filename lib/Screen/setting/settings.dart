@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sellerapp/Screen/Admin.dart';
+import 'package:sellerapp/Screen/Home/Admin.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class Settings extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sellerapp/Screen/Wrapper.dart';
+import 'package:sellerapp/Screen/wrapper/Wrapper.dart';
 import 'package:sellerapp/service/auth.dart';
 
 import 'Login.dart';

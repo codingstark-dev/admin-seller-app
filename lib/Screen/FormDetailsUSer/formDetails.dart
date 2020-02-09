@@ -3,9 +3,11 @@ import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:provider/provider.dart';
-import 'package:sellerapp/Screen/Wrapper.dart';
-import 'package:sellerapp/Screen/validator.dart';
+import 'package:sellerapp/Screen/wrapper/Wrapper.dart';
+import 'package:sellerapp/Screen/locations/user_location.dart';
+import 'package:sellerapp/Screen/FormDetailsUser/validator.dart';
 import 'package:sellerapp/Screen/widget/commonwidgets.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/auth.dart';
@@ -44,6 +46,7 @@ final TextEditingController _bankName = TextEditingController();
 final TextEditingController _acHolderName = TextEditingController();
 final TextEditingController _acCity = TextEditingController();
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+Geoflutterfire geo = Geoflutterfire();
 
 bool submitBtn = false;
 bool monVal = false;
@@ -78,7 +81,7 @@ class _FormDetailsState extends State<FormDetails> {
   //     this.category = newValueSelected;
   //   });
   // }
-
+  GeoFirePoint locationS;
   @override
   void initState() {
     super.initState();
@@ -96,6 +99,7 @@ class _FormDetailsState extends State<FormDetails> {
     bool pincodeVaild = submitBtn && !widget.pinCodeValidator.isValid(pinCode);
     bool gstinOrtinValid =
         submitBtn && !widget.gstinOrtinValidator.isValid(gstinOrtin);
+
     return Form(
       key: _formKey,
       child: Column(
@@ -373,6 +377,7 @@ class _FormDetailsState extends State<FormDetails> {
                           //   ),
                           //   isEmpty: category == null,
                           //   child:
+
                           return DropdownButton(
                             value: category,
                             isExpanded: true,
@@ -469,67 +474,29 @@ class _FormDetailsState extends State<FormDetails> {
     );
   }
 
-  lolos() async {
-    final auth = Provider.of<AuthService>(context);
-    bool result = await auth.refferal(refercode, name);
-    final user = Provider.of<User>(context);
-    if (_formKey.currentState.validate()) {
-      setState(() {
-        submitBtn = true;
-        if (result == false) {
-          Fluttertoast.showToast(
-              msg: "Invalid Refer Code Please Check It Properly");
-        } else if (category != null) {
-          DatabaseService(uid: user.uid).addDataToDb({
-            "name": name,
-            "usedReferCode": refercode,
-            "PhoneNumber": phoneNumber,
-            "Pan Number": pan,
-            "Address": address,
-            "Shop Name": details,
-            "ServiceCategory": category,
-            "Verification": false,
-            "formstatus": true,
-            "State": state,
-            "PinCode": pinCode,
-            "City": city,
-            "GstorTin Number": gstinOrtin,
-            "BankDetailsBool": false
-          });
-          auth.refferal(refercode, name);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Wrapper()));
-        } else {
-          Fluttertoast.showToast(msg: "Please Select Your Service");
-        }
-      });
-    } else {
-      Fluttertoast.showToast(msg: "Please Fill From Properly");
-    }
-  }
-
   @override
   void dispose() {
     super.dispose();
-    _email.clear();
     _details.clear();
+    _email.clear();
     _address.clear();
-    _bussiness.clear();
-    _gstinORtin.clear();
-    _name.clear();
-    _pan.clear();
-    _phoneNumber.clear();
     _refercode.clear();
-    _acCity.clear();
-    _accountNumber.clear();
-    _acHolderName.clear();
-    _acState.clear();
-    _bankName.clear();
-    _branch.clear();
+    _serviceType.clear();
+    _bussiness.clear();
+    _phoneNumber.clear();
+    _pan.clear();
+    _name.clear();
+    _gstinORtin.clear();
+    _state.clear();
+    _pincode.clear();
     _city.clear();
     _ifscCode.clear();
-    _pincode.clear();
-    _state.clear();
+    _accountNumber.clear();
+    _branch.clear();
+    _acState.clear();
+    _bankName.clear();
+    _acHolderName.clear();
+    _acCity.clear();
   }
 
   @override
@@ -544,7 +511,49 @@ class _FormDetailsState extends State<FormDetails> {
         widget.panValidator.isValid(pan) &&
         serviceBool &&
         monVal;
+    final pos = Provider.of<UserLocation>(context);
+    GeoFirePoint point =
+        geo.point(latitude: pos?.latitude, longitude: pos?.longitude);
     // final primaryText = _selectedPage == Page.service ? "Bussiness" : "Local";
+    lolos() async {
+      final auth = Provider.of<AuthService>(context);
+      bool result = await auth.refferal(refercode, name);
+      final user = Provider.of<User>(context);
+      if (_formKey.currentState.validate()) {
+        setState(() {
+          submitBtn = true;
+          if (result == false) {
+            Fluttertoast.showToast(
+                msg: "Invalid Refer Code Please Check It Properly");
+          } else if (category != null) {
+            DatabaseService(uid: user.uid).addDataToDb({
+              "name": name,
+              "usedReferCode": refercode,
+              "PhoneNumber": phoneNumber,
+              "Pan Number": pan,
+              "Address": address,
+              "Shop Name": details,
+              "ServiceCategory": category,
+              "Verification": false,
+              "formstatus": true,
+              "State": state,
+              "PinCode": pinCode,
+              "City": city,
+              "GstorTin Number": gstinOrtin,
+              "BankDetailsBool": false,
+              "location": point.data
+            });
+            auth.refferal(refercode, name);
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => Wrapper()));
+          } else {
+            Fluttertoast.showToast(msg: "Please Select Your Service");
+          }
+        });
+      } else {
+        Fluttertoast.showToast(msg: "Please Fill From Properly");
+      }
+    }
 
     return Scaffold(
       resizeToAvoidBottomPadding: true,

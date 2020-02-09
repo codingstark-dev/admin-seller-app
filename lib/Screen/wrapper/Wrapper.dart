@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
-import 'package:sellerapp/Screen/Admin.dart';
+import 'package:sellerapp/Screen/Home/Admin.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/formDetails.dart';
-import 'package:sellerapp/Screen/productList.dart';
-import 'package:sellerapp/Screen/verification.dart';
+import 'package:sellerapp/Screen/LoginOrSignUp/Signup.dart';
+import 'package:sellerapp/Screen/productInfo/productList.dart';
+import 'package:sellerapp/Screen/verification/verification.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/streamfiles.dart';
-import 'LoginOrSignUp/Signup.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Wrapper extends StatefulWidget {

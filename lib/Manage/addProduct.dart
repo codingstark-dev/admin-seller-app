@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,6 +49,10 @@ class _AddProductState extends State<AddProduct> {
   File _image1;
   File _image2;
   File _image3;
+  String imageurl1;
+  String imageurl2;
+  String imageurl3;
+  List<String> imageurl = [];
 
   int get sellingPrice => int.parse(sellingPriceController.text);
   int get orginalPrice => int.parse(originalPriceController.text);
@@ -223,7 +228,11 @@ class _AddProductState extends State<AddProduct> {
                   .child(productNameController.text)
                   .child(picture3)
                   .putFile(_image3);
-
+              setState(() {
+                imageurl.add(picture1);
+                imageurl.add(picture2);
+                imageurl.add(picture3);
+              });
               StorageTaskSnapshot snapshot1 =
                   await task1.onComplete.then((snapshot) => snapshot);
               StorageTaskSnapshot snapshot2 =
@@ -234,17 +243,18 @@ class _AddProductState extends State<AddProduct> {
                 imageUrl2 = await snapshot2.ref.getDownloadURL();
                 imageUrl3 = await snapshot3.ref.getDownloadURL();
                 List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
-
                 List<String> spiltList = productNameController.text.split(" ");
                 List<String> indexList = [];
                 String productIds = Uuid().v4().substring(0, 6);
-               // making search
-               
-               for (var i = 0; i < spiltList.length; i++) {
+                // making search
+
+                for (var i = 0; i < spiltList.length; i++) {
                   for (var y = 1; y < spiltList[i].length + 1; y++) {
                     indexList.add(spiltList[i].substring(0, y).toLowerCase());
                   }
                 }
+                final String fcm = await FirebaseMessaging().getToken();
+
                 productService.uploadProduct({
                   "indexList": indexList,
                   "ProductReview": false,
@@ -260,7 +270,9 @@ class _AddProductState extends State<AddProduct> {
                       (orginalPrice - sellingPrice) / orginalPrice * 100,
                   "category": _currentCategory,
                   "Reference": productIds,
-                  "TimeStamp": Timestamp.now()
+                  "TimeStamp": Timestamp.now(),
+                  "Token": fcm,
+                  "ImageDes": imageurl
                 }, username);
                 _formKey.currentState.reset();
                 setState(() => isLoading = false);
@@ -545,8 +557,8 @@ class _AddProductState extends State<AddProduct> {
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return 'You Must Need Add Price Of The Product';
-                                } else if (value.length > 5) {
-                                  return "Add Number Less Then 5";
+                                } else if (value.length > 6) {
+                                  return "Add Number Less Then 6";
                                 }
                               },
                             ),
@@ -690,13 +702,9 @@ class _AddProductState extends State<AddProduct> {
                             textColor: white,
                             child: Text('Add Product'),
                             onPressed: () {
-                              if (snapshot.data.bankDetailBool == false) {
-                                Fluttertoast.showToast(
-                                    msg: "Please Add Your Bank Detail");
-                              } else
-                                validateAndUpload(
-                                    snapshot.data.userName.toString(),
-                                    snapshot.data.uid.toString());
+                              validateAndUpload(
+                                  snapshot.data.userName.toString(),
+                                  snapshot.data.uid.toString());
                             },
                           )
                         ],

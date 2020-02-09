@@ -19,11 +19,6 @@ class MapSampleState extends State<MapSample> {
   Location location = new Location();
 
   Set<Marker> markers;
-  static final CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
 
   @override
   void initState() {
@@ -60,20 +55,39 @@ class MapSampleState extends State<MapSample> {
               _controller.complete(controller);
             },
           ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: FloatingActionButton.extended(
-              onPressed: _goToTheLake,
-              label: Text('To the lake!'),
-              icon: Icon(Icons.directions_boat),
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: FloatingActionButton(
+                  onPressed: _originalLoc,
+                  child: Icon(Icons.zoom_in),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: FloatingActionButton(
+                  onPressed: _zoomOut,
+                  child: Icon(Icons.zoom_out),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: FloatingActionButton(
+                  onPressed: _originalLoc,
+                  child: Icon(Icons.location_on),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Future<void> _goToTheLake() async {
+  Future<void> _originalLoc() async {
     var pos = await location.getLocation();
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
@@ -85,5 +99,12 @@ class MapSampleState extends State<MapSample> {
       markers.remove(mk2);
       markers.add(mk2);
     });
+  }
+
+  void _zoomOut() async {
+    var pos = await location.getLocation();
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(zoom: -20, target: LatLng(pos.latitude, pos.longitude))));
   }
 }

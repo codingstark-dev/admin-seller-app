@@ -38,35 +38,32 @@ class _FormDetailNotificationsState extends State<FormDetailNotifications> {
               return Container();
               break;
             case false:
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Card(
-                  elevation: 1.0,
-                  color: Colors.red,
-                  child: ListTile(
-                    leading: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.warning,
-                        color: Colors.white,
-                      ),
+              return Card(
+                elevation: 1.0,
+                color: Colors.red,
+                child: ListTile(
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.warning,
+                      color: Colors.white,
                     ),
-                    title: Container(color: Colors.white10,clipBehavior: Clip.hardEdge,
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),
-                      ),
+                  ),
+                  title: Container(color: Colors.white10,clipBehavior: Clip.hardEdge,
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),
                     ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 2),
-                      child: Text(widget.message, style: TextStyle(color: Colors.white)),
-                    ),contentPadding: EdgeInsets.all(5),
-                    trailing: FlatButton(highlightColor: Colors.white10,color:Colors.white10 ,
-                      onPressed: widget.buttonFuc,
-                      child: Text(
-                        widget.buttonTile,
-                        style: TextStyle(color: Colors.white),
-                      ),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 2),
+                    child: Text(widget.message, style: TextStyle(color: Colors.white)),
+                  ),contentPadding: EdgeInsets.all(5),
+                  trailing: FlatButton(highlightColor: Colors.white10,color:Colors.white10 ,
+                    onPressed: widget.buttonFuc,
+                    child: Text(
+                      widget.buttonTile,
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
