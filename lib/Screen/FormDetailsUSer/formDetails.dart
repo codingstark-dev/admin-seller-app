@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -12,6 +12,8 @@ import 'package:sellerapp/Screen/widget/commonwidgets.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:sellerapp/service/streamfiles.dart';
+import 'package:location/location.dart';
+import 'package:sellerapp/MainFinal.dart';
 
 class FormDetails extends StatefulWidget with EmailAndPasswordValidators {
   @override
@@ -47,7 +49,7 @@ final TextEditingController _acHolderName = TextEditingController();
 final TextEditingController _acCity = TextEditingController();
 GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 Geoflutterfire geo = Geoflutterfire();
-
+Location location = new Location();
 bool submitBtn = false;
 bool monVal = false;
 bool verificationDone = false;
@@ -511,49 +513,8 @@ class _FormDetailsState extends State<FormDetails> {
         widget.panValidator.isValid(pan) &&
         serviceBool &&
         monVal;
-    final pos = Provider.of<UserLocation>(context);
-    GeoFirePoint point =
-        geo.point(latitude: pos?.latitude, longitude: pos?.longitude);
+
     // final primaryText = _selectedPage == Page.service ? "Bussiness" : "Local";
-    lolos() async {
-      final auth = Provider.of<AuthService>(context);
-      bool result = await auth.refferal(refercode, name);
-      final user = Provider.of<User>(context);
-      if (_formKey.currentState.validate()) {
-        setState(() {
-          submitBtn = true;
-          if (result == false) {
-            Fluttertoast.showToast(
-                msg: "Invalid Refer Code Please Check It Properly");
-          } else if (category != null) {
-            DatabaseService(uid: user.uid).addDataToDb({
-              "name": name,
-              "usedReferCode": refercode,
-              "PhoneNumber": phoneNumber,
-              "Pan Number": pan,
-              "Address": address,
-              "Shop Name": details,
-              "ServiceCategory": category,
-              "Verification": false,
-              "formstatus": true,
-              "State": state,
-              "PinCode": pinCode,
-              "City": city,
-              "GstorTin Number": gstinOrtin,
-              "BankDetailsBool": false,
-              "location": point.data
-            });
-            auth.refferal(refercode, name);
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => Wrapper()));
-          } else {
-            Fluttertoast.showToast(msg: "Please Select Your Service");
-          }
-        });
-      } else {
-        Fluttertoast.showToast(msg: "Please Fill From Properly");
-      }
-    }
 
     return Scaffold(
       resizeToAvoidBottomPadding: true,
@@ -609,7 +570,8 @@ class _FormDetailsState extends State<FormDetails> {
                     // ),
                     OutlineButton(
                       splashColor: active,
-                      onPressed: isValidPan(pan) && submitBtn ? lolos : null,
+                      onPressed: 
+                          isValidPan(pan) && submitBtn ? lolos : null,
                       child: Text("Submit Form Details"),
                     ),
                     SizedBox(
@@ -623,6 +585,47 @@ class _FormDetailsState extends State<FormDetails> {
         ),
       ),
     );
+  }
+
+  lolos() async {
+    final pos = await location.getLocation();
+
+    GeoFirePoint point =
+        geo.point(latitude: pos?.latitude, longitude: pos?.longitude);
+    final auth = Provider.of<AuthService>(context);
+    bool result = await auth.refferal(refercode, name);
+    final user = Provider.of<User>(context);
+    if (_formKey.currentState.validate()) {
+      if (result == false) {
+        Fluttertoast.showToast(
+            msg: "Invalid Refer Code Please Check It Properly");
+      } else if (category != null) {
+        DatabaseService(uid: user.uid).addDataToDb({
+          "name": name,
+          "usedReferCode": refercode,
+          "PhoneNumber": phoneNumber,
+          "Pan Number": pan,
+          "Address": address,
+          "Shop Name": details,
+          "ServiceCategory": category,
+          "Verification": false,
+          "formstatus": true,
+          "State": state,
+          "PinCode": pinCode,
+          "City": city,
+          "GstorTin Number": gstinOrtin,
+          "BankDetailsBool": false,
+          "location": point?.data
+        });
+        auth.refferal(refercode, name);
+        await Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => MainFinal()));
+      } else {
+        Fluttertoast.showToast(msg: "Please Select Your Service");
+      }
+    } else {
+      Fluttertoast.showToast(msg: "Please Fill From Properly");
+    }
   }
 
   bool isValidPan(String val) {

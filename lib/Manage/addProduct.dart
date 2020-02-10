@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/bankdetails.dart';
@@ -29,7 +29,6 @@ class _AddProductState extends State<AddProduct> {
   List<DocumentSnapshot> categories = <DocumentSnapshot>[];
   List<DropdownMenuItem<String>> categoriesDropDown =
       <DropdownMenuItem<String>>[];
-
   Color grey = Colors.grey;
   bool isLoading = false;
   final TextEditingController sellingPriceController = TextEditingController();
@@ -85,6 +84,10 @@ class _AddProductState extends State<AddProduct> {
     return items;
   }
 
+  GlobalKey<FormState> _brandFormKey = GlobalKey();
+  GlobalKey<FormState> _categoryFormKey = GlobalKey();
+  TextEditingController brandController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
   _getCategories() async {
     List<DocumentSnapshot> data = await _categoryService.getCategories();
     print(data.length);
@@ -307,6 +310,8 @@ class _AddProductState extends State<AddProduct> {
     _getBrands();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -428,9 +433,59 @@ class _AddProductState extends State<AddProduct> {
                               style: TextStyle(color: active, fontSize: 12),
                             ),
                           ),
-
+                          // Divider(),
+                          // Row(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     SizedBox(
+                          //       width: 10,
+                          //     ),
+                          //     Expanded(
+                          //         flex: 1,
+                          //         child: FlatButton.icon(
+                          //             textColor: active,
+                          //             onPressed: () {
+                          //               _brandAlert(context);
+                          //             },
+                          //             icon: Icon(Icons.add_circle),
+                          //             label: Text("Add Brand"))
+                          //         //  ListTile(
+                          //         //   dense: true,
+                          //         //   leading: Icon(Icons.add_circle),
+                          //         //   title: Text("Add category"),
+                          //         //   onTap: () {
+                          //         //     // _categoryAlert(context);
+                          //         //   },
+                          //         // ),
+                          //         ),
+                          //     Expanded(
+                          //         flex: 1,
+                          //         child: FlatButton.icon(
+                          //             textColor: active,
+                          //             onPressed: () {
+                          //               _categoryAlert(context);
+                          //             },
+                          //             icon: Icon(Icons.add_circle_outline),
+                          //             label: Text("Add Category"))
+                          //         //  ListTile(
+                          //         //   dense: true,
+                          //         //   leading: Icon(Icons.add_circle_outline),
+                          //         //   title: Text("Add brand"),
+                          //         //   onTap: () {
+                          //         //     // _brandAlert(
+                          //         //     //     context); // function using here but not working
+                          //         //   },
+                          //         // ),
+                          //         ),
+                          //     SizedBox(
+                          //       width: 10,
+                          //     ),
+                          //   ],
+                          // ),
+                          Divider(),
                           Padding(
-                            padding: const EdgeInsets.all(12.0),
+                            padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
                             child: TextFormField(
                               controller: productNameController,
                               decoration: InputDecoration(
@@ -451,6 +506,7 @@ class _AddProductState extends State<AddProduct> {
 
 //              select category
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -713,5 +769,103 @@ class _AddProductState extends State<AddProduct> {
             );
           }),
     );
+  }
+
+  void _categoryAlert(BuildContext context) {
+    var alert = AlertDialog(
+      content: Form(
+        key: _categoryFormKey,
+        child: TextFormField(
+          inputFormatters: [
+            BlacklistingTextInputFormatter(" "),
+          ],
+          controller: categoryController,
+          validator: (value) {
+            assert(value != null);
+            if (value.isEmpty) {
+              return 'category cannot be empty';
+            } else {
+              return "Samething Went Wrong";
+            }
+          },
+          decoration: InputDecoration(hintText: "Add Category"),
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+            textColor: active,
+            onPressed: () {
+              if (categoryController.text.isNotEmpty) {
+                _categoryService.createCategory(categoryController.text);
+                Fluttertoast.showToast(msg: 'category created');
+                categoryController.clear();
+                Navigator.of(context, rootNavigator: true).pop();
+              } else {
+                Fluttertoast.showToast(msg: "Please Enter Category");
+              }
+            },
+            child: Text('ADD')),
+        FlatButton(
+            textColor: active,
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop();
+              //Navigator.of(context).pop();
+            },
+            child: Text('CANCEL')),
+      ],
+    );
+
+    showDialog(
+        useRootNavigator: true,
+        barrierDismissible: true,
+        context: context,
+        builder: (BuildContext context) => alert);
+  }
+
+  void _brandAlert(BuildContext context) {
+    var alert = new AlertDialog(
+      content: Form(
+        key: _brandFormKey,
+        child: TextFormField(
+          inputFormatters: [
+            BlacklistingTextInputFormatter(" "),
+          ],
+          controller: brandController,
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'category cannot be empty';
+            } else {
+              return "Samething Went Wrong";
+            }
+          },
+          decoration: InputDecoration(
+            hintText: "Add Brand",
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+            textColor: active,
+            onPressed: () {
+              if (brandController.text.isNotEmpty) {
+                _brandService.createBrand(brandController.text);
+                Fluttertoast.showToast(msg: 'brand added');
+                Navigator.of(context, rootNavigator: true).pop();
+                brandController.clear();
+              } else {
+                Fluttertoast.showToast(msg: "Please Enter Brand");
+              }
+            },
+            child: Text('ADD')),
+        FlatButton(
+            textColor: active,
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop();
+            },
+            child: Text('CANCEL')),
+      ],
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => alert);
   }
 }

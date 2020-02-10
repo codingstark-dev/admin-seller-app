@@ -1,6 +1,6 @@
 class UserLocation {
-  final double latitude;
-  final double longitude;
+  double latitude;
+  double longitude;
 
   UserLocation({this.latitude, this.longitude});
 }

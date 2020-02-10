@@ -666,20 +666,18 @@ class _AdminState extends State<Admin> {
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.monetization_on),
-                title: Text("Your Reward"),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Rewards();
-                  }));
-                },
-              ),
-              Divider(),
-              ListTile(
                 leading: Icon(Icons.add_circle),
                 title: Text("Add category"),
                 onTap: () {
                   _categoryAlert(context);
+                },
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.add_circle_outline),
+                title: Text("Add brand"),
+                onTap: () {
+                  _brandAlert(context); // function using here but not working
                 },
               ),
               Divider(),
@@ -690,10 +688,12 @@ class _AdminState extends State<Admin> {
               ),
               Divider(),
               ListTile(
-                leading: Icon(Icons.add_circle_outline),
-                title: Text("Add brand"),
+                leading: Icon(Icons.monetization_on),
+                title: Text("Your Reward"),
                 onTap: () {
-                  _brandAlert(context); // function using here but not working
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return Rewards();
+                  }));
                 },
               ),
               Divider(),
@@ -741,10 +741,10 @@ class _AdminState extends State<Admin> {
                                   onPressed: () async {
                                     return await authService
                                         .signOut()
-                                        .whenComplete(() {
+                                        .whenComplete(() async {
                                       Navigator.pop(context);
-                                      Navigator.of(context).pushReplacement(
-                                          PageRouteBuilder(
+                                      await Navigator.of(context)
+                                          .pushReplacement(PageRouteBuilder(
                                               pageBuilder: (_, __, ___) =>
                                                   new Signup()));
                                     });

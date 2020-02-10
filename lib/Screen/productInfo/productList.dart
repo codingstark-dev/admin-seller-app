@@ -174,7 +174,9 @@ class _ProductListState extends State<ProductList> {
                           context,
                           MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  ProductDetaislEdit(
+                                  ProductDetaislEdits(
+                                    originalprice: document[index]
+                                        ["Orignal Price"],
                                     documentID: documentID,
                                     productName: document[index]["ProductName"]
                                         .toString(),
@@ -462,7 +464,10 @@ class _ProductListState extends State<ProductList> {
                                             MaterialPageRoute(
                                                 builder: (BuildContext
                                                         context) =>
-                                                    ProductDetaislEdit(
+                                                    ProductDetaislEdits(
+                                                      originalprice:
+                                                          document[index]
+                                                              ["originalPrice"],
                                                       documentID: documentID,
                                                       productName: document[
                                                                   index]

@@ -5,7 +5,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:package_info/package_info.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Screen/Home/Admin.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/formDetails.dart';
@@ -16,6 +18,8 @@ import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/streamfiles.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:location/location.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 class Wrapper extends StatefulWidget {
   @override
@@ -26,6 +30,9 @@ class _WrapperState extends State<Wrapper> {
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   String massageBody;
   String massageTitle;
+  Map<PermissionGroup, PermissionStatus> permissions;
+  Position position;
+  GeolocationStatus geolocationStatus;
   @override
   void initState() {
     firebaseMessaging.configure(
@@ -75,7 +82,26 @@ class _WrapperState extends State<Wrapper> {
     } catch (e) {
       print(e);
     }
+    getPermission();
     super.initState();
+  }
+
+  getPermission() async {
+    permissions = await PermissionHandler().requestPermissions([
+      PermissionGroup.location,
+      PermissionGroup.storage,
+      PermissionGroup.locationAlways
+    ]);
+    var pos = await location.getLocation();
+    GeoFirePoint point =
+        geo.point(latitude: pos?.latitude, longitude: pos?.longitude);
+    print(point.longitude);
+    return point;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void handleRouting(dynamic notification) {
@@ -187,8 +213,8 @@ class _WrapperState extends State<Wrapper> {
     }
   }
 
-//Prompt users to update app if there is a new version available
-//Uses url_launcher package
+  //Prompt users to update app if there is a new version available
+  //Uses url_launcher package
 
   final playStoreLink =
       'https://play.google.com/store/apps/details?id=in.citygrow.seller';
@@ -223,7 +249,7 @@ class _WrapperState extends State<Wrapper> {
     }
   }
 
-//Show Dialog to force user to update
+  //Show Dialog to force user to update
   _showVersionDialog(context) async {
     await showDialog<String>(
       useRootNavigator: false,

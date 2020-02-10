@@ -61,7 +61,7 @@ class _BankDetailsSubmitState extends State<BankDetailsSubmit> {
                 child: Container(
                     alignment: Alignment.bottomCenter,
                     child: Text(
-                      "Remember Star (*) Field Must important\nPlease Fill The Form Properly\nIf Any Occur Or Problem Contact Us",
+                      "Remember Star (*) Field Must important\nPlease Fill The Form Properly\nIf Any Trouble Or Problem Contact Us",
                       textAlign: TextAlign.start,
                       style:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
