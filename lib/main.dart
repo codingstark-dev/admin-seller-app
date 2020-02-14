@@ -12,13 +12,16 @@ void main() {
   // This is only to be used for confirming that reports are being
   // submitted as expected. It is not intended to be used for everyday
   // development.
-  Crashlytics.instance.enableInDevMode = true;
+  // ! on it
+  // Crashlytics.instance.enableInDevMode = true;
 
   // Pass all uncaught errors to Crashlytics.
-  FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  runZoned(() {
-    runApp(MyApp());
-  }, onError: Crashlytics.instance.recordError);
+
+  // ! on it
+  // FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  // runZoned(() {
+  runApp(MyApp());
+  // }, onError: Crashlytics.instance.recordError);
 }
 
 /// Set orienttation
@@ -49,7 +52,7 @@ class MyApp extends StatelessWidget {
       /// Move splash screen to ChoseLogin Layout
       /// Routes
       routes: <String, WidgetBuilder>{
-        "main": (BuildContext context) =>  MainFinal()
+        "main": (BuildContext context) => MainFinal()
       },
     );
   }

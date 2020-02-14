@@ -4,6 +4,7 @@ import 'package:sellerapp/Screen/locations/location_service.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:sellerapp/service/dbapi.dart';
+import 'package:sellerapp/service/notifier/promocode.dart';
 import 'Screen//wrapper/Wrapper.dart';
 
 Color active = Colors.deepPurple[400];
@@ -25,6 +26,9 @@ class MainFinal extends StatelessWidget {
           ),
           Provider<UserDetails>(
             create: (BuildContext context) => UserDetails(),
+          ),
+          Provider<PromoBase>(
+            create: (BuildContext context) => PromoBase(),
           ),
         ],
         child: MaterialApp(

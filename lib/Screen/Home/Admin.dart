@@ -23,6 +23,7 @@ import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:sellerapp/service/notifier/promocode.dart';
 
 enum Page { dashboard, manage } // look here
 
@@ -56,6 +57,7 @@ class _AdminState extends State<Admin> {
   String massageBody;
   String massageTitle;
   MaterialColor notActive = Colors.grey;
+  GlobalKey<FormState> _promoFormKey = GlobalKey();
 
   GlobalKey<FormState> _brandFormKey = GlobalKey();
   BrandService _brandService = BrandService();
@@ -63,7 +65,6 @@ class _AdminState extends State<Admin> {
   CategoryService _categoryService = CategoryService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Page _selectedPage = Page.dashboard;
-
   @override
   void initState() {
     super.initState();
@@ -218,6 +219,47 @@ class _AdminState extends State<Admin> {
             },
             child: Text('CANCEL')),
       ],
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => alert);
+  }
+
+  void _promoAlert(BuildContext context, dynamic data) {
+    var actions2 = <Widget>[
+      FlatButton(
+          onPressed: () {
+            if (brandController.text.isNotEmpty) {
+              _brandService.createBrand(brandController.text);
+              Fluttertoast.showToast(msg: 'brand added');
+              Navigator.of(context, rootNavigator: true).pop();
+              brandController.clear();
+            } else {
+              Fluttertoast.showToast(msg: "Please Enter Brand");
+            }
+          },
+          child: Text('ADD')),
+      FlatButton(
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+          child: Text('CANCEL')),
+    ];
+    var alert = new AlertDialog(
+      content: Form(
+        key: _promoFormKey,
+        child: TextFormField(
+          controller: brandController,
+          validator: (value) {
+            if (value.isEmpty) {
+              return 'category cannot be empty';
+            } else {
+              return "Samething Went Wrong";
+            }
+          },
+          decoration: InputDecoration(hintText: "add brand"),
+        ),
+      ),
+      actions: actions2,
     );
 
     showDialog(context: context, builder: (BuildContext context) => alert);
@@ -662,6 +704,20 @@ class _AdminState extends State<Admin> {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return ProductList();
                   }));
+                },
+              ),
+              Divider(),
+              Consumer<PromoBase>(
+                builder: (BuildContext context, value, Widget child) {
+                  
+                  return ListTile(
+                  leading: Icon(Icons.add_circle_outline),
+                  title: Text("Add promo"),
+                  onTap: () {
+                    _promoAlert(
+                        context, value); // function using here but not working
+                  },
+                );
                 },
               ),
               Divider(),
