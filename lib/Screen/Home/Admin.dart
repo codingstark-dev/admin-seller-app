@@ -184,7 +184,7 @@ class _AdminState extends State<Admin> {
         builder: (BuildContext context) => alert);
   }
 
-  void _brandAlert(BuildContext context) {
+  void _brandAlert(BuildContext context, String id) {
     var alert = new AlertDialog(
       content: Form(
         key: _brandFormKey,
@@ -204,7 +204,7 @@ class _AdminState extends State<Admin> {
         FlatButton(
             onPressed: () {
               if (brandController.text.isNotEmpty) {
-                _brandService.createBrand(brandController.text);
+                _brandService.createBrand(brandController.text, id);
                 Fluttertoast.showToast(msg: 'brand added');
                 Navigator.of(context, rootNavigator: true).pop();
                 brandController.clear();
@@ -219,47 +219,6 @@ class _AdminState extends State<Admin> {
             },
             child: Text('CANCEL')),
       ],
-    );
-
-    showDialog(context: context, builder: (BuildContext context) => alert);
-  }
-
-  void _promoAlert(BuildContext context, dynamic data) {
-    var actions2 = <Widget>[
-      FlatButton(
-          onPressed: () {
-            if (brandController.text.isNotEmpty) {
-              _brandService.createBrand(brandController.text);
-              Fluttertoast.showToast(msg: 'brand added');
-              Navigator.of(context, rootNavigator: true).pop();
-              brandController.clear();
-            } else {
-              Fluttertoast.showToast(msg: "Please Enter Brand");
-            }
-          },
-          child: Text('ADD')),
-      FlatButton(
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).pop();
-          },
-          child: Text('CANCEL')),
-    ];
-    var alert = new AlertDialog(
-      content: Form(
-        key: _promoFormKey,
-        child: TextFormField(
-          controller: brandController,
-          validator: (value) {
-            if (value.isEmpty) {
-              return 'category cannot be empty';
-            } else {
-              return "Samething Went Wrong";
-            }
-          },
-          decoration: InputDecoration(hintText: "add brand"),
-        ),
-      ),
-      actions: actions2,
     );
 
     showDialog(context: context, builder: (BuildContext context) => alert);
@@ -683,7 +642,13 @@ class _AdminState extends State<Admin> {
                 title: Text("Add product"),
                 onTap: () {
                   Navigator.push(
-                      context, MaterialPageRoute(builder: (_) => AddProduct()));
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => MultiProvider(providers: [
+                                ChangeNotifierProvider<BrandService>(
+                                  create: (context) => BrandService(),
+                                )
+                              ], child: AddProduct())));
                 },
               ),
               Divider(),
@@ -707,20 +672,6 @@ class _AdminState extends State<Admin> {
                 },
               ),
               Divider(),
-              Consumer<PromoBase>(
-                builder: (BuildContext context, value, Widget child) {
-                  
-                  return ListTile(
-                  leading: Icon(Icons.add_circle_outline),
-                  title: Text("Add promo"),
-                  onTap: () {
-                    _promoAlert(
-                        context, value); // function using here but not working
-                  },
-                );
-                },
-              ),
-              Divider(),
               ListTile(
                 leading: Icon(Icons.add_circle),
                 title: Text("Add category"),
@@ -733,7 +684,8 @@ class _AdminState extends State<Admin> {
                 leading: Icon(Icons.add_circle_outline),
                 title: Text("Add brand"),
                 onTap: () {
-                  _brandAlert(context); // function using here but not working
+                  _brandAlert(
+                      context, user.uid); // function using here but not working
                 },
               ),
               Divider(),

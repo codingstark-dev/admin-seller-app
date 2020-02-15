@@ -871,7 +871,7 @@ class _ProductDetaislEditsState extends State<ProductDetaislEdits> {
         builder: (BuildContext context) => alert);
   }
 
-  void _brandAlert(BuildContext context) {
+  void _brandAlert(BuildContext context, String id) {
     var alert = new AlertDialog(
       content: Form(
         key: _brandFormKey,
@@ -897,7 +897,7 @@ class _ProductDetaislEditsState extends State<ProductDetaislEdits> {
             textColor: active,
             onPressed: () {
               if (brandController.text.isNotEmpty) {
-                _brandService.createBrand(brandController.text);
+                _brandService.createBrand(brandController.text, id);
                 Fluttertoast.showToast(msg: 'brand added');
                 Navigator.of(context, rootNavigator: true).pop();
                 brandController.clear();

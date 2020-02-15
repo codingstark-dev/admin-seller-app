@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-class BrandService {
+class BrandService extends ChangeNotifier {
   String ref = 'brands';
 
   Firestore _firestore = Firestore.instance;
 
-  void createBrand(String name) async {
+  void createBrand(String name, String uid) async {
     var id = Uuid();
     String brandId = id.v1();
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
@@ -17,8 +18,8 @@ class BrandService {
         .collection("Sellers")
         .document(uid)
         .collection("Brand")
-        .document(brandId)
-        .setData({'brand': name});
+        .document(name)
+        .setData({'brand': name, "id": uid});
   }
 
   Future<List<DocumentSnapshot>> getBrands() async {
@@ -31,6 +32,7 @@ class BrandService {
         .getDocuments()
         .then((snaps) {
       print(snaps.documents.length);
+      notifyListeners();
       return snaps.documents;
     });
   }

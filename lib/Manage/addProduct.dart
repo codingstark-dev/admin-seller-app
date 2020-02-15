@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -52,6 +53,10 @@ class _AddProductState extends State<AddProduct> {
   String imageurl2;
   String imageurl3;
   List<String> imageurl = [];
+
+  var category;
+
+  var selectedCurrency;
 
   int get sellingPrice => int.parse(sellingPriceController.text);
   int get orginalPrice => int.parse(originalPriceController.text);
@@ -310,8 +315,6 @@ class _AddProductState extends State<AddProduct> {
     _getBrands();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -433,56 +436,56 @@ class _AddProductState extends State<AddProduct> {
                               style: TextStyle(color: active, fontSize: 12),
                             ),
                           ),
-                          // Divider(),
-                          // Row(
-                          //   crossAxisAlignment: CrossAxisAlignment.start,
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: <Widget>[
-                          //     SizedBox(
-                          //       width: 10,
-                          //     ),
-                          //     Expanded(
-                          //         flex: 1,
-                          //         child: FlatButton.icon(
-                          //             textColor: active,
-                          //             onPressed: () {
-                          //               _brandAlert(context);
-                          //             },
-                          //             icon: Icon(Icons.add_circle),
-                          //             label: Text("Add Brand"))
-                          //         //  ListTile(
-                          //         //   dense: true,
-                          //         //   leading: Icon(Icons.add_circle),
-                          //         //   title: Text("Add category"),
-                          //         //   onTap: () {
-                          //         //     // _categoryAlert(context);
-                          //         //   },
-                          //         // ),
-                          //         ),
-                          //     Expanded(
-                          //         flex: 1,
-                          //         child: FlatButton.icon(
-                          //             textColor: active,
-                          //             onPressed: () {
-                          //               _categoryAlert(context);
-                          //             },
-                          //             icon: Icon(Icons.add_circle_outline),
-                          //             label: Text("Add Category"))
-                          //         //  ListTile(
-                          //         //   dense: true,
-                          //         //   leading: Icon(Icons.add_circle_outline),
-                          //         //   title: Text("Add brand"),
-                          //         //   onTap: () {
-                          //         //     // _brandAlert(
-                          //         //     //     context); // function using here but not working
-                          //         //   },
-                          //         // ),
-                          //         ),
-                          //     SizedBox(
-                          //       width: 10,
-                          //     ),
-                          //   ],
-                          // ),
+                          Divider(),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                  flex: 1,
+                                  child: FlatButton.icon(
+                                      textColor: active,
+                                      onPressed: () {
+                                        _brandAlert(context,user.uid);
+                                      },
+                                      icon: Icon(Icons.add_circle),
+                                      label: Text("Add Brand"))
+                                  //  ListTile(
+                                  //   dense: true,
+                                  //   leading: Icon(Icons.add_circle),
+                                  //   title: Text("Add category"),
+                                  //   onTap: () {
+                                  //     // _categoryAlert(context);
+                                  //   },
+                                  // ),
+                                  ),
+                              Expanded(
+                                  flex: 1,
+                                  child: FlatButton.icon(
+                                      textColor: active,
+                                      onPressed: () {
+                                        _categoryAlert(context);
+                                      },
+                                      icon: Icon(Icons.add_circle_outline),
+                                      label: Text("Add Category"))
+                                  //  ListTile(
+                                  //   dense: true,
+                                  //   leading: Icon(Icons.add_circle_outline),
+                                  //   title: Text("Add brand"),
+                                  //   onTap: () {
+                                  //     // _brandAlert(
+                                  //     //     context); // function using here but not working
+                                  //   },
+                                  // ),
+                                  ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
                           Divider(),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
@@ -532,6 +535,118 @@ class _AddProductState extends State<AddProduct> {
                                 onChanged: changeSelectedBrand,
                                 value: _currentBrand,
                               ),
+                              // StreamBuilder(
+                              //     stream: Firestore.instance
+                              //         .collection('Sellers')
+                              //         .document(user.uid)
+                              //         .collection("Category")
+                              //         .snapshots(),
+                              //     builder: (context,
+                              //         AsyncSnapshot<QuerySnapshot> snapshot) {
+                              //       if (!snapshot.hasData)
+                              //         Center(
+                              //           child:
+                              //               const CupertinoActivityIndicator(),
+                              //         );
+                              //       return DropdownButton<String>(
+                              //         value: category,
+                              //         isDense: true,
+                              //         hint: Text('Category'),
+                              //         onChanged: (newValue) {
+                              //           setState(() {
+                              //             category = newValue;
+                              //           });
+                              //         },
+                              //         items: snapshot.data != null
+                              //             ? snapshot.data.documents
+                              //                 .map((DocumentSnapshot document) {
+                              //                 return new DropdownMenuItem<
+                              //                         String>(
+                              //                     value: document
+                              //                         .data['Category']
+                              //                         .toString(),
+                              //                     child: new Container(
+                              //                       height: 100.0,
+                              //                       //color: primaryColor,
+                              //                       child: new Text(
+                              //                         document.data['Category']
+                              //                             .toString(),
+                              //                       ),
+                              //                     ));
+                              //               }).toList()
+                              //             : DropdownMenuItem(
+                              //                 value: 'null',
+                              //                 child: new Container(
+                              //                   height: 100.0,
+                              //                   child: new Text('null'),
+                              //                 ),
+                              //               ),
+                              //       );
+                              //     }),
+                              // StreamBuilder<QuerySnapshot>(
+                              //     stream: Firestore.instance
+                              //         .collection('Sellers')
+                              //         .document(user.uid)
+                              //         .collection("Category")
+                              //         .snapshots(),
+                              //     builder: (context, snapshot) {
+                              //       if (!snapshot.hasData)
+                              //         const Text("Loading.....");
+                              //       else {
+                              //         List<DropdownMenuItem> currencyItems = [];
+                              //         for (int i = 0;
+                              //             i < snapshot.data.documents.length;
+                              //             i++) {
+                              //           DocumentSnapshot snap =
+                              //               snapshot.data.documents[i].data[i];
+                              //           currencyItems.add(
+                              //             DropdownMenuItem(
+                              //               child: Text(
+                              //                 snap.documentID,
+                              //                 style: TextStyle(
+                              //                     color: Color(0xff11b719)),
+                              //               ),
+                              //               value: "${snap}",
+                              //             ),
+                              //           );
+                              //         }
+                              //         return Row(
+                              //           mainAxisAlignment:
+                              //               MainAxisAlignment.center,
+                              //           children: <Widget>[
+                              //             Icon(Icons.access_alarm,
+                              //                 size: 25.0,
+                              //                 color: Color(0xff11b719)),
+                              //             SizedBox(width: 50.0),
+                              //             DropdownButton(
+                              //               items: currencyItems,
+                              //               onChanged: (currencyValue) {
+                              //                 final snackBar = SnackBar(
+                              //                   content: Text(
+                              //                     'Selected Currency value is $currencyValue',
+                              //                     style: TextStyle(
+                              //                         color: Color(0xff11b719)),
+                              //                   ),
+                              //                 );
+                              //                 Scaffold.of(context)
+                              //                     .showSnackBar(snackBar);
+                              //                 setState(() {
+                              //                   selectedCurrency =
+                              //                       currencyValue;
+                              //                 });
+                              //               },
+                              //               value: selectedCurrency,
+                              //               isExpanded: false,
+                              //               hint: new Text(
+                              //                 "Choose Currency Type",
+                              //                 style: TextStyle(
+                              //                     color: Color(0xff11b719)),
+                              //               ),
+                              //             ),
+                              //           ],
+                              //         );
+                              //       }
+                              //     }),
                             ],
                           ),
 
@@ -822,7 +937,7 @@ class _AddProductState extends State<AddProduct> {
         builder: (BuildContext context) => alert);
   }
 
-  void _brandAlert(BuildContext context) {
+  void _brandAlert(BuildContext context,String id) {
     var alert = new AlertDialog(
       content: Form(
         key: _brandFormKey,
@@ -848,7 +963,7 @@ class _AddProductState extends State<AddProduct> {
             textColor: active,
             onPressed: () {
               if (brandController.text.isNotEmpty) {
-                _brandService.createBrand(brandController.text);
+                _brandService.createBrand(brandController.text,id);
                 Fluttertoast.showToast(msg: 'brand added');
                 Navigator.of(context, rootNavigator: true).pop();
                 brandController.clear();
