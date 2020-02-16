@@ -820,7 +820,7 @@ class _ProductDetaislEditsState extends State<ProductDetaislEdits> {
     );
   }
 
-  void _categoryAlert(BuildContext context) {
+  void _categoryAlert(BuildContext context,String id) {
     var alert = AlertDialog(
       content: Form(
         key: _categoryFormKey,
@@ -845,7 +845,7 @@ class _ProductDetaislEditsState extends State<ProductDetaislEdits> {
             textColor: active,
             onPressed: () {
               if (categoryController.text.isNotEmpty) {
-                _categoryService.createCategory(categoryController.text);
+                _categoryService.createCategory(categoryController.text,id);
                 Fluttertoast.showToast(msg: 'category created');
                 categoryController.clear();
                 Navigator.of(context, rootNavigator: true).pop();

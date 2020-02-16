@@ -434,7 +434,8 @@ class _FormDetailsState extends State<FormDetails> {
                                   ),
                           );
                           // );
-                        }),
+                        }
+                        ),
                   ),
                 ],
               ),

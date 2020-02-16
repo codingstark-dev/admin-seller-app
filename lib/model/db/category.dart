@@ -7,17 +7,17 @@ class CategoryService {
 
   Firestore _firestore = Firestore.instance;
 
-  void createCategory(String name) async {
-    var id = Uuid();
-    String categoryId = id.v1();
+  void createCategory(String name, String id) async {
+    // var id = Uuid();
+    // String categoryId = id.v1();
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     final String uid = user.uid.toString();
     _firestore
         .collection("Sellers")
         .document(uid)
         .collection("Category")
-        .document(categoryId)
-        .setData({'category': name});
+        .document(name)
+        .setData({'category': name, "id": id});
   }
 
   Future<List<DocumentSnapshot>> getCategories() async {

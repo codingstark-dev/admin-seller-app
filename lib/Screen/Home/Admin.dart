@@ -134,7 +134,7 @@ class _AdminState extends State<Admin> {
   //   }
   // }
 
-  void _categoryAlert(BuildContext context) {
+  void _categoryAlert(BuildContext context,String id) {
     var alert = AlertDialog(
       content: Form(
         key: _categoryFormKey,
@@ -159,7 +159,7 @@ class _AdminState extends State<Admin> {
         FlatButton(
             onPressed: () {
               if (categoryController.text.isNotEmpty) {
-                _categoryService.createCategory(categoryController.text);
+                _categoryService.createCategory(categoryController.text,id);
                 Fluttertoast.showToast(msg: 'category created');
                 categoryController.clear();
                 Navigator.of(context, rootNavigator: true).pop();
@@ -676,7 +676,7 @@ class _AdminState extends State<Admin> {
                 leading: Icon(Icons.add_circle),
                 title: Text("Add category"),
                 onTap: () {
-                  _categoryAlert(context);
+                  _categoryAlert(context,user.uid);
                 },
               ),
               Divider(),

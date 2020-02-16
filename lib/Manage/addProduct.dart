@@ -34,6 +34,9 @@ class _AddProductState extends State<AddProduct> {
   bool isLoading = false;
   final TextEditingController sellingPriceController = TextEditingController();
   final TextEditingController productNameController = TextEditingController();
+  final TextEditingController productDesController = TextEditingController();
+  final TextEditingController productPromoController = TextEditingController();
+
   ProductService productService = ProductService();
   final TextEditingController quatityController = TextEditingController();
   final TextEditingController originalPriceController = TextEditingController();
@@ -53,73 +56,79 @@ class _AddProductState extends State<AddProduct> {
   String imageurl2;
   String imageurl3;
   List<String> imageurl = [];
-
+  List<String> promocode = [];
   var category;
+  var brand;
 
-  var selectedCurrency;
+  bool _visible = false;
+
+  String _sizetext = "Add Size (Optional)";
+  String _promotext = "Create Promocode (Optional)";
+
+  bool _textfielddes = false;
 
   int get sellingPrice => int.parse(sellingPriceController.text);
   int get orginalPrice => int.parse(originalPriceController.text);
 
-  List<DropdownMenuItem<String>> getCategoriesDropdown() {
-    List<DropdownMenuItem<String>> items = new List();
-    for (int i = 0; i < categories.length; i++) {
-      setState(() {
-        items.insert(
-            0,
-            DropdownMenuItem(
-                child: Text(categories[i].data['category']),
-                value: categories[i].data['category']));
-      });
-    }
-    return items;
-  }
+  // List<DropdownMenuItem<String>> getCategoriesDropdown() {
+  //   List<DropdownMenuItem<String>> items = new List();
+  //   for (int i = 0; i < categories.length; i++) {
+  //     setState(() {
+  //       items.insert(
+  //           0,
+  //           DropdownMenuItem(
+  //               child: Text(categories[i].data['category']),
+  //               value: categories[i].data['category']));
+  //     });
+  //   }
+  //   return items;
+  // }
 
-  List<DropdownMenuItem<String>> getBrandosDropDown() {
-    List<DropdownMenuItem<String>> items = new List();
-    for (int i = 0; i < brands.length; i++) {
-      setState(() {
-        items.insert(
-            0,
-            DropdownMenuItem(
-                child: Text(brands[i].data['brand']),
-                value: brands[i].data['brand']));
-      });
-    }
-    return items;
-  }
+  // List<DropdownMenuItem<String>> getBrandosDropDown() {
+  //   List<DropdownMenuItem<String>> items = new List();
+  //   for (int i = 0; i < brands.length; i++) {
+  //     setState(() {
+  //       items.insert(
+  //           0,
+  //           DropdownMenuItem(
+  //               child: Text(brands[i].data['brand']),
+  //               value: brands[i].data['brand']));
+  //     });
+  //   }
+  //   return items;
+  // }
 
   GlobalKey<FormState> _brandFormKey = GlobalKey();
   GlobalKey<FormState> _categoryFormKey = GlobalKey();
   TextEditingController brandController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
-  _getCategories() async {
-    List<DocumentSnapshot> data = await _categoryService.getCategories();
-    print(data.length);
-    setState(() {
-      categories = data;
-      categoriesDropDown = getCategoriesDropdown();
-      _currentCategory = categories[0].data['category'];
-    });
-  }
+  // _getCategories() async {
+  //   List<DocumentSnapshot> data = await _categoryService.getCategories();
+  //   print(data.length);
+  //   setState(() {
+  //     categories = data;
+  //     categoriesDropDown = getCategoriesDropdown();
+  //     _currentCategory = categories[0].data['category'];
+  //   });
+  // }
 
-  _getBrands() async {
-    List<DocumentSnapshot> data = await _brandService.getBrands();
-    print(data.length);
-    setState(() {
-      brands = data;
-      brandsDropDown = getBrandosDropDown();
-      _currentBrand = brands[0].data['brand'];
-    });
-  }
+  // _getBrands() async {
+  //   List<DocumentSnapshot> data = await _brandService.getBrands();
+  //   print(data.length);
+  //   setState(() {
+  //     brands = data;
+  //     brandsDropDown = getBrandosDropDown();
+  //     _currentBrand = brands[0].data['brand'];
+  //   });
+  // }
 
-  changeSelectedCategory(String selectedCategory) {
-    setState(() => _currentCategory = selectedCategory);
-  }
+  // changeSelectedCategory(String selectedCategory) {
+  //   setState(() => _currentCategory = selectedCategory);
+  // }
 
-  changeSelectedBrand(String selectedBrand) {
-    setState(() => _currentBrand = selectedBrand);
-  }
+  // changeSelectedBrand(String selectedBrand) {
+  //   setState(() => _currentBrand = selectedBrand);
+  // }
 
   void changeSelectedSize(String size) {
     if (selectedSizes.contains(size)) {
@@ -254,7 +263,8 @@ class _AddProductState extends State<AddProduct> {
                 List<String> spiltList = productNameController.text.split(" ");
                 List<String> indexList = [];
                 String productIds = Uuid().v4().substring(0, 6);
-                // making search
+
+                //! making search
 
                 for (var i = 0; i < spiltList.length; i++) {
                   for (var y = 1; y < spiltList[i].length + 1; y++) {
@@ -280,7 +290,8 @@ class _AddProductState extends State<AddProduct> {
                   "Reference": productIds,
                   "TimeStamp": Timestamp.now(),
                   "Token": fcm,
-                  "ImageDes": imageurl
+                  "ImageDes": imageurl,
+                  "ProductDes": productDesController.text
                 }, username);
                 _formKey.currentState.reset();
                 setState(() => isLoading = false);
@@ -311,8 +322,14 @@ class _AddProductState extends State<AddProduct> {
   @override
   void initState() {
     super.initState();
-    _getCategories();
-    _getBrands();
+    // _getCategories();
+    // _getBrands();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -449,25 +466,7 @@ class _AddProductState extends State<AddProduct> {
                                   child: FlatButton.icon(
                                       textColor: active,
                                       onPressed: () {
-                                        _brandAlert(context,user.uid);
-                                      },
-                                      icon: Icon(Icons.add_circle),
-                                      label: Text("Add Brand"))
-                                  //  ListTile(
-                                  //   dense: true,
-                                  //   leading: Icon(Icons.add_circle),
-                                  //   title: Text("Add category"),
-                                  //   onTap: () {
-                                  //     // _categoryAlert(context);
-                                  //   },
-                                  // ),
-                                  ),
-                              Expanded(
-                                  flex: 1,
-                                  child: FlatButton.icon(
-                                      textColor: active,
-                                      onPressed: () {
-                                        _categoryAlert(context);
+                                        _categoryAlert(context, user.uid);
                                       },
                                       icon: Icon(Icons.add_circle_outline),
                                       label: Text("Add Category"))
@@ -478,6 +477,24 @@ class _AddProductState extends State<AddProduct> {
                                   //   onTap: () {
                                   //     // _brandAlert(
                                   //     //     context); // function using here but not working
+                                  //   },
+                                  // ),
+                                  ),
+                              Expanded(
+                                  flex: 1,
+                                  child: FlatButton.icon(
+                                      textColor: active,
+                                      onPressed: () {
+                                        _brandAlert(context, user.uid);
+                                      },
+                                      icon: Icon(Icons.add_circle),
+                                      label: Text("Add Brand"))
+                                  //  ListTile(
+                                  //   dense: true,
+                                  //   leading: Icon(Icons.add_circle),
+                                  //   title: Text("Add category"),
+                                  //   onTap: () {
+                                  //     // _categoryAlert(context);
                                   //   },
                                   // ),
                                   ),
@@ -506,74 +523,375 @@ class _AddProductState extends State<AddProduct> {
                               },
                             ),
                           ),
-
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
+                            child: TextFormField(
+                              maxLines: 5,
+                              controller: productDesController,
+                              decoration: InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: active),
+                                  ),
+                                  hintText: 'Product Description',
+                                  focusColor: active),
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'You Must Enter The Product Name';
+                                } else if (value.length < 3) {
+                                  return 'Add Full Product Name';
+                                }
+                              },
+                            ),
+                          ),
+                          Center(
+                            child: SizedBox(
+                              height: 30,
+                              width: 350,
+                              child: FlatButton.icon(
+                                icon: Icon(Icons.add),
+                                onPressed: _textdes,
+                                label: Text(_promotext),
+                              ),
+                            ),
+                          ),
+                          Divider(),
+                          Visibility(
+                            visible: _textfielddes,
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 3,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            12.0, 0, 12, 12),
+                                        child: TextFormField(
+                                          controller: productPromoController,
+                                          decoration: InputDecoration(
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide:
+                                                    BorderSide(color: active),
+                                              ),
+                                              hintText: 'Create Your Promocode',
+                                              focusColor: active),
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return 'You Must Enter The Product Name';
+                                            } else if (value.length < 3) {
+                                              return 'Add Full Product Name';
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            12.0, 0, 12, 12),
+                                        child: TextFormField(
+                                          controller: productPromoController,
+                                          decoration: InputDecoration(
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide:
+                                                    BorderSide(color: active),
+                                              ),
+                                              hintText: 'Discount Price',
+                                              focusColor: active),
+                                          validator: (value) {
+                                            if (value.isEmpty) {
+                                              return 'You Must Enter The Product Name';
+                                            } else if (value.length < 3) {
+                                              return 'Add Full Product Name';
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 350,
+                                  height: 30,
+                                  child: FlatButton.icon(
+                                      textColor: Colors.white,
+                                      color: active,
+                                      onPressed: () {
+                                        setState(() {
+                                          promocode
+                                              .add(productPromoController.text);
+                                          productPromoController.clear();
+                                          print(promocode);
+                                        });
+                                      },
+                                      icon: Icon(Icons.add),
+                                      label: Text("Add")),
+                                ),
+                                Divider(),
+                                buildCard(),
+                                Divider()
+                              ],
+                            ),
+                          ),
+                          // ListView.builder(
+                          //     itemCount: promocode.length,
+                          //     itemBuilder: (BuildContext context, int index) {
+                          //       return Card(
+                          //         child: ListTile(
+                          //           title: Text(promocode[index]),
+                          //         ),
+                          //       );
+                          //     }),
 //              select category
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Category: ',
-                                  style: TextStyle(color: active),
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8.0, 8, 0, 8),
+                                  child: Text(
+                                    'Category:',
+                                    style: TextStyle(color: active),
+                                  ),
                                 ),
                               ),
-                              DropdownButton(
-                                items: categoriesDropDown,
-                                onChanged: changeSelectedCategory,
-                                value: _currentCategory,
+                              Expanded(
+                                flex: 3,
+                                child: StreamBuilder<QuerySnapshot>(
+                                    stream: Firestore.instance
+                                        .collection("Sellers")
+                                        .document(user.uid)
+                                        .collection("Category")
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData ||
+                                          snapshot.data.documents.length == 0) {
+                                        return Text(
+                                          "No Catergory Added",
+                                        );
+                                      }
+                                      return DropdownButton<String>(
+                                        value: category,
+                                        isExpanded: true,
+                                        hint: Text("Category"),
+                                        isDense: true,
+                                        onChanged: (String newValue) {
+                                          setState(() {
+                                            final snackBar = SnackBar(
+                                              backgroundColor: Colors.white,
+                                              content: Text(
+                                                'Your Category Is $newValue',
+                                                style: TextStyle(color: active),
+                                              ),
+                                            );
+                                            Scaffold.of(context)
+                                                .showSnackBar(snackBar);
+                                            category = newValue;
+                                            // _onShopDropItemSelected(newValue);
+                                          });
+                                        },
+                                        items: snapshot.data != null
+                                            ? snapshot.data.documents.map((f) {
+                                                return DropdownMenuItem(
+                                                  value:
+                                                      f.documentID.toString(),
+                                                  child: Text(
+                                                      f.documentID.toString()),
+                                                );
+                                              }).toList()
+
+                                            //  snapshot.data != null
+                                            //     ? snapshot.data.documents
+                                            //         .map((DocumentSnapshot document) {
+                                            //         // final List<DocumentSnapshot> documents =
+                                            //         //     document.data["local"];
+
+                                            //           return DropdownMenuItem(
+                                            //               value: document["locals"].toString(),
+                                            //               child: new Container(
+                                            //                 height: 100.0,
+                                            //                 child: new Text(
+                                            //                   document.data["locals"][i].toString(),
+                                            //                 ),
+                                            //               ));
+
+                                            //       }).toList()
+
+                                            : DropdownMenuItem(
+                                                value: 'null',
+                                                child: new Container(
+                                                  height: 100.0,
+                                                  child: new Text('null'),
+                                                ),
+                                              ),
+                                      );
+                                    }),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Brand: ',
-                                  style: TextStyle(color: active),
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8.0, 8, 0, 8),
+                                  child: Text(
+                                    'Brand:',
+                                    style: TextStyle(color: active),
+                                  ),
                                 ),
                               ),
-                              DropdownButton(
-                                items: brandsDropDown,
-                                onChanged: changeSelectedBrand,
-                                value: _currentBrand,
+                              Expanded(
+                                flex: 3,
+                                child: StreamBuilder<QuerySnapshot>(
+                                    stream: Firestore.instance
+                                        .collection("Sellers")
+                                        .document(user.uid)
+                                        .collection("Brand")
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData ||
+                                          snapshot.data.documents.length == 0) {
+                                        return Text("No Brand Added");
+                                      }
+
+                                      return DropdownButton<String>(
+                                        value: brand,
+                                        isExpanded: true,
+                                        hint: Text("Brand"),
+                                        isDense: true,
+                                        onChanged: (String newValue) {
+                                          setState(() {
+                                            final snackBar = SnackBar(
+                                              backgroundColor: Colors.white,
+                                              content: Text(
+                                                'Your Brand Is $newValue',
+                                                style: TextStyle(color: active),
+                                              ),
+                                            );
+                                            Scaffold.of(context)
+                                                .showSnackBar(snackBar);
+                                            brand = newValue;
+                                            // _onShopDropItemSelected(newValue);
+                                          });
+                                        },
+                                        items: snapshot.data != null
+                                            ? snapshot.data.documents.map((f) {
+                                                return DropdownMenuItem(
+                                                  value:
+                                                      f.documentID.toString(),
+                                                  child: Text(
+                                                      f.documentID.toString()),
+                                                );
+                                              }).toList()
+
+                                            //  snapshot.data != null
+                                            //     ? snapshot.data.documents
+                                            //         .map((DocumentSnapshot document) {
+                                            //         // final List<DocumentSnapshot> documents =
+                                            //         //     document.data["local"];
+
+                                            //           return DropdownMenuItem(
+                                            //               value: document["locals"].toString(),
+                                            //               child: new Container(
+                                            //                 height: 100.0,
+                                            //                 child: new Text(
+                                            //                   document.data["locals"][i].toString(),
+                                            //                 ),
+                                            //               ));
+
+                                            //       }).toList()
+
+                                            : DropdownMenuItem(
+                                                value: 'null',
+                                                child: new Container(
+                                                  height: 100.0,
+                                                  child: new Text('null'),
+                                                ),
+                                              ),
+                                      );
+                                    }),
                               ),
-                              // StreamBuilder(
+                              // StreamBuilder<QuerySnapshot>(
                               //     stream: Firestore.instance
-                              //         .collection('Sellers')
+                              //         .collection("Sellers")
                               //         .document(user.uid)
-                              //         .collection("Category")
+                              //         .collection("Brand")
                               //         .snapshots(),
-                              //     builder: (context,
-                              //         AsyncSnapshot<QuerySnapshot> snapshot) {
-                              //       if (!snapshot.hasData)
-                              //         Center(
-                              //           child:
-                              //               const CupertinoActivityIndicator(),
-                              //         );
+                              //     builder: (context, snapshot) {
+                              //       // List<DropdownMenuItem> servicess = [];
+                              //       // final List<DocumentSnapshot> documentss =
+                              //       //     snapshot?.data?.documents;
+                              //       if (!snapshot.hasData ||
+                              //           snapshot.data.documents.length == 0) {
+                              //         return Center(
+                              //             child: CircularProgressIndicator());
+                              //       }
+                              //       // return InputDecorator(
+                              //       //   decoration: InputDecoration(
+                              //       //     //labelText: 'Activity',
+                              //       //     hintText: 'Choose an category',
+                              //       //     hintStyle: TextStyle(
+                              //       //       color: active,
+                              //       //       fontSize: 16.0,
+                              //       //       fontFamily: "OpenSans",
+                              //       //       fontWeight: FontWeight.normal,
+                              //       //     ),
+                              //       //   ),
+                              //       //   isEmpty: category == null,
+                              //       //   child:
+
                               //       return DropdownButton<String>(
                               //         value: category,
+                              //         isExpanded: true,
+                              //         hint: Text("Service"),
                               //         isDense: true,
-                              //         hint: Text('Category'),
-                              //         onChanged: (newValue) {
+                              //         onChanged: (String newValue) {
                               //           setState(() {
+                              //             final snackBar = SnackBar(
+                              //               backgroundColor: Colors.white,
+                              //               content: Text(
+                              //                 'Your Service Is $newValue',
+                              //                 style: TextStyle(color: active),
+                              //               ),
+                              //             );
+                              //             Scaffold.of(context)
+                              //                 .showSnackBar(snackBar);
                               //             category = newValue;
+                              //             // _onShopDropItemSelected(newValue);
                               //           });
                               //         },
                               //         items: snapshot.data != null
-                              //             ? snapshot.data.documents
-                              //                 .map((DocumentSnapshot document) {
-                              //                 return new DropdownMenuItem<
-                              //                         String>(
-                              //                     value: document
-                              //                         .data['Category']
-                              //                         .toString(),
-                              //                     child: new Container(
-                              //                       height: 100.0,
-                              //                       //color: primaryColor,
-                              //                       child: new Text(
-                              //                         document.data['Category']
-                              //                             .toString(),
-                              //                       ),
-                              //                     ));
+                              //             ? snapshot.data.documents.map((f) {
+                              //                 return DropdownMenuItem(
+                              //                   value: f.documentID.toString(),
+                              //                   child: Text(
+                              //                       f.documentID.toString()),
+                              //                 );
                               //               }).toList()
+
+                              //             //  snapshot.data != null
+                              //             //     ? snapshot.data.documents
+                              //             //         .map((DocumentSnapshot document) {
+                              //             //         // final List<DocumentSnapshot> documents =
+                              //             //         //     document.data["local"];
+
+                              //             //           return DropdownMenuItem(
+                              //             //               value: document["locals"].toString(),
+                              //             //               child: new Container(
+                              //             //                 height: 100.0,
+                              //             //                 child: new Text(
+                              //             //                   document.data["locals"][i].toString(),
+                              //             //                 ),
+                              //             //               ));
+
+                              //             //       }).toList()
+
                               //             : DropdownMenuItem(
                               //                 value: 'null',
                               //                 child: new Container(
@@ -582,70 +900,7 @@ class _AddProductState extends State<AddProduct> {
                               //                 ),
                               //               ),
                               //       );
-                              //     }),
-                              // StreamBuilder<QuerySnapshot>(
-                              //     stream: Firestore.instance
-                              //         .collection('Sellers')
-                              //         .document(user.uid)
-                              //         .collection("Category")
-                              //         .snapshots(),
-                              //     builder: (context, snapshot) {
-                              //       if (!snapshot.hasData)
-                              //         const Text("Loading.....");
-                              //       else {
-                              //         List<DropdownMenuItem> currencyItems = [];
-                              //         for (int i = 0;
-                              //             i < snapshot.data.documents.length;
-                              //             i++) {
-                              //           DocumentSnapshot snap =
-                              //               snapshot.data.documents[i].data[i];
-                              //           currencyItems.add(
-                              //             DropdownMenuItem(
-                              //               child: Text(
-                              //                 snap.documentID,
-                              //                 style: TextStyle(
-                              //                     color: Color(0xff11b719)),
-                              //               ),
-                              //               value: "${snap}",
-                              //             ),
-                              //           );
-                              //         }
-                              //         return Row(
-                              //           mainAxisAlignment:
-                              //               MainAxisAlignment.center,
-                              //           children: <Widget>[
-                              //             Icon(Icons.access_alarm,
-                              //                 size: 25.0,
-                              //                 color: Color(0xff11b719)),
-                              //             SizedBox(width: 50.0),
-                              //             DropdownButton(
-                              //               items: currencyItems,
-                              //               onChanged: (currencyValue) {
-                              //                 final snackBar = SnackBar(
-                              //                   content: Text(
-                              //                     'Selected Currency value is $currencyValue',
-                              //                     style: TextStyle(
-                              //                         color: Color(0xff11b719)),
-                              //                   ),
-                              //                 );
-                              //                 Scaffold.of(context)
-                              //                     .showSnackBar(snackBar);
-                              //                 setState(() {
-                              //                   selectedCurrency =
-                              //                       currencyValue;
-                              //                 });
-                              //               },
-                              //               value: selectedCurrency,
-                              //               isExpanded: false,
-                              //               hint: new Text(
-                              //                 "Choose Currency Type",
-                              //                 style: TextStyle(
-                              //                     color: Color(0xff11b719)),
-                              //               ),
-                              //             ),
-                              //           ],
-                              //         );
-                              //       }
+                              //       // );
                               //     }),
                             ],
                           ),
@@ -734,136 +989,152 @@ class _AddProductState extends State<AddProduct> {
                               },
                             ),
                           ),
-                          Text('Available Sizes'),
-
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: <Widget>[
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('XS'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('XS')),
-                                Text('XS'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('S'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('S')),
-                                Text('S'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('M'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('M')),
-                                Text('M'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('L'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('L')),
-                                Text('L'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('XL'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('XL')),
-                                Text('XL'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('XXL'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('XXL')),
-                                Text('XXL'),
-                              ],
+                          Center(
+                            child: SizedBox(
+                              height: 30,
+                              width: 350,
+                              child: FlatButton.icon(
+                                icon: Icon(Icons.add),
+                                onPressed: _toggle,
+                                label: Text(_sizetext),
+                              ),
                             ),
                           ),
-
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
+                          Divider(),
+                          Visibility(
+                            visible: _visible,
+                            child: Column(
                               children: <Widget>[
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('28'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('28')),
-                                Text('28'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('30'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('30')),
-                                Text('30'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('32'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('32')),
-                                Text('32'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('34'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('34')),
-                                Text('34'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('36'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('36')),
-                                Text('36'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('38'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('38')),
-                                Text('38'),
-                              ],
-                            ),
-                          ),
-
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: <Widget>[
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('40'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('40')),
-                                Text('40'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('42'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('42')),
-                                Text('42'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('44'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('44')),
-                                Text('44'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('46'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('46')),
-                                Text('46'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('48'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('48')),
-                                Text('48'),
-                                Checkbox(
-                                    activeColor: active,
-                                    value: selectedSizes.contains('50'),
-                                    onChanged: (value) =>
-                                        changeSelectedSize('50')),
-                                Text('50'),
+                                Text('Available Sizes'),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('XS'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('XS')),
+                                      Text('XS'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('S'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('S')),
+                                      Text('S'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('M'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('M')),
+                                      Text('M'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('L'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('L')),
+                                      Text('L'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('XL'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('XL')),
+                                      Text('XL'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('XXL'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('XXL')),
+                                      Text('XXL'),
+                                    ],
+                                  ),
+                                ),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('28'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('28')),
+                                      Text('28'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('30'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('30')),
+                                      Text('30'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('32'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('32')),
+                                      Text('32'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('34'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('34')),
+                                      Text('34'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('36'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('36')),
+                                      Text('36'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('38'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('38')),
+                                      Text('38'),
+                                    ],
+                                  ),
+                                ),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('40'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('40')),
+                                      Text('40'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('42'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('42')),
+                                      Text('42'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('44'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('44')),
+                                      Text('44'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('46'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('46')),
+                                      Text('46'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('48'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('48')),
+                                      Text('48'),
+                                      Checkbox(
+                                          activeColor: active,
+                                          value: selectedSizes.contains('50'),
+                                          onChanged: (value) =>
+                                              changeSelectedSize('50')),
+                                      Text('50'),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -886,7 +1157,29 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  void _categoryAlert(BuildContext context) {
+  buildCard() {
+    if (promocode.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text("No Promocode Added"),
+      );
+    } else {
+      return Card(
+          child: ListTile(
+        title: Text(promocode[0]),
+        dense: true,
+        trailing: IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              setState(() {
+                promocode.clear();
+              });
+            }),
+      ));
+    }
+  }
+
+  void _categoryAlert(BuildContext context, String id) {
     var alert = AlertDialog(
       content: Form(
         key: _categoryFormKey,
@@ -911,7 +1204,7 @@ class _AddProductState extends State<AddProduct> {
             textColor: active,
             onPressed: () {
               if (categoryController.text.isNotEmpty) {
-                _categoryService.createCategory(categoryController.text);
+                _categoryService.createCategory(categoryController.text, id);
                 Fluttertoast.showToast(msg: 'category created');
                 categoryController.clear();
                 Navigator.of(context, rootNavigator: true).pop();
@@ -937,7 +1230,7 @@ class _AddProductState extends State<AddProduct> {
         builder: (BuildContext context) => alert);
   }
 
-  void _brandAlert(BuildContext context,String id) {
+  void _brandAlert(BuildContext context, String id) {
     var alert = new AlertDialog(
       content: Form(
         key: _brandFormKey,
@@ -963,7 +1256,7 @@ class _AddProductState extends State<AddProduct> {
             textColor: active,
             onPressed: () {
               if (brandController.text.isNotEmpty) {
-                _brandService.createBrand(brandController.text,id);
+                _brandService.createBrand(brandController.text, id);
                 Fluttertoast.showToast(msg: 'brand added');
                 Navigator.of(context, rootNavigator: true).pop();
                 brandController.clear();
@@ -982,5 +1275,20 @@ class _AddProductState extends State<AddProduct> {
     );
 
     showDialog(context: context, builder: (BuildContext context) => alert);
+  }
+
+  void _toggle() {
+    setState(() {
+      _sizetext = (_visible == false) ? "Hide Size" : "Add Size (Optional)";
+      _visible = !_visible;
+    });
+  }
+
+  void _textdes() {
+    setState(() {
+      _promotext =
+          (_textfielddes == false) ? "Hide Promo" : "Add Promocode (Optional)";
+      _textfielddes = !_textfielddes;
+    });
   }
 }
