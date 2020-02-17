@@ -10,8 +10,9 @@ class ProductService {
   String appid = "CityGrow Product List";
 
   Firestore _firestore = Firestore.instance;
-
-  void uploadProduct(Map<String, dynamic> data, String username) async {
+  void uploadPromocode() {}
+  void uploadProduct(Map<String, dynamic> data, String username,
+      Map<String, dynamic> promo) async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     final String uid = user.uid.toString();
     // final String name = user?.displayName;
@@ -22,6 +23,12 @@ class ProductService {
     data["PersonID"] = productId;
     // ProductListsView(uid: uid, userName: username, name: name);
     _firestore.collection(ref).document(productIds).setData(data);
+    _firestore
+        .collection(ref)
+        .document(productIds)
+        .collection("promocode")
+        .document(productIds)
+        .setData(promo);
   }
 
   void updateProduct(Map<String, dynamic> data, String documentID) async {

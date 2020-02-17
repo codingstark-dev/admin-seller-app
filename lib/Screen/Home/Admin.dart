@@ -141,7 +141,6 @@ class _AdminState extends State<Admin> {
         child: TextFormField(
           inputFormatters: [
             BlacklistingTextInputFormatter(" "),
-            LengthLimitingTextInputFormatter(8)
           ],
           controller: categoryController,
           validator: (value) {

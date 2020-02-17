@@ -62,13 +62,21 @@ class _AddProductState extends State<AddProduct> {
   List<String> promoprice = [];
   var category;
   var brand;
-
+  var _currencies = [
+    "Kg",
+    "gm",
+    "Ltr",
+    "Pic",
+    "Nos",
+  ];
   bool _visible = false;
 
   String _sizetext = "Add Size (Optional)";
   String _promotext = "Create Promocode (Optional)";
 
   bool _textfielddes = false;
+
+  var _currentSelectedValue;
 
   int get sellingPrice => int.parse(sellingPriceController.text);
   int get orginalPrice => int.parse(originalPriceController.text);
@@ -217,125 +225,132 @@ class _AddProductState extends State<AddProduct> {
   void validateAndUpload(String username, String uid) async {
     var id = Uuid().v1();
     try {
-      if (_currentBrand != null && _currentCategory != null) {
+      if (category != null) {
         if (_formKey.currentState.validate()) {
           setState(() => isLoading = true);
           if (_image1 != null && _image2 != null && _image3 != null) {
-            if (selectedSizes.isNotEmpty) {
-              String imageUrl1;
-              String imageUrl2;
-              String imageUrl3;
+            String imageUrl1;
+            String imageUrl2;
+            String imageUrl3;
 
-              final FirebaseStorage storage = FirebaseStorage.instance;
-              final String picture1 = "1${id.substring(0, 8)}.jpg";
-              StorageUploadTask task1 = storage
-                  .ref()
-                  .child(uid)
-                  .child(productNameController.text)
-                  .child(picture1)
-                  .putFile(_image1);
-              final String picture2 = "2${id.substring(0, 8)}.jpg";
-              StorageUploadTask task2 = storage
-                  .ref()
-                  .child(uid)
-                  .child(productNameController.text)
-                  .child(picture2)
-                  .putFile(_image2);
-              final String picture3 = "3${id.substring(0, 8)}.jpg";
-              StorageUploadTask task3 = storage
-                  .ref()
-                  .child(uid)
-                  .child(productNameController.text)
-                  .child(picture3)
-                  .putFile(_image3);
-              setState(() {
-                imageurl.add(picture1);
-                imageurl.add(picture2);
-                imageurl.add(picture3);
-              });
-              StorageTaskSnapshot snapshot1 =
-                  await task1.onComplete.then((snapshot) => snapshot);
-              StorageTaskSnapshot snapshot2 =
-                  await task2.onComplete.then((snapshot) => snapshot);
+            final FirebaseStorage storage = FirebaseStorage.instance;
+            final String picture1 = "1${id.substring(0, 8)}.jpg";
+            StorageUploadTask task1 = storage
+                .ref()
+                .child(uid)
+                .child(productNameController.text)
+                .child(picture1)
+                .putFile(_image1);
+            final String picture2 = "2${id.substring(0, 8)}.jpg";
+            StorageUploadTask task2 = storage
+                .ref()
+                .child(uid)
+                .child(productNameController.text)
+                .child(picture2)
+                .putFile(_image2);
+            final String picture3 = "3${id.substring(0, 8)}.jpg";
+            StorageUploadTask task3 = storage
+                .ref()
+                .child(uid)
+                .child(productNameController.text)
+                .child(picture3)
+                .putFile(_image3);
+            setState(() {
+              imageurl.add(picture1);
+              imageurl.add(picture2);
+              imageurl.add(picture3);
+            });
+            StorageTaskSnapshot snapshot1 =
+                await task1.onComplete.then((snapshot) => snapshot);
+            StorageTaskSnapshot snapshot2 =
+                await task2.onComplete.then((snapshot) => snapshot);
 
-              task3.onComplete.then((snapshot3) async {
-                imageUrl1 = await snapshot1.ref.getDownloadURL();
-                imageUrl2 = await snapshot2.ref.getDownloadURL();
-                imageUrl3 = await snapshot3.ref.getDownloadURL();
-                List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
-                List<String> spiltList = productNameController.text.split(" ");
-                List<String> indexList = [];
-                String productIds = Uuid().v4().substring(0, 6);
+            task3.onComplete.then((snapshot3) async {
+              imageUrl1 = await snapshot1.ref.getDownloadURL();
+              imageUrl2 = await snapshot2.ref.getDownloadURL();
+              imageUrl3 = await snapshot3.ref.getDownloadURL();
+              List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
+              List<String> spiltList = productNameController.text.split(" ");
+              List<String> indexList = [];
+              String productIds = Uuid().v4().substring(0, 6);
 
-                //! making search
+              //! making search
 
-                for (var i = 0; i < spiltList.length; i++) {
-                  for (var y = 1; y < spiltList[i].length + 1; y++) {
-                    indexList.add(spiltList[i].substring(0, y).toLowerCase());
-                  }
+              for (var i = 0; i < spiltList.length; i++) {
+                for (var y = 1; y < spiltList[i].length + 1; y++) {
+                  indexList.add(spiltList[i].substring(0, y).toLowerCase());
                 }
-                final String fcm = await FirebaseMessaging().getToken();
-                sl.get<ProductService>().uploadProduct({
-                  "Product Description": productDesController.text,
-                  "indexList": indexList,
-                  "ProductReview": false,
-                  "ProductName": productNameController.text,
-                  "UploaderName": username,
-                  "price": double.parse(sellingPriceController.text),
-                  "Orignal Price": int.parse(originalPriceController.text),
-                  "sizes": selectedSizes,
-                  "images": imageList,
-                  "quantity": int.parse(quatityController.text),
-                  "brand": _currentBrand,
-                  "Discount":
-                      (orginalPrice - sellingPrice) / orginalPrice * 100,
-                  "category": _currentCategory,
-                  "Reference": productIds,
-                  "TimeStamp": Timestamp.now(),
-                  "Token": fcm,
-                  "ImageDes": imageurl,
-                  "ProductDes": productDesController.text
-                }, username);
-                // productService.uploadProduct({
-                //   "indexList": indexList,
-                //   "ProductReview": false,
-                //   "ProductName": productNameController.text,
-                //   "UploaderName": username,
-                //   "price": double.parse(sellingPriceController.text),
-                //   "Orignal Price": int.parse(originalPriceController.text),
-                //   "sizes": selectedSizes,
-                //   "images": imageList,
-                //   "quantity": int.parse(quatityController.text),
-                //   "brand": _currentBrand,
-                //   "Discount":
-                //       (orginalPrice - sellingPrice) / orginalPrice * 100,
-                //   "category": _currentCategory,
-                //   "Reference": productIds,
-                //   "TimeStamp": Timestamp.now(),
-                //   "Token": fcm,
-                //   "ImageDes": imageurl,
-                //   "ProductDes": productDesController.text
-                // }, username);
-                _formKey.currentState.reset();
-                setState(() => isLoading = false);
-                Fluttertoast.showToast(msg: 'Product added');
-                Navigator.pop(context);
-              });
-            } else {
+              }
+              final String fcm = await FirebaseMessaging().getToken();
+              sl.get<ProductService>().uploadProduct(
+                  {
+                    "Product Description": productDesController.text,
+                    "indexList": indexList,
+                    "ProductReview": false,
+                    "Featured Product": false,
+                    "ProductName": productNameController.text,
+                    "UploaderName": username,
+                    "price": double.parse(sellingPriceController.text),
+                    "Orignal Price": int.parse(originalPriceController.text),
+                    "sizes": selectedSizes,
+                    "images": imageList,
+                    "quantity": int.parse(quatityController.text),
+                    "brand": brand ?? "",
+                    "Discount":
+                        (orginalPrice - sellingPrice) / orginalPrice * 100,
+                    "category": category,
+                    "Reference": productIds,
+                    "TimeStamp": Timestamp.now(),
+                    "Token": fcm,
+                    "ImageDes": imageurl,
+                    "ProductDes": productDesController.text,
+                    "Promocode": (promocode.isEmpty) ? "" : promocode[0],
+                    "PromoPrice": (promoprice.isEmpty) ? "" : promoprice[0],
+                  },
+                  username,
+                  {
+                    "uid": uid,
+                    "Promocode": (promocode.isEmpty) ? "" : promocode[0],
+                    "PromoPrice": (promoprice.isEmpty) ? "" : promoprice[0],
+                    "Token": fcm,
+                    "category": category,
+                    "brand": brand ?? "",
+                    "ProductName": productNameController.text,
+                  });
+              // productService.uploadProduct({
+              //   "indexList": indexList,
+              //   "ProductReview": false,
+              //   "ProductName": productNameController.text,
+              //   "UploaderName": username,
+              //   "price": double.parse(sellingPriceController.text),
+              //   "Orignal Price": int.parse(originalPriceController.text),
+              //   "sizes": selectedSizes,
+              //   "images": imageList,
+              //   "quantity": int.parse(quatityController.text),
+              //   "brand": _currentBrand,
+              //   "Discount":
+              //       (orginalPrice - sellingPrice) / orginalPrice * 100,
+              //   "category": _currentCategory,
+              //   "Reference": productIds,
+              //   "TimeStamp": Timestamp.now(),
+              //   "Token": fcm,
+              //   "ImageDes": imageurl,
+              //   "ProductDes": productDesController.text
+              // }, username);
+              _formKey.currentState.reset();
               setState(() => isLoading = false);
-
-              Fluttertoast.showToast(msg: 'select atleast one size');
-            }
+              Fluttertoast.showToast(msg: 'Product added');
+              Navigator.pop(context);
+            });
           } else {
             setState(() => isLoading = false);
-            Fluttertoast.showToast(msg: 'all the images must be provided');
+
+            Fluttertoast.showToast(msg: 'select atleast one size');
           }
+        } else {
+          setState(() => isLoading = false);
+          Fluttertoast.showToast(msg: 'all the images must be provided');
         }
-      } else {
-        setState(() => isLoading = false);
-        Fluttertoast.showToast(
-            msg:
-                "Add Category And Brand Go Manage Section Scroll Down And Both Thing");
       }
     } catch (e) {
       print(e.toString());
@@ -609,13 +624,6 @@ class _AddProductState extends State<AddProduct> {
                                               ),
                                               hintText: 'Create Your Promocode',
                                               focusColor: active),
-                                          validator: (value) {
-                                            if (value.isEmpty) {
-                                              return 'You Must Enter The Promocode To Add It!';
-                                            } else if (value.length < 3) {
-                                              return 'Add More Text';
-                                            }
-                                          },
                                         ),
                                       ),
                                     ),
@@ -636,13 +644,6 @@ class _AddProductState extends State<AddProduct> {
                                               ),
                                               hintText: 'Discount Price',
                                               focusColor: active),
-                                          validator: (value) {
-                                            if (value.isEmpty) {
-                                              return 'You Must Enter The Discount Price';
-                                            } else if (value.length < 1) {
-                                              return 'Add Minimum Price';
-                                            }
-                                          },
                                         ),
                                       ),
                                     ),
@@ -1007,6 +1008,77 @@ class _AddProductState extends State<AddProduct> {
                               ),
                               Expanded(
                                 flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: TextFormField(
+                                    controller: sellingPriceController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: active),
+                                      ),
+                                      hintText: 'Selling Price *',
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'You Must Need Add Price Of The Product';
+                                      } else if (value.length > 5) {
+                                        return "Add Number Less Then 5";
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: FormField<String>(
+                                    builder: (FormFieldState<String> state) {
+                                      return InputDecorator(
+                                        decoration: InputDecoration(
+                                            errorStyle: TextStyle(
+                                                color: Colors.redAccent,
+                                                fontSize: 16.0),
+                                            hintText: 'Please select expense',
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        5.0))),
+                                        isEmpty: _currentSelectedValue == '',
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            value: _currentSelectedValue,
+                                            isDense: true,
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                _currentSelectedValue =
+                                                    newValue;
+                                                state.didChange(newValue);
+                                                print(_currentSelectedValue);
+                                              });
+                                            },
+                                            items:
+                                                _currencies.map((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Text("OR"),
+                              Expanded(
+                                flex: 1,
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: TextFormField(
