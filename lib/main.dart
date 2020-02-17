@@ -5,9 +5,11 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sellerapp/MainFinal.dart';
+import 'package:sellerapp/service/notifier/service_locator.dart';
 
 /// Run first apps open
 void main() {
+  serviceLocator();
   // Set `enableInDevMode` to true to see reports while in debug mode
   // This is only to be used for confirming that reports are being
   // submitted as expected. It is not intended to be used for everyday

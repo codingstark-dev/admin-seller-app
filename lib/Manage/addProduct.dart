@@ -15,6 +15,7 @@ import 'package:sellerapp/model/db/category.dart';
 import 'package:sellerapp/model/db/product.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
+import 'package:sellerapp/service/notifier/service_locator.dart';
 import 'package:sellerapp/service/streamfiles.dart';
 import 'package:uuid/uuid.dart';
 
@@ -36,7 +37,8 @@ class _AddProductState extends State<AddProduct> {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController productDesController = TextEditingController();
   final TextEditingController productPromoController = TextEditingController();
-
+  final TextEditingController productPromoDicountController =
+      TextEditingController();
   ProductService productService = ProductService();
   final TextEditingController quatityController = TextEditingController();
   final TextEditingController originalPriceController = TextEditingController();
@@ -44,8 +46,8 @@ class _AddProductState extends State<AddProduct> {
   List<String> selectedSizes = <String>[];
   Color white = Colors.white;
 
-  BrandService _brandService = BrandService();
-  CategoryService _categoryService = CategoryService();
+  // BrandService _brandService = BrandService();
+  // CategoryService _categoryService = CategoryService();
   String _currentBrand;
   String _currentCategory;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -57,6 +59,7 @@ class _AddProductState extends State<AddProduct> {
   String imageurl3;
   List<String> imageurl = [];
   List<String> promocode = [];
+  List<String> promoprice = [];
   var category;
   var brand;
 
@@ -272,8 +275,8 @@ class _AddProductState extends State<AddProduct> {
                   }
                 }
                 final String fcm = await FirebaseMessaging().getToken();
-
-                productService.uploadProduct({
+                sl.get<ProductService>().uploadProduct({
+                  "Product Description": productDesController.text,
                   "indexList": indexList,
                   "ProductReview": false,
                   "ProductName": productNameController.text,
@@ -293,6 +296,26 @@ class _AddProductState extends State<AddProduct> {
                   "ImageDes": imageurl,
                   "ProductDes": productDesController.text
                 }, username);
+                // productService.uploadProduct({
+                //   "indexList": indexList,
+                //   "ProductReview": false,
+                //   "ProductName": productNameController.text,
+                //   "UploaderName": username,
+                //   "price": double.parse(sellingPriceController.text),
+                //   "Orignal Price": int.parse(originalPriceController.text),
+                //   "sizes": selectedSizes,
+                //   "images": imageList,
+                //   "quantity": int.parse(quatityController.text),
+                //   "brand": _currentBrand,
+                //   "Discount":
+                //       (orginalPrice - sellingPrice) / orginalPrice * 100,
+                //   "category": _currentCategory,
+                //   "Reference": productIds,
+                //   "TimeStamp": Timestamp.now(),
+                //   "Token": fcm,
+                //   "ImageDes": imageurl,
+                //   "ProductDes": productDesController.text
+                // }, username);
                 _formKey.currentState.reset();
                 setState(() => isLoading = false);
                 Fluttertoast.showToast(msg: 'Product added');
@@ -386,7 +409,16 @@ class _AddProductState extends State<AddProduct> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              'Select The Clear And Proper Images',
+                              'Remember Star Marks (*) Always Importants',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: active, fontSize: 12),
+                            ),
+                          ),
+                          Divider(),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Select The Clear And Proper Images *',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: active, fontSize: 12),
                             ),
@@ -512,7 +544,7 @@ class _AddProductState extends State<AddProduct> {
                                   focusedBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: active),
                                   ),
-                                  hintText: 'Product Name',
+                                  hintText: 'Product Name *',
                                   focusColor: active),
                               validator: (value) {
                                 if (value.isEmpty) {
@@ -532,13 +564,13 @@ class _AddProductState extends State<AddProduct> {
                                   focusedBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(color: active),
                                   ),
-                                  hintText: 'Product Description',
+                                  hintText: 'Product Description *',
                                   focusColor: active),
                               validator: (value) {
                                 if (value.isEmpty) {
-                                  return 'You Must Enter The Product Name';
+                                  return 'You Must Enter The Product Details';
                                 } else if (value.length < 3) {
-                                  return 'Add Full Product Name';
+                                  return 'Add More Product Details';
                                 }
                               },
                             ),
@@ -567,6 +599,7 @@ class _AddProductState extends State<AddProduct> {
                                         padding: const EdgeInsets.fromLTRB(
                                             12.0, 0, 12, 12),
                                         child: TextFormField(
+                                          keyboardType: TextInputType.text,
                                           controller: productPromoController,
                                           decoration: InputDecoration(
                                               focusedBorder:
@@ -578,9 +611,9 @@ class _AddProductState extends State<AddProduct> {
                                               focusColor: active),
                                           validator: (value) {
                                             if (value.isEmpty) {
-                                              return 'You Must Enter The Product Name';
+                                              return 'You Must Enter The Promocode To Add It!';
                                             } else if (value.length < 3) {
-                                              return 'Add Full Product Name';
+                                              return 'Add More Text';
                                             }
                                           },
                                         ),
@@ -592,7 +625,9 @@ class _AddProductState extends State<AddProduct> {
                                         padding: const EdgeInsets.fromLTRB(
                                             12.0, 0, 12, 12),
                                         child: TextFormField(
-                                          controller: productPromoController,
+                                          keyboardType: TextInputType.number,
+                                          controller:
+                                              productPromoDicountController,
                                           decoration: InputDecoration(
                                               focusedBorder:
                                                   UnderlineInputBorder(
@@ -603,9 +638,9 @@ class _AddProductState extends State<AddProduct> {
                                               focusColor: active),
                                           validator: (value) {
                                             if (value.isEmpty) {
-                                              return 'You Must Enter The Product Name';
-                                            } else if (value.length < 3) {
-                                              return 'Add Full Product Name';
+                                              return 'You Must Enter The Discount Price';
+                                            } else if (value.length < 1) {
+                                              return 'Add Minimum Price';
                                             }
                                           },
                                         ),
@@ -624,10 +659,36 @@ class _AddProductState extends State<AddProduct> {
                                       color: active,
                                       onPressed: () {
                                         setState(() {
-                                          promocode
-                                              .add(productPromoController.text);
-                                          productPromoController.clear();
-                                          print(promocode);
+                                          if (productPromoController
+                                                  .text.isNotEmpty &&
+                                              productPromoDicountController
+                                                  .text.isNotEmpty) {
+                                            if (promocode.length == 0 &&
+                                                promoprice.length == 0) {
+                                              promocode.add(
+                                                  productPromoController.text);
+                                              promoprice.add(
+                                                  productPromoDicountController
+                                                      .text);
+                                              productPromoController.clear();
+                                              productPromoDicountController
+                                                  .clear();
+                                              print(promocode);
+                                            } else if (promocode.length > 0) {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      "You Can Add Only One Promocode");
+                                            }
+                                          } else if (productPromoController
+                                              .text.isEmpty) {
+                                            Fluttertoast.showToast(
+                                                msg: "Please Create promocode");
+                                          } else if (productPromoDicountController
+                                              .text.isEmpty) {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    "Please Add Discount Price promocode");
+                                          }
                                         });
                                       },
                                       icon: Icon(Icons.add),
@@ -921,7 +982,7 @@ class _AddProductState extends State<AddProduct> {
                                         borderSide: BorderSide(color: active),
                                       ),
 
-                                      hintText: 'Orginal Price',
+                                      hintText: 'Orginal Price *',
                                       // suffixIcon: InkWell(
                                       //   onTap: () {
                                       //     Fluttertoast.showToast(
@@ -955,7 +1016,7 @@ class _AddProductState extends State<AddProduct> {
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(color: active),
                                       ),
-                                      hintText: 'Selling Price',
+                                      hintText: 'Selling Price *',
                                     ),
                                     validator: (value) {
                                       if (value.isEmpty) {
@@ -978,7 +1039,7 @@ class _AddProductState extends State<AddProduct> {
                                 focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: active),
                                 ),
-                                hintText: 'Stock Quantity',
+                                hintText: 'Stock Quantity *',
                               ),
                               validator: (value) {
                                 if (value.isEmpty) {
@@ -1167,12 +1228,13 @@ class _AddProductState extends State<AddProduct> {
       return Card(
           child: ListTile(
         title: Text(promocode[0]),
-        dense: true,
+        subtitle: Text("₹\ ${promoprice[0]}"),
         trailing: IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
               setState(() {
                 promocode.clear();
+                promoprice.clear();
               });
             }),
       ));
@@ -1204,7 +1266,10 @@ class _AddProductState extends State<AddProduct> {
             textColor: active,
             onPressed: () {
               if (categoryController.text.isNotEmpty) {
-                _categoryService.createCategory(categoryController.text, id);
+                sl
+                    .get<CategoryService>()
+                    .createCategory(categoryController.text, id);
+                // _categoryService.createCategory(categoryController.text, id);
                 Fluttertoast.showToast(msg: 'category created');
                 categoryController.clear();
                 Navigator.of(context, rootNavigator: true).pop();
@@ -1256,7 +1321,8 @@ class _AddProductState extends State<AddProduct> {
             textColor: active,
             onPressed: () {
               if (brandController.text.isNotEmpty) {
-                _brandService.createBrand(brandController.text, id);
+                sl.get<BrandService>().createBrand(brandController.text, id);
+                // _brandService.createBrand(brandController.text, id);
                 Fluttertoast.showToast(msg: 'brand added');
                 Navigator.of(context, rootNavigator: true).pop();
                 brandController.clear();

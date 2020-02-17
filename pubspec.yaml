@@ -49,6 +49,7 @@ dependencies:
   location:
   font_awesome_flutter: ^8.5.0 
   geoflutterfire: ^2.0.3+8
+  get_it:
 
 
 dev_dependencies:
