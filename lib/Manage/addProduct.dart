@@ -78,6 +78,10 @@ class _AddProductState extends State<AddProduct> {
 
   var _currentSelectedValue;
 
+  var units;
+
+  bool _unitcustom = false;
+
   int get sellingPrice => int.parse(sellingPriceController.text);
   int get orginalPrice => int.parse(originalPriceController.text);
 
@@ -967,8 +971,15 @@ class _AddProductState extends State<AddProduct> {
                             ],
                           ),
 
-//
-
+                          Divider(),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Your Product Per Rate Will Be Count This $units/Unit',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: active, fontSize: 12),
+                            ),
+                          ),
                           Row(
                             children: <Widget>[
                               Expanded(
@@ -1029,77 +1040,92 @@ class _AddProductState extends State<AddProduct> {
                                   ),
                                 ),
                               ),
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                  child: StreamBuilder<QuerySnapshot>(
+                                      stream: Firestore.instance
+                                          .collection("units")
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData ||
+                                            snapshot.data.documents.length ==
+                                                0) {
+                                          return Text("No Brand Added");
+                                        }
+
+                                        return DropdownButton<String>(
+                                          value: units,
+                                          isExpanded: true,
+                                          hint: Text("Brand"),
+                                          isDense: true,
+                                          onChanged: (String newValue) {
+                                            setState(() {
+                                              final snackBar = SnackBar(
+                                                backgroundColor: Colors.white,
+                                                content: Text(
+                                                  'Your Unit Will Be $newValue',
+                                                  style:
+                                                      TextStyle(color: active),
+                                                ),
+                                              );
+                                              Scaffold.of(context)
+                                                  .showSnackBar(snackBar);
+                                              units = newValue;
+                                              if (newValue == "Custom") {
+                                                _unitcustom = true;
+                                              } else {
+                                                _unitcustom = false;
+                                              }
+                                              // _onShopDropItemSelected(newValue);
+                                            });
+                                          },
+                                          items: snapshot.data != null
+                                              ? snapshot.data.documents
+                                                  .map((f) {
+                                                  return DropdownMenuItem(
+                                                    value:
+                                                        f.documentID.toString(),
+                                                    child: Text(f.documentID
+                                                        .toString()),
+                                                  );
+                                                }).toList()
+
+                                              //  snapshot.data != null
+                                              //     ? snapshot.data.documents
+                                              //         .map((DocumentSnapshot document) {
+                                              //         // final List<DocumentSnapshot> documents =
+                                              //         //     document.data["local"];
+
+                                              //           return DropdownMenuItem(
+                                              //               value: document["locals"].toString(),
+                                              //               child: new Container(
+                                              //                 height: 100.0,
+                                              //                 child: new Text(
+                                              //                   document.data["locals"][i].toString(),
+                                              //                 ),
+                                              //               ));
+
+                                              //       }).toList()
+
+                                              : DropdownMenuItem(
+                                                  value: 'null',
+                                                  child: new Container(
+                                                    height: 100.0,
+                                                    child: new Text('null'),
+                                                  ),
+                                                ),
+                                        );
+                                      }),
+                                ),
+                              ),
                             ],
                           ),
                           Row(
                             children: <Widget>[
-                              Expanded(
-                                flex: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: FormField<String>(
-                                    builder: (FormFieldState<String> state) {
-                                      return InputDecorator(
-                                        decoration: InputDecoration(
-                                            errorStyle: TextStyle(
-                                                color: Colors.redAccent,
-                                                fontSize: 16.0),
-                                            hintText: 'Please select expense',
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        5.0))),
-                                        isEmpty: _currentSelectedValue == '',
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
-                                            value: _currentSelectedValue,
-                                            isDense: true,
-                                            onChanged: (String newValue) {
-                                              setState(() {
-                                                _currentSelectedValue =
-                                                    newValue;
-                                                state.didChange(newValue);
-                                                print(_currentSelectedValue);
-                                              });
-                                            },
-                                            items:
-                                                _currencies.map((String value) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Text("OR"),
-                              Expanded(
-                                flex: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: TextFormField(
-                                    controller: sellingPriceController,
-                                    keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(color: active),
-                                      ),
-                                      hintText: 'Selling Price *',
-                                    ),
-                                    validator: (value) {
-                                      if (value.isEmpty) {
-                                        return 'You Must Need Add Price Of The Product';
-                                      } else if (value.length > 5) {
-                                        return "Add Number Less Then 5";
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
+                              buildExpanded(),
                             ],
                           ),
                           Padding(
@@ -1288,6 +1314,39 @@ class _AddProductState extends State<AddProduct> {
             );
           }),
     );
+  }
+
+  buildExpanded() {
+    if (_unitcustom == true) {
+      return Expanded(
+        flex: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Visibility(
+            visible: _unitcustom,
+            child: TextFormField(
+              controller: sellingPriceController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: active),
+                ),
+                hintText: 'Selling Price *',
+              ),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'You Must Need Add Price Of The Product';
+                } else if (value.length > 5) {
+                  return "Add Number Less Then 5";
+                }
+              },
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   buildCard() {
