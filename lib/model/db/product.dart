@@ -31,7 +31,7 @@ class ProductService {
         .setData(promo);
   }
 
-  void updateProduct(Map<String, dynamic> data, String documentID) async {
+  void updateProduct(Map<String, dynamic> data, String documentID,Map<String, dynamic> promo) async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     final String uid = user.uid.toString();
     // final String name = user?.displayName;
@@ -48,5 +48,11 @@ class ProductService {
         .whenComplete(() {
       Fluttertoast.showToast(msg: 'Product Updated');
     });
+     _firestore
+        .collection(ref)
+        .document(documentID)
+        .collection("promocode")
+        .document(documentID)
+        .updateData(promo);
   }
 }

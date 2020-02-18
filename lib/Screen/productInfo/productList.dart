@@ -76,7 +76,7 @@ class _ProductListState extends State<ProductList> {
                               ]),
                         ),
                         SizedBox(
-                          height: 4,
+                          height: 2,
                         ),
                         RichText(
                           overflow: TextOverflow.fade,
@@ -105,7 +105,7 @@ class _ProductListState extends State<ProductList> {
                               ]),
                         ),
                         SizedBox(
-                          height: 4,
+                          height: 2,
                         ),
                         RichText(
                           text: TextSpan(children: [
@@ -122,17 +122,18 @@ class _ProductListState extends State<ProductList> {
                           ]),
                         ),
                         SizedBox(
-                          height: 4,
+                          height: 2,
                         ),
+                        richText(document, index),
                         RichText(
                           text: TextSpan(children: [
                             TextSpan(
-                                text: "Brand: ",
+                                text: "Reference: ",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500)),
                             TextSpan(
-                                text: document[index]["brand"],
+                                text: document[index]["Reference"],
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w400))
@@ -173,10 +174,20 @@ class _ProductListState extends State<ProductList> {
                       onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ProductDetaislEdits(
+                              builder: (BuildContext context) => EditProduct(
+                                    beingImage1: document[index]["images"][0],
+                                    beingImage2: document[index]["images"][1],
+                                    beingImage3: document[index]["images"][2],
+                                    beingpromocode: document[index]
+                                        ["Promocode"],
+                                    beingpromoprice: document[index]
+                                        ["PromoPrice"],
+                                    productDescription: document[index]
+                                        ["Product Description"],
                                     originalprice: document[index]
                                         ["Orignal Price"],
+                                    beingreference: document[index]
+                                        ["Reference"],
                                     documentID: documentID,
                                     productName: document[index]["ProductName"]
                                         .toString(),
@@ -202,6 +213,12 @@ class _ProductListState extends State<ProductList> {
                                     onPressed: () async {
                                       await Firestore.instance
                                           .collection("ProductListID")
+                                          .document(documentID)
+                                          .delete();
+                                      await Firestore.instance
+                                          .collection("ProductListID")
+                                          .document(documentID)
+                                          .collection("promocode")
                                           .document(documentID)
                                           .delete()
                                           .whenComplete(() {
@@ -249,6 +266,25 @@ class _ProductListState extends State<ProductList> {
         size: Size(100, 100),
       ),
     );
+  }
+
+  richText(document, index) {
+    if (document[index]["brand"] == "") {
+      return Container();
+    } else {
+      return RichText(
+        text: TextSpan(children: [
+          TextSpan(
+              text: "Brand: ",
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+          TextSpan(
+              text: document[index]["brand"],
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.w400))
+        ]),
+      );
+    }
   }
 
   @override
@@ -458,29 +494,29 @@ class _ProductListState extends State<ProductList> {
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
-                                      IconButton(
-                                        onPressed: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    ProductDetaislEdits(
-                                                      originalprice:
-                                                          document[index]
-                                                              ["originalPrice"],
-                                                      documentID: documentID,
-                                                      productName: document[
-                                                                  index]
-                                                              ["ProductName"]
-                                                          .toString(),
-                                                      index: index,
-                                                      price: document[index]
-                                                          ["price"],
-                                                      quantity: document[index]
-                                                          ["quantity"],
-                                                    ))),
-                                        icon: Icon(Icons.edit),
-                                      ),
+                                      // IconButton(
+                                      //   onPressed: () => Navigator.push(
+                                      //       context,
+                                      //       MaterialPageRoute(
+                                      //           builder: (BuildContext
+                                      //                   context) =>
+                                      //               ProductDetaislEdits(
+                                      //                 originalprice:
+                                      //                     document[index]
+                                      //                         ["originalPrice"],
+                                      //                 documentID: documentID,
+                                      //                 productName: document[
+                                      //                             index]
+                                      //                         ["ProductName"]
+                                      //                     .toString(),
+                                      //                 index: index,
+                                      //                 price: document[index]
+                                      //                     ["price"],
+                                      //                 quantity: document[index]
+                                      //                     ["quantity"],
+                                      //               ))),
+                                      //   icon: Icon(Icons.edit),
+                                      // ),
                                       IconButton(
                                         icon: Icon(Icons.delete),
                                         onPressed: () {

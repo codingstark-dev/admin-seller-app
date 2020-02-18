@@ -134,7 +134,7 @@ class _AdminState extends State<Admin> {
   //   }
   // }
 
-  void _categoryAlert(BuildContext context,String id) {
+  void _categoryAlert(BuildContext context, String id) {
     var alert = AlertDialog(
       content: Form(
         key: _categoryFormKey,
@@ -158,7 +158,7 @@ class _AdminState extends State<Admin> {
         FlatButton(
             onPressed: () {
               if (categoryController.text.isNotEmpty) {
-                _categoryService.createCategory(categoryController.text,id);
+                _categoryService.createCategory(categoryController.text, id);
                 Fluttertoast.showToast(msg: 'category created');
                 categoryController.clear();
                 Navigator.of(context, rootNavigator: true).pop();
@@ -457,30 +457,31 @@ class _AdminState extends State<Admin> {
                                 child: Card(
                                     child: ListTile(
                                         title: FlatButton.icon(
-                                            onPressed: () async {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          MapSample()));
+                                            onPressed: null,
+                                            // () async {
+                                            //   // Navigator.push(
+                                            //   //     context,
+                                            //   //     MaterialPageRoute(
+                                            //   //         builder: (BuildContext
+                                            //   //                 context) =>
+                                            //   //             MapSample()));
 
-                                              //   // final PackageInfo info =
-                                              //   //     await PackageInfo
-                                              //   //         .fromPlatform();
-                                              //   // double currentVersion =
-                                              //   //     double.parse(info.version
-                                              //   //         .trim()
-                                              //   //         .replaceAll(".", ""));
-                                              //   //         print(currentVersion);
+                                            //   //   // final PackageInfo info =
+                                            //   //   //     await PackageInfo
+                                            //   //   //         .fromPlatform();
+                                            //   //   // double currentVersion =
+                                            //   //   //     double.parse(info.version
+                                            //   //   //         .trim()
+                                            //   //   //         .replaceAll(".", ""));
+                                            //   //   //         print(currentVersion);
 
-                                              //   // Navigator.push(
-                                              //   //     context,
-                                              //   //     MaterialPageRoute(
-                                              //   //         builder: (BuildContext
-                                              //   //                 context) =>
-                                              //   //             MessagingWidget()));
-                                            },
+                                            //   //   // Navigator.push(
+                                            //   //   //     context,
+                                            //   //   //     MaterialPageRoute(
+                                            //   //   //         builder: (BuildContext
+                                            //   //   //                 context) =>
+                                            //   //   //             MessagingWidget()));
+                                            // },
                                             icon: Icon(
                                               Icons.category,
                                               color: active,
@@ -629,7 +630,9 @@ class _AdminState extends State<Admin> {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             image: NetworkImage(
-                                "https://images.unsplash.com/photo-1455894127589-22f75500213a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=679&q=80"),
+                              "http://4.bp.blogspot.com/-zZoysyIjd10/XkxQcWyApuI/AAAAAAAALrU/ZNsAHScHIi8G_A8puaMjEmcAlf7hI8rVQCK4BGAYYCw/s1600/output.png",
+                            ),
+                            // "https://images.unsplash.com/photo-1455894127589-22f75500213a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=679&q=80"),
                             fit: BoxFit.cover)),
                   ),
                   profile
@@ -675,7 +678,7 @@ class _AdminState extends State<Admin> {
                 leading: Icon(Icons.add_circle),
                 title: Text("Add category"),
                 onTap: () {
-                  _categoryAlert(context,user.uid);
+                  _categoryAlert(context, user.uid);
                 },
               ),
               Divider(),

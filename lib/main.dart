@@ -15,15 +15,15 @@ void main() {
   // submitted as expected. It is not intended to be used for everyday
   // development.
   // ! on it
-  // Crashlytics.instance.enableInDevMode = true;
+  Crashlytics.instance.enableInDevMode = true;
 
   // Pass all uncaught errors to Crashlytics.
 
   // ! on it
-  // FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  // runZoned(() {
-  runApp(MyApp());
-  // }, onError: Crashlytics.instance.recordError);
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  runZoned(() {
+    runApp(MyApp());
+  }, onError: Crashlytics.instance.recordError);
 }
 
 /// Set orienttation
