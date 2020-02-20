@@ -376,6 +376,16 @@ class _AddProductState extends State<AddProduct> {
     super.dispose();
   }
 
+  var _currencies = [
+    "Food",
+    "Transport",
+    "Personal",
+    "Shopping",
+    "Medical",
+    "Rent",
+    "Movie",
+    "Salary"
+  ];
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -507,55 +517,133 @@ class _AddProductState extends State<AddProduct> {
                             ),
                           ),
                           Divider(),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                  flex: 1,
-                                  child: FlatButton.icon(
-                                      textColor: active,
-                                      onPressed: () {
-                                        _categoryAlert(context, user.uid);
-                                      },
-                                      icon: Icon(Icons.add_circle_outline),
-                                      label: Text("Add Category"))
-                                  //  ListTile(
-                                  //   dense: true,
-                                  //   leading: Icon(Icons.add_circle_outline),
-                                  //   title: Text("Add brand"),
-                                  //   onTap: () {
-                                  //     // _brandAlert(
-                                  //     //     context); // function using here but not working
-                                  //   },
-                                  // ),
+                          StreamBuilder<QuerySnapshot>(
+                              stream: Firestore.instance
+                                  .collection("Grocery")
+                                  .snapshots(),
+                              builder: (context, dropbt) {
+                                if (!dropbt.hasData ||
+                                    dropbt.data.documents.length == 0) {
+                                  return Text(
+                                    "No Catergory Added",
+                                  );
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: FormField<String>(
+                                    builder: (FormFieldState<String> state) {
+                                      return InputDecorator(
+                                        decoration: InputDecoration(
+                                            errorStyle: TextStyle(
+                                                color: Colors.redAccent,
+                                                fontSize: 16.0),
+                                            hintText: 'Please select expense',
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0))),
+                                        isEmpty: _currentSelectedValue == '',
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            hint: Text("Select Category"),
+                                            value: _currentSelectedValue,
+                                            isDense: true,
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                _currentSelectedValue = newValue;
+                                                state.didChange(newValue);
+                                              });
+                                            },
+                                            items: dropbt.data != null
+                                                ? dropbt.data.documents.map((f) {
+                                                    return DropdownMenuItem(
+                                                      value:
+                                                          f.documentID.toString(),
+                                                      child: Text(f.documentID
+                                                          .toString()),
+                                                    );
+                                                  }).toList()
+
+                                                //  snapshot.data != null
+                                                //     ? snapshot.data.documents
+                                                //         .map((DocumentSnapshot document) {
+                                                //         // final List<DocumentSnapshot> documents =
+                                                //         //     document.data["local"];
+
+                                                //           return DropdownMenuItem(
+                                                //               value: document["locals"].toString(),
+                                                //               child: new Container(
+                                                //                 height: 100.0,
+                                                //                 child: new Text(
+                                                //                   document.data["locals"][i].toString(),
+                                                //                 ),
+                                                //               ));
+
+                                                //       }).toList()
+
+                                                : DropdownMenuItem(
+                                                    value: 'null',
+                                                    child: new Container(
+                                                      height: 100.0,
+                                                      child: new Text('null'),
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
-                              Expanded(
-                                  flex: 1,
-                                  child: FlatButton.icon(
-                                      textColor: active,
-                                      onPressed: () {
-                                        _brandAlert(context, user.uid);
-                                      },
-                                      icon: Icon(Icons.add_circle),
-                                      label: Text("Add Brand"))
-                                  //  ListTile(
-                                  //   dense: true,
-                                  //   leading: Icon(Icons.add_circle),
-                                  //   title: Text("Add category"),
-                                  //   onTap: () {
-                                  //     // _categoryAlert(context);
-                                  //   },
-                                  // ),
-                                  ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                            ],
-                          ),
+                                );
+                              })
+                          // Row(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     SizedBox(
+                          //       width: 10,
+                          //     ),
+                          //     Expanded(
+                          //         flex: 1,
+                          //         child: FlatButton.icon(
+                          //             textColor: active,
+                          //             onPressed: () {
+                          //               _categoryAlert(context, user.uid);
+                          //             },
+                          //             icon: Icon(Icons.add_circle_outline),
+                          //             label: Text("Add Category"))
+                          //         //  ListTile(
+                          //         //   dense: true,
+                          //         //   leading: Icon(Icons.add_circle_outline),
+                          //         //   title: Text("Add brand"),
+                          //         //   onTap: () {
+                          //         //     // _brandAlert(
+                          //         //     //     context); // function using here but not working
+                          //         //   },
+                          //         // ),
+                          //         ),
+                          //     Expanded(
+                          //         flex: 1,
+                          //         child: FlatButton.icon(
+                          //             textColor: active,
+                          //             onPressed: () {
+                          //               _brandAlert(context, user.uid);
+                          //             },
+                          //             icon: Icon(Icons.add_circle),
+                          //             label: Text("Add Brand"))
+                          //         //  ListTile(
+                          //         //   dense: true,
+                          //         //   leading: Icon(Icons.add_circle),
+                          //         //   title: Text("Add category"),
+                          //         //   onTap: () {
+                          //         //     // _categoryAlert(context);
+                          //         //   },
+                          //         // ),
+                          //         ),
+                          //     SizedBox(
+                          //       width: 10,
+                          //     ),
+                          //   ],
+                          // ),
+                          ,
                           Divider(),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
