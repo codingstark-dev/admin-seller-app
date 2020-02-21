@@ -673,29 +673,29 @@ class _AdminState extends State<Admin> {
                   }));
                 },
               ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.add_circle),
-                title: Text("Add category"),
-                onTap: () {
-                  _categoryAlert(context, user.uid);
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.add_circle_outline),
-                title: Text("Add brand"),
-                onTap: () {
-                  _brandAlert(
-                      context, user.uid); // function using here but not working
-                },
-              ),
-              Divider(),
-              ListTile(
-                leading: Icon(Icons.category),
-                title: Text("Category list"),
-                onTap: () {},
-              ),
+              // Divider(),
+              // ListTile(
+              //   leading: Icon(Icons.add_circle),
+              //   title: Text("Add category"),
+              //   onTap: () {
+              //     _categoryAlert(context, user.uid);
+              //   },
+              // ),
+              // Divider(),
+              // ListTile(
+              //   leading: Icon(Icons.add_circle_outline),
+              //   title: Text("Add brand"),
+              //   onTap: () {
+              //     _brandAlert(
+              //         context, user.uid); // function using here but not working
+              //   },
+              // ),
+              // Divider(),
+              // ListTile(
+              //   leading: Icon(Icons.category),
+              //   title: Text("Category list"),
+              //   onTap: () {},
+              // ),
               Divider(),
               ListTile(
                 leading: Icon(Icons.monetization_on),
@@ -707,14 +707,14 @@ class _AdminState extends State<Admin> {
                 },
               ),
               Divider(),
-              ListTile(
-                leading: Icon(Icons.library_books),
-                title: Text("brand list"),
-                onTap: () {
-                  _brandService.getBrands();
-                },
-              ),
-              Divider(),
+              // ListTile(
+              //   leading: Icon(Icons.library_books),
+              //   title: Text("brand list"),
+              //   onTap: () {
+              //     _brandService.getBrands();
+              //   },
+              // ),
+              // Divider(),
               ListTile(
                 leading: Icon(Icons.settings),
                 title: Text("Settings"),

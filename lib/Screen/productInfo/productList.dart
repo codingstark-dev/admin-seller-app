@@ -60,7 +60,13 @@ class _ProductListState extends State<ProductList> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        RichText(
+                       
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[ RichText(
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
                               style: Theme.of(context)
@@ -78,66 +84,69 @@ class _ProductListState extends State<ProductList> {
                         SizedBox(
                           height: 2,
                         ),
-                        RichText(
-                          overflow: TextOverflow.fade,
-                          text: TextSpan(
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  .copyWith(fontSize: 14),
-                              children: [
-                                TextSpan(
-                                    text: "Price: ",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500)),
-                                TextSpan(
-                                    text:
-                                        "${document[index]["price"].toString()} ",
-                                    style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w400)),
-                                TextSpan(
-                                    text: "₹",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold)),
-                              ]),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        RichText(
-                          text: TextSpan(children: [
-                            TextSpan(
-                                text: "Category: ",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500)),
-                            TextSpan(
-                                text: document[index]["category"],
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400))
-                          ]),
-                        ),
-                        SizedBox(
-                          height: 2,
-                        ),
-                        richText(document, index),
-                        RichText(
-                          text: TextSpan(children: [
-                            TextSpan(
-                                text: "Reference: ",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500)),
-                            TextSpan(
-                                text: document[index]["Reference"],
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400))
-                          ]),
+                              RichText(
+                                overflow: TextOverflow.fade,
+                                text: TextSpan(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1
+                                        .copyWith(fontSize: 14),
+                                    children: [
+                                      TextSpan(
+                                          text: "Price: ",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500)),
+                                      TextSpan(
+                                          text:
+                                              "${document[index]["price"].toString()} ",
+                                          style: TextStyle(
+                                              color: Colors.grey[600],
+                                              fontWeight: FontWeight.w400)),
+                                      TextSpan(
+                                          text: "₹",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold)),
+                                    ]),
+                              ),
+                              SizedBox(
+                                height: 2,
+                              ),
+                              RichText(
+                                text: TextSpan(children: [
+                                  TextSpan(
+                                      text: "Category: ",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500)),
+                                  TextSpan(
+                                      text: document[index]["category"],
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400))
+                                ]),
+                              ),
+                              SizedBox(
+                                height: 2,
+                              ),
+                              richText(document, index),
+                              RichText(
+                                text: TextSpan(children: [
+                                  TextSpan(
+                                      text: "Reference: ",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500)),
+                                  TextSpan(
+                                      text: document[index]["Reference"],
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400))
+                                ]),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

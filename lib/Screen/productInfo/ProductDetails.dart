@@ -106,6 +106,10 @@ class _EditProductState extends State<EditProduct> {
   bool _unitcustom = false;
   bool _visible = false;
 
+  var _brandSelectedValue;
+
+  var _categorySelectedValue;
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -261,10 +265,10 @@ class _EditProductState extends State<EditProduct> {
     }
   }
 
-  void validateAndUpload(String username, String uid) async {
+  void validateAndUpload(String username, String uid, String categoryId) async {
     var id = Uuid().v1();
     try {
-      if (category != null) {
+      if (_categorySelectedValue != null) {
         if (units != null || customUnitController.text.isNotEmpty) {
           if (_formKey.currentState.validate()) {
             setState(() => isLoading = true);
@@ -330,18 +334,19 @@ class _EditProductState extends State<EditProduct> {
                       ? customUnitController.text.toString()
                       : units,
                   "ProductReview": false,
+                  "UserService": categoryId,
                   "Featured Product": false,
                   "ProductName": productNameController.text,
                   "UploaderName": username,
                   "price": double.parse(sellingPriceController.text),
-                  "Orignal Price": double.parse(originalPriceController.text),
+                  "Orignal Price": int.parse(originalPriceController.text),
                   "sizes": selectedSizes.isEmpty ? "" : selectedSizes,
                   // "images": imageList,
                   "quantity": int.parse(quatityController.text),
-                  "brand": brand ?? "",
+                  "brand": _brandSelectedValue ?? "",
                   "Discount":
                       (orginalPrice - sellingPrice) / orginalPrice * 100,
-                  "category": category,
+                  "category": _categorySelectedValue,
                   "Reference": productIds,
                   "TimeStamp": Timestamp.now(),
                   "Token": fcm,
@@ -398,7 +403,7 @@ class _EditProductState extends State<EditProduct> {
           Fluttertoast.showToast(msg: "Please Add Proper Units");
         }
       } else {
-        Fluttertoast.showToast(msg: "Please Add Category");
+        Fluttertoast.showToast(msg: "Please Select Category");
       }
     } catch (e) {
       print(e.toString());
@@ -702,56 +707,199 @@ class _EditProductState extends State<EditProduct> {
                             ),
                           ),
                           Divider(),
+                          SizedBox(
+                            width: 350,
+                            child: FlatButton.icon(
+                                textColor: active,
+                                onPressed: () {
+                                  _brandAlert(context, user.uid);
+                                },
+                                icon: Icon(Icons.add_circle),
+                                label: Text("Add Brand")),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: StreamBuilder<QuerySnapshot>(
+                                stream: Firestore.instance
+                                    .collection("Grocery")
+                                    .snapshots(),
+                                builder: (context, dropbt) {
+                                  if (!dropbt.hasData ||
+                                      dropbt.data.documents.length == 0) {
+                                    return Text(
+                                      "No Catergory Added",
+                                    );
+                                  }
+                                  return FormField<String>(
+                                    builder: (FormFieldState<String> state) {
+                                      return InputDecorator(
+                                        decoration: InputDecoration(
+                                            errorStyle: TextStyle(
+                                                color: Colors.redAccent,
+                                                fontSize: 16.0),
+                                            hintText: 'Select Category',
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        5.0))),
+                                        isEmpty: _categorySelectedValue == '',
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            hint: Text("Select Category"),
+                                            value: _categorySelectedValue,
+                                            isDense: true,
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                _categorySelectedValue =
+                                                    newValue;
+                                                state.didChange(newValue);
+                                              });
+                                            },
+                                            items: dropbt.data != null
+                                                ? dropbt.data.documents
+                                                    .map((f) {
+                                                    return DropdownMenuItem(
+                                                      value: f.documentID
+                                                          .toString(),
+                                                      child: Text(f.documentID
+                                                          .toString()),
+                                                    );
+                                                  }).toList()
 
+                                                //  snapshot.data != null
+                                                //     ? snapshot.data.documents
+                                                //         .map((DocumentSnapshot document) {
+                                                //         // final List<DocumentSnapshot> documents =
+                                                //         //     document.data["local"];
+
+                                                //           return DropdownMenuItem(
+                                                //               value: document["locals"].toString(),
+                                                //               child: new Container(
+                                                //                 height: 100.0,
+                                                //                 child: new Text(
+                                                //                   document.data["locals"][i].toString(),
+                                                //                 ),
+                                                //               ));
+
+                                                //       }).toList()
+
+                                                : DropdownMenuItem(
+                                                    value: 'null',
+                                                    child: new Container(
+                                                      height: 100.0,
+                                                      child: new Text('null'),
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }),
+                          ),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              SizedBox(
-                                width: 10,
-                              ),
                               Expanded(
-                                  flex: 1,
-                                  child: FlatButton.icon(
-                                      textColor: active,
-                                      onPressed: () {
-                                        _categoryAlert(context, user.uid);
-                                      },
-                                      icon: Icon(Icons.add_circle_outline),
-                                      label: Text("Add Category"))
-                                  //  ListTile(
-                                  //   dense: true,
-                                  //   leading: Icon(Icons.add_circle_outline),
-                                  //   title: Text("Add brand"),
-                                  //   onTap: () {
-                                  //     // _brandAlert(
-                                  //     //     context); // function using here but not working
-                                  //   },
-                                  // ),
-                                  ),
-                              Expanded(
-                                  flex: 1,
-                                  child: FlatButton.icon(
-                                      textColor: active,
-                                      onPressed: () {
-                                        _brandAlert(context, user.uid);
-                                      },
-                                      icon: Icon(Icons.add_circle),
-                                      label: Text("Add Brand"))
-                                  //  ListTile(
-                                  //   dense: true,
-                                  //   leading: Icon(Icons.add_circle),
-                                  //   title: Text("Add category"),
-                                  //   onTap: () {
-                                  //     // _categoryAlert(context);
-                                  //   },
-                                  // ),
-                                  ),
-                              SizedBox(
-                                width: 10,
+                                flex: 2,
+                                child: StreamBuilder<QuerySnapshot>(
+                                    stream: Firestore.instance
+                                        .collection("Sellers")
+                                        .document(user.uid)
+                                        .collection("Brand")
+                                        .snapshots(),
+                                    builder: (context, dropbt) {
+                                      if (!dropbt.hasData ||
+                                          dropbt.data.documents.length == 0) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Center(
+                                            child: Text(
+                                              "No Brand Added",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: FormField<String>(
+                                          builder:
+                                              (FormFieldState<String> state) {
+                                            return InputDecorator(
+                                              decoration: InputDecoration(
+                                                  errorStyle: TextStyle(
+                                                      color: Colors.redAccent,
+                                                      fontSize: 16.0),
+                                                  hintText: 'Select Brand',
+                                                  border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5.0))),
+                                              isEmpty:
+                                                  _brandSelectedValue == '',
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton<String>(
+                                                  hint: Text(
+                                                      "Select Brand (Optional)"),
+                                                  value: _brandSelectedValue,
+                                                  isDense: true,
+                                                  onChanged: (String newValue) {
+                                                    setState(() {
+                                                      _brandSelectedValue =
+                                                          newValue;
+                                                      state.didChange(newValue);
+                                                    });
+                                                  },
+                                                  items: dropbt.data != null
+                                                      ? dropbt.data.documents
+                                                          .map((f) {
+                                                          return DropdownMenuItem(
+                                                            value: f.documentID
+                                                                .toString(),
+                                                            child: Text(f
+                                                                .documentID
+                                                                .toString()),
+                                                          );
+                                                        }).toList()
+
+                                                      //  snapshot.data != null
+                                                      //     ? snapshot.data.documents
+                                                      //         .map((DocumentSnapshot document) {
+                                                      //         // final List<DocumentSnapshot> documents =
+                                                      //         //     document.data["local"];
+
+                                                      //           return DropdownMenuItem(
+                                                      //               value: document["locals"].toString(),
+                                                      //               child: new Container(
+                                                      //                 height: 100.0,
+                                                      //                 child: new Text(
+                                                      //                   document.data["locals"][i].toString(),
+                                                      //                 ),
+                                                      //               ));
+
+                                                      //       }).toList()
+
+                                                      : DropdownMenuItem(
+                                                          value: 'null',
+                                                          child: new Container(
+                                                            height: 100.0,
+                                                            child: new Text(
+                                                                'null'),
+                                                          ),
+                                                        ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }),
                               ),
                             ],
                           ),
+
                           Divider(),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -923,263 +1071,262 @@ class _EditProductState extends State<EditProduct> {
                           //       );
                           //     }),
 //              select category
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              Expanded(
-                                flex: 2,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8.0, 8, 0, 8),
-                                  child: Text(
-                                    'Category:',
-                                    style: TextStyle(color: active),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: StreamBuilder<QuerySnapshot>(
-                                    stream: Firestore.instance
-                                        .collection("Sellers")
-                                        .document(user.uid)
-                                        .collection("Category")
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData ||
-                                          snapshot.data.documents.length == 0) {
-                                        return Text(
-                                          "No Catergory Added",
-                                        );
-                                      }
-                                      return DropdownButton<String>(
-                                        value: category,
-                                        isExpanded: true,
-                                        hint: Text("Category *"),
-                                        isDense: true,
-                                        onChanged: (String newValue) {
-                                          setState(() {
-                                            final snackBar = SnackBar(
-                                              backgroundColor: Colors.white,
-                                              content: Text(
-                                                'Your Category Is $newValue',
-                                                style: TextStyle(color: active),
-                                              ),
-                                            );
-                                            Scaffold.of(context)
-                                                .showSnackBar(snackBar);
-                                            category = newValue;
-                                            // _onShopDropItemSelected(newValue);
-                                          });
-                                        },
-                                        items: snapshot.data != null
-                                            ? snapshot.data.documents.map((f) {
-                                                return DropdownMenuItem(
-                                                  value:
-                                                      f.documentID.toString(),
-                                                  child: Text(
-                                                      f.documentID.toString()),
-                                                );
-                                              }).toList()
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          //   children: <Widget>[
+                          //     Expanded(
+                          //       flex: 2,
+                          //       child: Padding(
+                          //         padding:
+                          //             const EdgeInsets.fromLTRB(8.0, 8, 0, 8),
+                          //         child: Text(
+                          //           'Category:',
+                          //           style: TextStyle(color: active),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     Expanded(
+                          //       flex: 3,
+                          //       child: StreamBuilder<QuerySnapshot>(
+                          //           stream: Firestore.instance
+                          //               .collection("Sellers")
+                          //               .document(user.uid)
+                          //               .collection("Category")
+                          //               .snapshots(),
+                          //           builder: (context, snapshot) {
+                          //             if (!snapshot.hasData ||
+                          //                 snapshot.data.documents.length == 0) {
+                          //               return Text(
+                          //                 "No Catergory Added",
+                          //               );
+                          //             }
+                          //             return DropdownButton<String>(
+                          //               value: category,
+                          //               isExpanded: true,
+                          //               hint: Text("Category *"),
+                          //               isDense: true,
+                          //               onChanged: (String newValue) {
+                          //                 setState(() {
+                          //                   final snackBar = SnackBar(
+                          //                     backgroundColor: Colors.white,
+                          //                     content: Text(
+                          //                       'Your Category Is $newValue',
+                          //                       style: TextStyle(color: active),
+                          //                     ),
+                          //                   );
+                          //                   Scaffold.of(context)
+                          //                       .showSnackBar(snackBar);
+                          //                   category = newValue;
+                          //                   // _onShopDropItemSelected(newValue);
+                          //                 });
+                          //               },
+                          //               items: snapshot.data != null
+                          //                   ? snapshot.data.documents.map((f) {
+                          //                       return DropdownMenuItem(
+                          //                         value:
+                          //                             f.documentID.toString(),
+                          //                         child: Text(
+                          //                             f.documentID.toString()),
+                          //                       );
+                          //                     }).toList()
 
-                                            //  snapshot.data != null
-                                            //     ? snapshot.data.documents
-                                            //         .map((DocumentSnapshot document) {
-                                            //         // final List<DocumentSnapshot> documents =
-                                            //         //     document.data["local"];
+                          //                   //  snapshot.data != null
+                          //                   //     ? snapshot.data.documents
+                          //                   //         .map((DocumentSnapshot document) {
+                          //                   //         // final List<DocumentSnapshot> documents =
+                          //                   //         //     document.data["local"];
 
-                                            //           return DropdownMenuItem(
-                                            //               value: document["locals"].toString(),
-                                            //               child: new Container(
-                                            //                 height: 100.0,
-                                            //                 child: new Text(
-                                            //                   document.data["locals"][i].toString(),
-                                            //                 ),
-                                            //               ));
+                          //                   //           return DropdownMenuItem(
+                          //                   //               value: document["locals"].toString(),
+                          //                   //               child: new Container(
+                          //                   //                 height: 100.0,
+                          //                   //                 child: new Text(
+                          //                   //                   document.data["locals"][i].toString(),
+                          //                   //                 ),
+                          //                   //               ));
 
-                                            //       }).toList()
+                          //                   //       }).toList()
 
-                                            : DropdownMenuItem(
-                                                value: 'null',
-                                                child: new Container(
-                                                  height: 100.0,
-                                                  child: new Text('null'),
-                                                ),
-                                              ),
-                                      );
-                                    }),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8.0, 8, 0, 8),
-                                  child: Text(
-                                    'Brand:',
-                                    style: TextStyle(color: active),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: StreamBuilder<QuerySnapshot>(
-                                    stream: Firestore.instance
-                                        .collection("Sellers")
-                                        .document(user.uid)
-                                        .collection("Brand")
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData ||
-                                          snapshot.data.documents.length == 0) {
-                                        return Text("No Brand Added");
-                                      }
+                          //                   : DropdownMenuItem(
+                          //                       value: 'null',
+                          //                       child: new Container(
+                          //                         height: 100.0,
+                          //                         child: new Text('null'),
+                          //                       ),
+                          //                     ),
+                          //             );
+                          //           }),
+                          //     ),
+                          //     Expanded(
+                          //       flex: 2,
+                          //       child: Padding(
+                          //         padding:
+                          //             const EdgeInsets.fromLTRB(8.0, 8, 0, 8),
+                          //         child: Text(
+                          //           'Brand:',
+                          //           style: TextStyle(color: active),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     Expanded(
+                          //       flex: 3,
+                          //       child: StreamBuilder<QuerySnapshot>(
+                          //           stream: Firestore.instance
+                          //               .collection("Sellers")
+                          //               .document(user.uid)
+                          //               .collection("Brand")
+                          //               .snapshots(),
+                          //           builder: (context, snapshot) {
+                          //             if (!snapshot.hasData ||
+                          //                 snapshot.data.documents.length == 0) {
+                          //               return Text("No Brand Added");
+                          //             }
 
-                                      return DropdownButton<String>(
-                                        value: brand,
-                                        isExpanded: true,
-                                        hint: Text("Brand"),
-                                        isDense: true,
-                                        onChanged: (String newValue) {
-                                          setState(() {
-                                            final snackBar = SnackBar(
-                                              backgroundColor: Colors.white,
-                                              content: Text(
-                                                'Your Brand Is $newValue',
-                                                style: TextStyle(color: active),
-                                              ),
-                                            );
-                                            Scaffold.of(context)
-                                                .showSnackBar(snackBar);
-                                            brand = newValue;
-                                            // _onShopDropItemSelected(newValue);
-                                          });
-                                        },
-                                        items: snapshot.data != null
-                                            ? snapshot.data.documents.map((f) {
-                                                return DropdownMenuItem(
-                                                  value:
-                                                      f.documentID.toString(),
-                                                  child: Text(
-                                                      f.documentID.toString()),
-                                                );
-                                              }).toList()
+                          //             return DropdownButton<String>(
+                          //               value: brand,
+                          //               isExpanded: true,
+                          //               hint: Text("Brand"),
+                          //               isDense: true,
+                          //               onChanged: (String newValue) {
+                          //                 setState(() {
+                          //                   final snackBar = SnackBar(
+                          //                     backgroundColor: Colors.white,
+                          //                     content: Text(
+                          //                       'Your Brand Is $newValue',
+                          //                       style: TextStyle(color: active),
+                          //                     ),
+                          //                   );
+                          //                   Scaffold.of(context)
+                          //                       .showSnackBar(snackBar);
+                          //                   brand = newValue;
+                          //                   // _onShopDropItemSelected(newValue);
+                          //                 });
+                          //               },
+                          //               items: snapshot.data != null
+                          //                   ? snapshot.data.documents.map((f) {
+                          //                       return DropdownMenuItem(
+                          //                         value:
+                          //                             f.documentID.toString(),
+                          //                         child: Text(
+                          //                             f.documentID.toString()),
+                          //                       );
+                          //                     }).toList()
 
-                                            //  snapshot.data != null
-                                            //     ? snapshot.data.documents
-                                            //         .map((DocumentSnapshot document) {
-                                            //         // final List<DocumentSnapshot> documents =
-                                            //         //     document.data["local"];
+                          //                   //  snapshot.data != null
+                          //                   //     ? snapshot.data.documents
+                          //                   //         .map((DocumentSnapshot document) {
+                          //                   //         // final List<DocumentSnapshot> documents =
+                          //                   //         //     document.data["local"];
 
-                                            //           return DropdownMenuItem(
-                                            //               value: document["locals"].toString(),
-                                            //               child: new Container(
-                                            //                 height: 100.0,
-                                            //                 child: new Text(
-                                            //                   document.data["locals"][i].toString(),
-                                            //                 ),
-                                            //               ));
+                          //                   //           return DropdownMenuItem(
+                          //                   //               value: document["locals"].toString(),
+                          //                   //               child: new Container(
+                          //                   //                 height: 100.0,
+                          //                   //                 child: new Text(
+                          //                   //                   document.data["locals"][i].toString(),
+                          //                   //                 ),
+                          //                   //               ));
 
-                                            //       }).toList()
+                          //                   //       }).toList()
 
-                                            : DropdownMenuItem(
-                                                value: 'null',
-                                                child: new Container(
-                                                  height: 100.0,
-                                                  child: new Text('null'),
-                                                ),
-                                              ),
-                                      );
-                                    }),
-                              ),
-                              // StreamBuilder<QuerySnapshot>(
-                              //     stream: Firestore.instance
-                              //         .collection("Sellers")
-                              //         .document(user.uid)
-                              //         .collection("Brand")
-                              //         .snapshots(),
-                              //     builder: (context, snapshot) {
-                              //       // List<DropdownMenuItem> servicess = [];
-                              //       // final List<DocumentSnapshot> documentss =
-                              //       //     snapshot?.data?.documents;
-                              //       if (!snapshot.hasData ||
-                              //           snapshot.data.documents.length == 0) {
-                              //         return Center(
-                              //             child: CircularProgressIndicator());
-                              //       }
-                              //       // return InputDecorator(
-                              //       //   decoration: InputDecoration(
-                              //       //     //labelText: 'Activity',
-                              //       //     hintText: 'Choose an category',
-                              //       //     hintStyle: TextStyle(
-                              //       //       color: active,
-                              //       //       fontSize: 16.0,
-                              //       //       fontFamily: "OpenSans",
-                              //       //       fontWeight: FontWeight.normal,
-                              //       //     ),
-                              //       //   ),
-                              //       //   isEmpty: category == null,
-                              //       //   child:
+                          //                   : DropdownMenuItem(
+                          //                       value: 'null',
+                          //                       child: new Container(
+                          //                         height: 100.0,
+                          //                         child: new Text('null'),
+                          //                       ),
+                          //                     ),
+                          //             );
+                          //           }),
+                          //     ),
+                          //     // StreamBuilder<QuerySnapshot>(
+                          //     //     stream: Firestore.instance
+                          //     //         .collection("Sellers")
+                          //     //         .document(user.uid)
+                          //     //         .collection("Brand")
+                          //     //         .snapshots(),
+                          //     //     builder: (context, snapshot) {
+                          //     //       // List<DropdownMenuItem> servicess = [];
+                          //     //       // final List<DocumentSnapshot> documentss =
+                          //     //       //     snapshot?.data?.documents;
+                          //     //       if (!snapshot.hasData ||
+                          //     //           snapshot.data.documents.length == 0) {
+                          //     //         return Center(
+                          //     //             child: CircularProgressIndicator());
+                          //     //       }
+                          //     //       // return InputDecorator(
+                          //     //       //   decoration: InputDecoration(
+                          //     //       //     //labelText: 'Activity',
+                          //     //       //     hintText: 'Choose an category',
+                          //     //       //     hintStyle: TextStyle(
+                          //     //       //       color: active,
+                          //     //       //       fontSize: 16.0,
+                          //     //       //       fontFamily: "OpenSans",
+                          //     //       //       fontWeight: FontWeight.normal,
+                          //     //       //     ),
+                          //     //       //   ),
+                          //     //       //   isEmpty: category == null,
+                          //     //       //   child:
 
-                              //       return DropdownButton<String>(
-                              //         value: category,
-                              //         isExpanded: true,
-                              //         hint: Text("Service"),
-                              //         isDense: true,
-                              //         onChanged: (String newValue) {
-                              //           setState(() {
-                              //             final snackBar = SnackBar(
-                              //               backgroundColor: Colors.white,
-                              //               content: Text(
-                              //                 'Your Service Is $newValue',
-                              //                 style: TextStyle(color: active),
-                              //               ),
-                              //             );
-                              //             Scaffold.of(context)
-                              //                 .showSnackBar(snackBar);
-                              //             category = newValue;
-                              //             // _onShopDropItemSelected(newValue);
-                              //           });
-                              //         },
-                              //         items: snapshot.data != null
-                              //             ? snapshot.data.documents.map((f) {
-                              //                 return DropdownMenuItem(
-                              //                   value: f.documentID.toString(),
-                              //                   child: Text(
-                              //                       f.documentID.toString()),
-                              //                 );
-                              //               }).toList()
+                          //     //       return DropdownButton<String>(
+                          //     //         value: category,
+                          //     //         isExpanded: true,
+                          //     //         hint: Text("Service"),
+                          //     //         isDense: true,
+                          //     //         onChanged: (String newValue) {
+                          //     //           setState(() {
+                          //     //             final snackBar = SnackBar(
+                          //     //               backgroundColor: Colors.white,
+                          //     //               content: Text(
+                          //     //                 'Your Service Is $newValue',
+                          //     //                 style: TextStyle(color: active),
+                          //     //               ),
+                          //     //             );
+                          //     //             Scaffold.of(context)
+                          //     //                 .showSnackBar(snackBar);
+                          //     //             category = newValue;
+                          //     //             // _onShopDropItemSelected(newValue);
+                          //     //           });
+                          //     //         },
+                          //     //         items: snapshot.data != null
+                          //     //             ? snapshot.data.documents.map((f) {
+                          //     //                 return DropdownMenuItem(
+                          //     //                   value: f.documentID.toString(),
+                          //     //                   child: Text(
+                          //     //                       f.documentID.toString()),
+                          //     //                 );
+                          //     //               }).toList()
 
-                              //             //  snapshot.data != null
-                              //             //     ? snapshot.data.documents
-                              //             //         .map((DocumentSnapshot document) {
-                              //             //         // final List<DocumentSnapshot> documents =
-                              //             //         //     document.data["local"];
+                          //     //             //  snapshot.data != null
+                          //     //             //     ? snapshot.data.documents
+                          //     //             //         .map((DocumentSnapshot document) {
+                          //     //             //         // final List<DocumentSnapshot> documents =
+                          //     //             //         //     document.data["local"];
 
-                              //             //           return DropdownMenuItem(
-                              //             //               value: document["locals"].toString(),
-                              //             //               child: new Container(
-                              //             //                 height: 100.0,
-                              //             //                 child: new Text(
-                              //             //                   document.data["locals"][i].toString(),
-                              //             //                 ),
-                              //             //               ));
+                          //     //             //           return DropdownMenuItem(
+                          //     //             //               value: document["locals"].toString(),
+                          //     //             //               child: new Container(
+                          //     //             //                 height: 100.0,
+                          //     //             //                 child: new Text(
+                          //     //             //                   document.data["locals"][i].toString(),
+                          //     //             //                 ),
+                          //     //             //               ));
 
-                              //             //       }).toList()
+                          //     //             //       }).toList()
 
-                              //             : DropdownMenuItem(
-                              //                 value: 'null',
-                              //                 child: new Container(
-                              //                   height: 100.0,
-                              //                   child: new Text('null'),
-                              //                 ),
-                              //               ),
-                              //       );
-                              //       // );
-                              //     }),
-                            ],
-                          ),
+                          //     //             : DropdownMenuItem(
+                          //     //                 value: 'null',
+                          //     //                 child: new Container(
+                          //     //                   height: 100.0,
+                          //     //                   child: new Text('null'),
+                          //     //                 ),
+                          //     //               ),
+                          //     //       );
+                          //     //       // );
+                          //     //     }),
+                          //   ],
+                          // ),
 
-                          Divider(),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
                             child: Text(
@@ -1515,7 +1662,8 @@ class _EditProductState extends State<EditProduct> {
                             onPressed: () {
                               validateAndUpload(
                                   snapshot.data.userName.toString(),
-                                  snapshot.data.uid.toString());
+                                  snapshot.data.uid.toString(),
+                                  snapshot.data.catergory.toString());
                             },
                           )
                         ],

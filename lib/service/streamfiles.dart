@@ -42,7 +42,8 @@ class DatabaseService {
         referalId: data["refercode"] ?? "",
         verificationWaiting: data["Verification"] ?? false,
         rewards: data["Reward"] ?? "",
-        formDetaiVerify: data["formstatus"] ?? false);
+        formDetaiVerify: data["formstatus"] ?? false,
+        catergory: data["ServiceCategory"] ?? "");
   }
 
   // stream of data

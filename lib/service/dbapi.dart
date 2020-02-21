@@ -6,16 +6,18 @@ class UserDetails {
   final String uid;
   final int rewards;
   final bool bankDetailBool;
+  final String catergory;
   // final String points;
   UserDetails({
+    // this.points,
+    this.referalId,
+    this.formDetaiVerify,
+    this.verificationWaiting,
+    this.userName,
+    this.uid,
     this.rewards,
     this.bankDetailBool,
-    this.uid,
-    this.verificationWaiting,
-    this.formDetaiVerify,
-    this.referalId,
-    this.userName,
-    // this.points,
+    this.catergory,
   });
 
   // factory UserDetails.fromFirestore(DocumentSnapshot doc) {
