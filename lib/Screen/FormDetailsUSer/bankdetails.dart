@@ -84,6 +84,7 @@ class _BankDetailsSubmitState extends State<BankDetailsSubmit> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFieldWidget(
+                      textCapitalization: TextCapitalization.words,
                       errorText:
                           acHolderNameVaild ? widget.invalidDetailsError : null,
                       inputFormatters: [
@@ -102,6 +103,7 @@ class _BankDetailsSubmitState extends State<BankDetailsSubmit> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFieldWidget(
+                      textCapitalization: TextCapitalization.none,
                       errorText: accountNumberVaild
                           ? widget.invalidDetailsError
                           : null,
@@ -122,6 +124,7 @@ class _BankDetailsSubmitState extends State<BankDetailsSubmit> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFieldWidget(
+                      textCapitalization: TextCapitalization.characters,
                       errorText: ifscVaild ? widget.invalidDetailsError : null,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(11),
@@ -139,6 +142,7 @@ class _BankDetailsSubmitState extends State<BankDetailsSubmit> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFieldWidget(
+                      textCapitalization: TextCapitalization.words,
                       errorText: acBankName ? widget.invalidDetailsError : null,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(40),
@@ -156,6 +160,7 @@ class _BankDetailsSubmitState extends State<BankDetailsSubmit> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFieldWidget(
+                      textCapitalization: TextCapitalization.words,
                       errorText:
                           acBranchVaild ? widget.invalidDetailsError : null,
                       inputFormatters: [

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:getflutter/components/badge/gf_badge.dart';
 import 'package:getflutter/components/badge/gf_icon_badge.dart';
@@ -13,9 +14,8 @@ import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/bankdetails.dart';
 import 'package:sellerapp/Screen/LoginOrSignUp/Signup.dart';
 import 'package:sellerapp/Screen/Notification/Notfication.dart';
-import 'package:sellerapp/Screen/reward/Rewards.dart';
-import 'package:sellerapp/Screen/locations/map.dart';
 import 'package:sellerapp/Screen/productInfo/productList.dart';
+import 'package:sellerapp/Screen/reward/Rewards.dart';
 import 'package:sellerapp/Screen/widget/formerror.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:sellerapp/model/db/category.dart';
@@ -23,7 +23,7 @@ import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:sellerapp/service/notifier/promocode.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum Page { dashboard, manage } // look here
 
@@ -65,6 +65,10 @@ class _AdminState extends State<Admin> {
   CategoryService _categoryService = CategoryService();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Page _selectedPage = Page.dashboard;
+
+  bool isExpanded = false;
+
+  var value;
   @override
   void initState() {
     super.initState();
@@ -716,6 +720,90 @@ class _AdminState extends State<Admin> {
               // ),
               // Divider(),
               ListTile(
+                leading: Icon(Icons.feedback),
+                title: Text("Contact Us"),
+                onTap: () {
+                  showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              leading: Icon(Icons.call),
+                              title: Text("Call Us"),
+                              onTap: () async {
+                                Future<void> _makePhoneCall(String url) async {
+                                  if (await canLaunch(url)) {
+                                    await launch(url);
+                                  } else {
+                                    throw 'Could not launch $url';
+                                  }
+                                }
+
+                                return await _makePhoneCall(
+                                    "tel:+918999996369");
+                              },
+                            ),
+                            ListTile(
+                              title: Text("Massage Us"),
+                              leading: Icon(Icons.message),
+                              onTap: () async {
+                                Future<void> _makeMassage(String url) async {
+                                  if (await canLaunch(url)) {
+                                    await launch(url);
+                                  } else {
+                                    throw 'Could not launch $url';
+                                  }
+                                }
+
+                                return await _makeMassage("sms:+918999996369");
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.email),
+                              title: Text("Email Us"),
+                              onTap: () async {
+                                Future<void> _emailchat(String url) async {
+                                  if (await canLaunch(url)) {
+                                    await launch(url);
+                                  } else {
+                                    throw 'Could not launch $url';
+                                  }
+                                }
+
+                                return await _emailchat(
+                                    "mailto:geteasytodaygroup@gmail.com?subject=Want Help!&body=Hey Bro");
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.chat),
+                              title: Text("Chat Us On Whatsapp"),
+                              onTap: () async {
+                                try {
+                                  FlutterOpenWhatsapp.sendSingleMessage(
+                                      "918999996369", "Hello,Bro I Want Help!");
+                                } catch (e) {
+                                  print(e.toString());
+                                }
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.bug_report),
+                              title: Text("Report Bug To Developer"),
+                              onTap: () async {
+                                await FlutterOpenWhatsapp.sendSingleMessage(
+                                    "918149963853",
+                                    "Hello, Bro I found A Bug !");
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                },
+              ),
+              Divider(),
+              ListTile(
                 leading: Icon(Icons.settings),
                 title: Text("Settings"),
                 onTap: () {
@@ -887,5 +975,120 @@ class _AdminState extends State<Admin> {
               content: Text("Double Tap To Exit"),
             ),
             child: _loadScreen(context)));
+  }
+
+  showMenu() {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.0),
+                topRight: Radius.circular(16.0),
+              ),
+              color: active,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                SizedBox(
+                    height: (56 * 6).toDouble(),
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16.0),
+                            topRight: Radius.circular(16.0),
+                          ),
+                          color: Color(0xff344955),
+                        ),
+                        child: Stack(
+                          alignment: Alignment(0, 0),
+                          overflow: Overflow.visible,
+                          children: <Widget>[
+                            Positioned(
+                              child: ListView(
+                                physics: NeverScrollableScrollPhysics(),
+                                children: <Widget>[
+                                  ListTile(
+                                    title: Text(
+                                      "Inbox",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    leading: Icon(
+                                      Icons.inbox,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                  ListTile(
+                                    title: Text(
+                                      "Starred",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    leading: Icon(
+                                      Icons.star_border,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                  ListTile(
+                                    title: Text(
+                                      "Sent",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    leading: Icon(
+                                      Icons.send,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                  ListTile(
+                                    title: Text(
+                                      "Trash",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    leading: Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                  ListTile(
+                                    title: Text(
+                                      "Spam",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    leading: Icon(
+                                      Icons.error,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                  ListTile(
+                                    title: Text(
+                                      "Drafts",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    leading: Icon(
+                                      Icons.mail_outline,
+                                      color: Colors.white,
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ))),
+                Container(
+                  height: 56,
+                  color: Color(0xff4a6572),
+                )
+              ],
+            ),
+          );
+        });
   }
 }
