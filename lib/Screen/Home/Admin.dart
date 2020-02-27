@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
@@ -9,6 +13,7 @@ import 'package:getflutter/components/badge/gf_icon_badge.dart';
 import 'package:getflutter/components/button/gf_icon_button.dart';
 import 'package:getflutter/shape/gf_badge_shape.dart';
 import 'package:getflutter/types/gf_button_type.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:sellerapp/Manage/addProduct.dart';
 import 'package:sellerapp/Screen/FormDetailsUSer/bankdetails.dart';
@@ -19,11 +24,14 @@ import 'package:sellerapp/Screen/reward/Rewards.dart';
 import 'package:sellerapp/Screen/widget/formerror.dart';
 import 'package:sellerapp/model/db/brand.dart';
 import 'package:sellerapp/model/db/category.dart';
+import 'package:sellerapp/model/db/product.dart';
 import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:sellerapp/service/notifier/service_locator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
 
 enum Page { dashboard, manage } // look here
 
@@ -69,6 +77,7 @@ class _AdminState extends State<Admin> {
   bool isExpanded = false;
 
   var value;
+
   @override
   void initState() {
     super.initState();
@@ -115,6 +124,49 @@ class _AdminState extends State<Admin> {
     //   //   print("Massage: $massage");
     //   // },
     // );
+  }
+
+  Future uploadProfileImage() async {
+    final user = Provider.of<User>(context);
+
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 50);
+    var id = Uuid().v1();
+    Fluttertoast.showToast(msg: "Wait Uploading");
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    final String picture1 = "1${id.substring(0, 8)}.jpg";
+    Navigator.of(context).pop();
+    StorageUploadTask task1 = storage
+        .ref()
+        .child(user.uid)
+        .child("Profile")
+        .child(picture1)
+        .putFile(image);
+    StorageTaskSnapshot snapshot1 =
+        await task1.onComplete.then((snapshot) => snapshot);
+    var imageUrl1 = await snapshot1.ref.getDownloadURL();
+    sl.get<ProductService>().uploadImage({"User Image": imageUrl1});
+  }
+
+  Future updateProfileImage() async {
+    final user = Provider.of<User>(context);
+
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 50);
+    var id = Uuid().v1();
+    Fluttertoast.showToast(msg: "Wait Uploading");
+
+    Navigator.of(context).pop();
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    final String picture1 = "1${id.substring(0, 8)}.jpg";
+    StorageUploadTask task1 = storage
+        .ref()
+        .child(user.uid)
+        .child("Profile")
+        .child(picture1)
+        .putFile(image);
+    StorageTaskSnapshot snapshot1 =
+        await task1.onComplete.then((snapshot) => snapshot);
+    var imageUrl1 = await snapshot1.ref.getDownloadURL();
+    sl.get<ProductService>().updateImage({"User Image": imageUrl1});
   }
 
   void handleRouting(dynamic notification) {
@@ -239,27 +291,13 @@ class _AdminState extends State<Admin> {
         Provider.of<UserDetails>(context, listen: false);
     // var ldos = Provider.of<List<UserDetails>>(context);
     Text buildText(username, User user, String usernameindb) {
-      setState(() {});
       if (username != null) {
         return Text(
           username,
           style: _txtName,
         );
-        // } else if ( username == null) {
-        //   return Text(
-        //     "Guest person",
-        //     style: _txtName,
-        //   );
-        // } else if(authService.signAnon() != null){
-        //   return Text(
-        //     "Hello",
-        //     style: _txtName,
-        //   );
       } else {
         var email = user?.emailId;
-        // String delimiter = ' ';
-        // int lastIndex = usernameindb.indexOf(delimiter);
-        // String trimmed = usernameindb.substring(0, lastIndex);
         return Text(
             (email == null)
                 ? "Guest person"
@@ -274,60 +312,94 @@ class _AdminState extends State<Admin> {
       padding: EdgeInsets.only(
         top: 140.0,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                height: 100.0,
-                width: 100.0,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 2.5),
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: NetworkImage(datas.imageUrls ??
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROEN04MBFWtD4MOMdV2TTH8rWsjlI1U0ZFVZMQoP1S6SwMDq9N&s" ??
-                            ""),
-                        fit: BoxFit.fill)),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 5.0),
-                child: buildText(datas?.username, user, userDetails?.userName),
-              ),
-              InkWell(
-                onTap: () {
-                  if (datas.emailIds == null) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) => Signup()));
-                  } else if (datas.emailIds != null) {
-                    Fluttertoast.showToast(msg: "Our Feature is Coming soon");
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 0.0),
-                  child: Text(
-                    datas.emailIds ?? "Click Here To SignUp",
-                    style: _txtEdit,
-                  ),
-                ),
-              )
+      child: StreamBuilder<DocumentSnapshot>(
+          stream: Firestore.instance
+              .collection("Sellers")
+              .document(user.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  (snapshot.data["User Image"] == null)
+                                      ? ListTile(
+                                          leading: Icon(Icons.image),
+                                          title: Text("Upload Image"),
+                                          onTap: uploadProfileImage,
+                                        )
+                                      : ListTile(
+                                          leading: Icon(Icons.image),
+                                          title: Text("Update Image"),
+                                          onTap: updateProfileImage,
+                                        ),
+                                  ListTile(
+                                    title: Text("Close"),
+                                    leading: Icon(Icons.close),
+                                    onTap: () async {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      child: profileView(datas, snapshot.data["User Image"]),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0),
+                      child: buildText(
+                          datas?.username, user, snapshot.data["name"]),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (datas.emailIds == null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) => Signup()));
+                        } else if (datas.emailIds != null) {
+                          Fluttertoast.showToast(
+                              msg: "Our Feature is Coming soon");
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 0.0),
+                        child: Text(
+                          snapshot.data["Email"],
+                          style: _txtEdit,
+                        ),
+                      ),
+                    )
 
-              // FlatButton(
-              //   child: Text("data"),
-              //   onPressed: () {
-              //   },
-              // )
-            ],
-          ),
-          Container(),
-        ],
-      ),
+                    // FlatButton(
+                    //   child: Text("data"),
+                    //   onPressed: () {
+                    //   },
+                    // )
+                  ],
+                ),
+                Container(),
+              ],
+            );
+          }),
     );
 
     Widget _loadScreen(BuildContext context) {
@@ -975,6 +1047,19 @@ class _AdminState extends State<Admin> {
               content: Text("Double Tap To Exit"),
             ),
             child: _loadScreen(context)));
+  }
+
+  profileView(Admin datas, imageurl) {
+    return Container(
+      height: 100.0,
+      width: 100.0,
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.white, width: 2.5),
+          shape: BoxShape.circle,
+          image: DecorationImage(
+              image: NetworkImage(datas.imageUrls ?? imageurl ?? ""),
+              fit: BoxFit.fill)),
+    );
   }
 
   showMenu() {

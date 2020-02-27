@@ -472,7 +472,7 @@ class _AddProductState extends State<AddProduct> {
                                       onPressed: () {
                                         _selectImage(
                                             ImagePicker.pickImage(
-                                                source: ImageSource.gallery),
+                                                source: ImageSource.gallery,),
                                             1);
                                       },
                                       child: _displayChild1()),

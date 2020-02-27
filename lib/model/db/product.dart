@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 class ProductService {
   String ref = 'ProductListID';
   String appid = "CityGrow Product List";
+  String userSeller = "Sellers";
 
   Firestore _firestore = Firestore.instance;
   void uploadPromocode() {}
@@ -31,7 +32,29 @@ class ProductService {
         .setData(promo);
   }
 
-  void updateProduct(Map<String, dynamic> data, String documentID,Map<String, dynamic> promo) async {
+  void updateImage(Map<String, dynamic> images) async {
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    final String uid = user.uid.toString();
+    _firestore
+        .collection(userSeller)
+        .document(uid)
+        .updateData(images)
+        .whenComplete(() {
+      Fluttertoast.showToast(msg: 'Image Updated');
+    });
+  }
+
+  void uploadImage(Map<String, dynamic> images) async {
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    final String uid = user.uid.toString();
+    _firestore.collection(userSeller).document(uid).updateData(images);
+    //     .whenComplete(() {
+    //   Fluttertoast.showToast(msg: 'Image Uploaded');
+    // });
+  }
+
+  void updateProduct(Map<String, dynamic> data, String documentID,
+      Map<String, dynamic> promo) async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     final String uid = user.uid.toString();
     // final String name = user?.displayName;
@@ -48,7 +71,7 @@ class ProductService {
         .whenComplete(() {
       Fluttertoast.showToast(msg: 'Product Updated');
     });
-     _firestore
+    _firestore
         .collection(ref)
         .document(documentID)
         .collection("promocode")
