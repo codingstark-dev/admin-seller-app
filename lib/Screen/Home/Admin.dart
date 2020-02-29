@@ -1,8 +1,7 @@
-import 'dart:io';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +29,7 @@ import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sellerapp/service/notifier/service_locator.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
@@ -129,7 +129,8 @@ class _AdminState extends State<Admin> {
   Future uploadProfileImage() async {
     final user = Provider.of<User>(context);
 
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 50);
+    var image = await ImagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50);
     var id = Uuid().v1();
     Fluttertoast.showToast(msg: "Wait Uploading");
     final FirebaseStorage storage = FirebaseStorage.instance;
@@ -150,7 +151,8 @@ class _AdminState extends State<Admin> {
   Future updateProfileImage() async {
     final user = Provider.of<User>(context);
 
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 50);
+    var image = await ImagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50);
     var id = Uuid().v1();
     Fluttertoast.showToast(msg: "Wait Uploading");
 
@@ -783,14 +785,7 @@ class _AdminState extends State<Admin> {
                 },
               ),
               Divider(),
-              // ListTile(
-              //   leading: Icon(Icons.library_books),
-              //   title: Text("brand list"),
-              //   onTap: () {
-              //     _brandService.getBrands();
-              //   },
-              // ),
-              // Divider(),
+
               ListTile(
                 leading: Icon(Icons.feedback),
                 title: Text("Contact Us"),
@@ -885,6 +880,12 @@ class _AdminState extends State<Admin> {
                   //     MaterialPageRoute(
                   //         builder: (BuildContext context) => Settings()));
                 },
+              ),
+              Divider(),
+              ListTile(
+                leading: Icon(Icons.share),
+                title: Text("Share The App"),
+                onTap: createLink,
               ),
               Divider(),
               Column(
@@ -1049,17 +1050,73 @@ class _AdminState extends State<Admin> {
             child: _loadScreen(context)));
   }
 
+  void createLink() async {
+    DynamicLinkParameters dynamicLinkParameters = DynamicLinkParameters(
+        socialMetaTagParameters: SocialMetaTagParameters(
+            title: "Sellers App",
+            description: "dfvfdvfdvfdv",
+            imageUrl: Uri.parse(
+                "https://1.bp.blogspot.com/-4fpxSS4wccU/Xk-IVlKxcJI/AAAAAAAALrk/J6AJwjPB4BsrQ3ZdO18a5EsCkupRFebpACLcBGAsYHQ/s640/CamScanner%2BPremium%2BMod%2BApk%2B1.webp")),
+        uriPrefix: "https://citygrow.page.link",
+        link: Uri.parse(
+            "https://1.bp.blogspot.com/-4fpxSS4wccU/Xk-IVlKxcJI/AAAAAAAALrk/J6AJwjPB4BsrQ3ZdO18a5EsCkupRFebpACLcBGAsYHQ/s640/CamScanner%2BPremium%2BMod%2BApk%2B1.webp"),
+        iosParameters:
+            IosParameters(bundleId: "in.citygrow.seller", minimumVersion: "0"),
+        androidParameters: AndroidParameters(
+            packageName: "in.citygrow.seller", minimumVersion: 0));
+    var url = await dynamicLinkParameters.buildShortLink();
+    final lll = url.shortUrl.toString();
+    await Share.share(lll);
+  }
+
   profileView(Admin datas, imageurl) {
-    return Container(
-      height: 100.0,
-      width: 100.0,
-      decoration: BoxDecoration(
+    //   return Container(
+    //     height: 100.0,
+    //     width: 100.0,
+    //     decoration: BoxDecoration(
+    //         border: Border.all(color: Colors.white, width: 2.5),
+    //         shape: BoxShape.circle,
+    //         image: DecorationImage(
+    //             image: NetworkImage(datas.imageUrls ?? imageurl ?? ""),
+    //             fit: BoxFit.fill)),
+    //   );
+    // } else {
+    if (imageurl == null) {
+      return Container(
+        decoration: BoxDecoration(
           border: Border.all(color: Colors.white, width: 2.5),
           shape: BoxShape.circle,
-          image: DecorationImage(
-              image: NetworkImage(datas.imageUrls ?? imageurl ?? ""),
-              fit: BoxFit.fill)),
-    );
+        ),
+        height: 100.0,
+        width: 100.0,
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl:
+                "https://www.palmcityyachts.com/wp/wp-content/uploads/palmcityyachts.com/2015/09/default-profile.png",
+            width: 80.0,
+            height: 80.0,
+            fit: BoxFit.fill,
+          ),
+        ),
+      );
+    } else if (imageurl != null) {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white, width: 2.5),
+          shape: BoxShape.circle,
+        ),
+        height: 100.0,
+        width: 100.0,
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: imageurl,
+            width: 80.0,
+            height: 80.0,
+            fit: BoxFit.fill,
+          ),
+        ),
+      );
+    }
   }
 
   showMenu() {
