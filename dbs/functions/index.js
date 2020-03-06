@@ -130,7 +130,6 @@ exports.OderNotifications = functions.firestore
     //     registrationTokens: stillRegisteredTokens
     //   });
   });
-
 exports.AccountApprove = functions.firestore
   .document("Sellers/{uid}")
   .onUpdate(async (docSnapshot, context) => {
@@ -210,3 +209,194 @@ exports.AccountApprove = functions.firestore
     //     registrationTokens: stillRegisteredTokens
     //   });
   });
+
+//! implement pending
+
+// exports.AccountApprove = functions.firestore
+//   .document("Sellers/{uid}")
+//   .onCreate(async (docSnapshot, context) => {
+//     const oders = docSnapshot.after.data();
+//     const uid = oders["id"];
+//     const name = oders["name"];
+//     // const senderName = oders["senderName"];
+//     console.log(name);
+//     const userDoc = await admin
+//       .firestore()
+//       .doc("Sellers/" + uid)
+//       .get();
+//     const Verification = userDoc.get("Verification");
+//     const registrationTokens = userDoc.get("userToken");
+//     // const BankDetailsBool = userDoc.get("BankDetailsBool");
+//     // const formstatus = userDoc.get("formstatus");
+//     const accountApprove = userDoc.get("Account Approve");
+
+//     console.log(Verification);
+//     console.log(registrationTokens);
+//     var trim = name.indexOf(" ");
+//     var sendingName = name.slice(0, trim);
+//     // const notificationBody =
+//     //   message["type"] === "TEXT"
+//     //     ? message["text"]
+//     //     : "You received a new image message.";
+//     //verification
+
+//     if (accountApprove === true) {
+//       const payload = {
+//         notification: {
+//           title: sendingName + " - Your Account Is Now Ready!",
+//           body: "Check What Things Has Changed 😊",
+//           click_action: "FLUTTER_NOTIFICATION_CLICK",
+//           sound: "default"
+//         }
+//       };
+
+//       return await admin
+//         .messaging()
+//         .sendToDevice(registrationTokens, payload)
+//         .then(response => {
+//           console.log("Successfully sent message:", response);
+//         })
+//         .catch(error => {
+//           console.log("Error sending message:", error);
+//         });
+//     } else if (Verification === false) {
+//       console.log("Account in Pending");
+//     }
+
+//     // const payload = {
+//     //   notification: {
+//     //     title: sendingName + " - Your Account Is Now Ready!",
+//     //     body: "Check What Things Has Changed 😊",
+//     //     click_action: "FLUTTER_NOTIFICATION_CLICK",
+//     //     sound: "default"
+//     //   }
+//     // };
+//     // switch (Verification) {
+//     //   case true:
+//     //     await admin
+//     //       .messaging()
+//     //       .sendToDevice(registrationTokens, payload)
+//     //       .then(response => {
+//     //         console.log("Successfully sent message:", response);
+//     //       })
+//     //       .catch(error => {
+//     //         console.log("Error sending message:", error);
+//     //       });
+//     //     break;
+//     //   default:
+//     //   // code block
+//     // }
+
+//     // const stillRegisteredTokens = registrationTokens;
+//     // response.results.forEach((result, index) => {
+//     //   const error = result.error;
+//     //   if (error) {
+//     //     const failedRegistrationToken = registrationTokens[index];
+//     //     console.error("blah", failedRegistrationToken, error);
+//     //     if (
+//     //       error.code === "messaging/invalid-registration-token" ||
+//     //       error.code === "messaging/registration-token-not-registered"
+//     //     ) {
+//     //       const failedIndex = stillRegisteredTokens.indexOf(
+//     //         failedRegistrationToken
+//     //       );
+//     //       if (failedIndex > -1) {
+//     //         stillRegisteredTokens.splice(failedIndex, 1);
+//     //       }
+//     //     }
+//     //   }
+//     // });
+
+//     // admin
+//     //   .firestore()
+//     //   .doc("users/" + uid)
+//     //   .update({
+//     //     registrationTokens: stillRegisteredTokens
+//     //   });
+//   });
+// exports.NotificationAccountApprove = functions.firestore
+//   .document("Sellers/{uid}")
+//   .onUpdate(async (docSnapshot, _context) => {
+//     const oders = docSnapshot.after.data();
+//     const uid = oders["id"];
+//     // const name = oders["name"];
+//     // const senderName = oders["senderName"];
+//     console.log(oders);
+//     const userDoc = await admin
+//       .firestore()
+//       .doc("Sellers/" + uid)
+//       .get();
+//     const Verification = userDoc.get("Verification");
+//     // const registrationTokens = userDoc.get("userToken");
+//     // const BankDetailsBool = userDoc.get("BankDetailsBool");
+//     // const formstatus = userDoc.get("formstatus");
+//     // console.log(Verification);
+//     // console.log(registrationTokens);
+//     // var trim = name.indexOf(" ");
+//     // var sendingName = name.slice(0, trim);
+//     // const notificationBody =
+//     //   message["type"] === "TEXT"
+//     //     ? message["text"]
+//     //     : "You received a new image message.";
+//     //verification
+//     if (Verification === true) {
+//       const userDoc = await admin
+//         .firestore()
+//         .doc("Sellers/" + uid)
+//         .update({
+//           "Account Approve": true
+//         });
+//       return userDoc;
+//     }
+
+//     // const payload = {
+//     //   notification: {
+//     //     title: sendingName + " - Your Account Is Now Ready!",
+//     //     body: "Check What Things Has Changed 😊",
+//     //     click_action: "FLUTTER_NOTIFICATION_CLICK",
+//     //     sound: "default"
+//     //   }
+//     // };
+//     // switch (Verification) {
+//     //   case true:
+//     //     await admin
+//     //       .messaging()
+//     //       .sendToDevice(registrationTokens, payload)
+//     //       .then(response => {
+//     //         console.log("Successfully sent message:", response);
+//     //       })
+//     //       .catch(error => {
+//     //         console.log("Error sending message:", error);
+//     //       });
+//     //     break;
+//     //   default:
+//     //   // code block
+//     // }
+
+//     // const stillRegisteredTokens = registrationTokens;
+//     // response.results.forEach((result, index) => {
+//     //   const error = result.error;
+//     //   if (error) {
+//     //     const failedRegistrationToken = registrationTokens[index];
+//     //     console.error("blah", failedRegistrationToken, error);
+//     //     if (
+//     //       error.code === "messaging/invalid-registration-token" ||
+//     //       error.code === "messaging/registration-token-not-registered"
+//     //     ) {
+//     //       const failedIndex = stillRegisteredTokens.indexOf(
+//     //         failedRegistrationToken
+//     //       );
+//     //       if (failedIndex > -1) {
+//     //         stillRegisteredTokens.splice(failedIndex, 1);
+//     //       }
+//     //     }
+//     //   }
+//     // });
+
+//     // admin
+//     //   .firestore()
+//     //   .doc("users/" + uid)
+//     //   .update({
+//     //     registrationTokens: stillRegisteredTokens
+//     //   });
+//   });

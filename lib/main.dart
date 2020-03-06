@@ -4,8 +4,10 @@ import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:sellerapp/MainFinal.dart';
 import 'package:sellerapp/service/notifier/service_locator.dart';
+import 'package:sellerapp/theme/theme_provider.dart';
 
 /// Run first apps open
 void main() {
@@ -22,7 +24,10 @@ void main() {
   // ! on it
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
   runZoned(() {
-    runApp(MyApp());
+    runApp(ChangeNotifierProvider<ThemeProvider>(
+      create: (BuildContext context) => ThemeProvider(isLightTheme: true),
+      child: MyApp(),
+    ));
   }, onError: Crashlytics.instance.recordError);
 }
 
@@ -40,14 +45,11 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
       statusBarColor: Colors.transparent, //or set color with: Color(0xFF0000FF)
     ));
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
       title: "CityGrow Seller App",
-      theme: ThemeData(
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
-          primaryColorLight: Colors.white,
-          primaryColorBrightness: Brightness.light,
-          primaryColor: Colors.white),
+      theme: themeProvider.getThemeData,
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
 

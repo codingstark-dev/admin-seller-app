@@ -5,6 +5,7 @@ import 'package:sellerapp/model/user.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/notifier/promocode.dart';
+import 'package:sellerapp/theme/theme_provider.dart';
 import 'Screen//wrapper/Wrapper.dart';
 
 Color active = Colors.deepPurple[400];
@@ -13,6 +14,8 @@ void main() => runApp(MainFinal());
 class MainFinal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MultiProvider(
         providers: [
           StreamProvider<User>.value(
@@ -32,6 +35,7 @@ class MainFinal extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
+          theme: themeProvider.getThemeData,
           debugShowCheckedModeBanner: false,
           home: Wrapper(),
         ));

@@ -29,6 +29,7 @@ import 'package:sellerapp/service/dbapi.dart';
 import 'package:sellerapp/service/auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sellerapp/service/notifier/service_locator.dart';
+import 'package:sellerapp/theme/theme_provider.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
@@ -424,7 +425,34 @@ class _AdminState extends State<Admin> {
                               BankDetailsSubmit()));
                 },
               ),
-
+              // Expanded(
+              //     flex: 2,
+              //     child: ListView(
+              //       padding: EdgeInsets.all(5),
+              //       scrollDirection: Axis.horizontal,
+              //       children: <Widget>[
+              //         SizedBox(
+              //           height: 100,
+              //           width: 100,
+              //           child: Card(
+              //             elevation: 2,
+              //             child: ListTile(
+              //               title: Text(
+              //                 'Total Revenue',
+              //                 textAlign: TextAlign.center,
+              //                 style:
+              //                     TextStyle(color: Colors.grey, fontSize: 12.0),
+              //               ),
+              //               subtitle: Text(
+              //                 '0',
+              //                 textAlign: TextAlign.center,
+              //                 style: TextStyle(color: active, fontSize: 25.0),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ],
+              //     )),
               // Padding(
               //   padding: const EdgeInsets.all(8.0),
               //   child: Container(
@@ -525,11 +553,13 @@ class _AdminState extends State<Admin> {
                     if (snapshot.hasData &&
                         snapshot.data.documents.length > 0) {
                       return Expanded(
+                        flex: 6,
                         child: GridView(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2),
                           children: <Widget>[
+                         
                             Padding(
                                 padding: const EdgeInsets.fromLTRB(7, 5, 5, 5),
                                 child: Card(
@@ -882,11 +912,19 @@ class _AdminState extends State<Admin> {
                 },
               ),
               Divider(),
-              ListTile(
-                leading: Icon(Icons.share),
-                title: Text("Share The App"),
-                onTap: createLink,
-              ),
+              StreamBuilder<DocumentSnapshot>(
+                  stream: Firestore.instance
+                      .collection("Sellers")
+                      .document(user.uid)
+                      .snapshots(),
+                  builder: (context, sharedata) {
+                    return ListTile(
+                      leading: Icon(Icons.share),
+                      title: Text("Share The App"),
+                      onTap: () => createLink(
+                          sharedata.data["name"], sharedata.data["refercode"]),
+                    );
+                  }),
               Divider(),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1050,23 +1088,25 @@ class _AdminState extends State<Admin> {
             child: _loadScreen(context)));
   }
 
-  void createLink() async {
+  createLink(String name, String refercode) async {
     DynamicLinkParameters dynamicLinkParameters = DynamicLinkParameters(
         socialMetaTagParameters: SocialMetaTagParameters(
-            title: "Sellers App",
-            description: "dfvfdvfdvfdv",
+            title: "CityGrow Sellers App",
+            description: "CityGrow Sellers App",
             imageUrl: Uri.parse(
-                "https://1.bp.blogspot.com/-4fpxSS4wccU/Xk-IVlKxcJI/AAAAAAAALrk/J6AJwjPB4BsrQ3ZdO18a5EsCkupRFebpACLcBGAsYHQ/s640/CamScanner%2BPremium%2BMod%2BApk%2B1.webp")),
+                "https://1.bp.blogspot.com/-4uLMcrE9PBg/XmEhHOYpefI/AAAAAAAAMws/p8oqOG8goAwkCNc2n5FJi5RB2BkcaHqBgCLcBGAsYHQ/s640/CityGrow%2Bbannner.jpg")),
         uriPrefix: "https://citygrow.page.link",
         link: Uri.parse(
-            "https://1.bp.blogspot.com/-4fpxSS4wccU/Xk-IVlKxcJI/AAAAAAAALrk/J6AJwjPB4BsrQ3ZdO18a5EsCkupRFebpACLcBGAsYHQ/s640/CamScanner%2BPremium%2BMod%2BApk%2B1.webp"),
+            "https://1.bp.blogspot.com/-4uLMcrE9PBg/XmEhHOYpefI/AAAAAAAAMws/p8oqOG8goAwkCNc2n5FJi5RB2BkcaHqBgCLcBGAsYHQ/s640/CityGrow%2Bbannner.jpg"),
         iosParameters:
             IosParameters(bundleId: "in.citygrow.seller", minimumVersion: "0"),
         androidParameters: AndroidParameters(
             packageName: "in.citygrow.seller", minimumVersion: 0));
     var url = await dynamicLinkParameters.buildShortLink();
     final lll = url.shortUrl.toString();
-    await Share.share(lll);
+    await Share.share(
+        "$name just invited you to join CityGrow Seller App and use this refer code $refercode to join " +
+            lll);
   }
 
   profileView(Admin datas, imageurl) {

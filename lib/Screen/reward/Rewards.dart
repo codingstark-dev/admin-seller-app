@@ -17,13 +17,15 @@ Color active = Colors.deepPurple[400];
 class _RewardsState extends State<Rewards> {
   @override
   Widget build(BuildContext context) {
+    final ThemeData _theme = Theme.of(context);
+
     final User user = Provider.of<User>(context);
     final db = DatabaseService(uid: user.uid);
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text("Reward"),
         backgroundColor: active,
-        centerTitle: true,
       ),
       body: StreamBuilder<UserDetails>(
           stream: db?.documentSnapshot,
